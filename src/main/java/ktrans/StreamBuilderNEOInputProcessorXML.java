@@ -16,8 +16,22 @@ import neolite.io.xml.ElementBehaviorMatrix;
 import neolite.io.xml.ElementBoundary;
 import neolite.io.xml.ElementHolonMatrix;
 
+/**
+ * Input processor for building NEO input for a simple stream solute model
+ * 
+ * @author v78h241
+ *
+ */
 public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuilderMetaInputXML,StreamSimulatorNEO> {
 
+   /**
+    * Constructor 
+    * 
+    * @param metaInput
+    *       meta input processed by this processor
+    * @param sim
+    *       simulator associated with this processor
+    */
    public StreamBuilderNEOInputProcessorXML(StreamBuilderMetaInputXML metaInput, StreamSimulatorNEO sim) 
    {
       super(metaInput, sim);
@@ -72,7 +86,7 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
                );
          elementBehavior.createInitValueElement(
                BehaviorSoluteInject.REQ_STATE_START, 
-               metaInput.getInjectStartTime().toString(), 
+               metaInput.getInjectStartInterval().toString(), 
                null
                );
           

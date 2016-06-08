@@ -8,6 +8,12 @@ import edu.montana.cerg.simmanager.InputProcessorFactory;
 import edu.montana.cerg.simmanager.metainputs.DoubleMetaInput;
 import statemachine.io.xml.XMLDocument;
 
+/**
+ * Generic input processor factory for the stream solute simulator
+ * 
+ * @author v78h241
+ *
+ */
 public class StreamSimulatorNEOInputProcessorFactory extends InputProcessorFactory {
 
    @Override

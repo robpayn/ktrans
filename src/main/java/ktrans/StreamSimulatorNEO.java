@@ -9,8 +9,20 @@ import edu.montana.cerg.simmanager.interfaces.IOutputProcessorFactory;
 import neolite.Matrix;
 import neolite.io.MatrixBuilder;
 
+/**
+ * A solute transport stream simulator using the NEO framework
+ * 
+ * @author v78h241
+ *
+ */
 public class StreamSimulatorNEO extends Simulator {
    
+   /**
+    * Entry point
+    * 
+    * @param args
+    *       array of command line arguments
+    */
    public static void main(String[] args)
    {
       try 
@@ -61,12 +73,26 @@ public class StreamSimulatorNEO extends Simulator {
     */
    private Matrix matrix;
    
+   /**
+    * Constructor based on an argument map and working directory
+    * 
+    * @param argMap
+    *       map of command line arguments ("=" delimiter expected for key/value pairs
+    * @param workingDir
+    *       working directory
+    */
    public StreamSimulatorNEO(HashMap<String,String> argMap, File workingDir)
    {
       this.argMap = argMap;
       this.workingDir = workingDir;
    }
 
+   /**
+    * Load the matrix
+    * 
+    * @throws Exception
+    *       if error in loading the matrix
+    */
    public void loadMatrix() throws Exception 
    {
       matrix = MatrixBuilder.createMatrix(
@@ -94,12 +120,18 @@ public class StreamSimulatorNEO extends Simulator {
       return new StreamSimulatorNEOOutputProcessorFactory();
    }
 
+   /**
+    * Overrides implementation in Simulator to provide specific type
+    */
    @Override
    public StreamSimulatorNEOInputProcessorFactory getInputProcessorFactory()
    {
       return (StreamSimulatorNEOInputProcessorFactory)inputProcessorFactory;
    }
 
+   /**
+    * Overrides implementation in Simulator to provide specific type
+    */
    @Override
    public StreamSimulatorNEOOutputProcessorFactory getOutputProcessorFactory()
    {
