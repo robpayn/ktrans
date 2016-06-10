@@ -9,7 +9,7 @@ import currencies.solute.boundary.inject.BehaviorSoluteInject;
 import currencies.solute.cell.storage.BehaviorSoluteStorage;
 import currencies.solute.cell.storage.SoluteConc;
 import edu.montana.cerg.simmanager.InputProcessor;
-import neolite.behaviors.BehaviorMatrix;
+import neolite.BehaviorMatrix;
 import neolite.io.xml.DocumentBoundary;
 import neolite.io.xml.DocumentCell;
 import neolite.io.xml.ElementBehaviorMatrix;
