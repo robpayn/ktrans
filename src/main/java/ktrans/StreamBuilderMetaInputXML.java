@@ -4,7 +4,9 @@ import java.io.File;
 
 import org.w3c.dom.Element;
 
-import currencies.solute.boundary.inject.BehaviorSoluteInject;
+import currencies.solute.CurrencySolute;
+import currencies.solute.boundary.BehaviorSoluteActiveMM;
+import currencies.solute.boundary.BehaviorSoluteInject;
 import edu.montana.cerg.simmanager.interfaces.IMetaInput;
 import statemachine.io.xml.ElementHelper;
 import statemachine.io.xml.XMLDocument;
@@ -119,7 +121,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    public Double getFlow() 
    {
       Element element = getFirstChildElement("flow");
-      return Double.valueOf(element.getAttribute("value"));
+      return Double.valueOf(element.getAttribute("flow"));
    }
 
    /**
@@ -130,8 +132,8 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Double getDispersion() 
    {
-      Element element = getFirstChildElement("dispersion");
-      return Double.valueOf(element.getAttribute("value"));
+      Element element = getFirstChildElement("flow");
+      return Double.valueOf(element.getAttribute("dispersion"));
    }
 
    /**
@@ -168,6 +170,89 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    {
       Element element = getFirstChildElement("inject");
       return Long.valueOf(element.getAttribute(BehaviorSoluteInject.REQ_STATE_START));
+   }
+
+   /**
+    * Get the maximum uptake
+    * 
+    * @return
+    *       maximum uptake
+    */
+   public Double getUMax() 
+   {
+      Element element = getFirstChildElement("active");
+      return Double.valueOf(element.getAttribute(BehaviorSoluteActiveMM.REQ_STATE_UMAX));
+   }
+
+   /**
+    * Get the half saturation concentration
+    * 
+    * @return
+    *       half saturation concentration
+    */
+   public Double getHalfSat() 
+   {
+      Element element = getFirstChildElement("active");
+      return Double.valueOf(element.getAttribute(BehaviorSoluteActiveMM.REQ_STATE_HALFSAT));
+   }
+
+   /**
+    * Get the background concentration
+    * 
+    * @return
+    *       background concentration
+    */
+   public Double getBkgConc() 
+   {
+      Element element = getFirstChildElement("active");
+      return Double.valueOf(element.getAttribute("bkg" + CurrencySolute.NAME_SOLUTE_CONC));
+   }
+
+   /**
+    * Checks if is to be an injected boundary
+    * 
+    * @return
+    *       true if injected, false otherwise
+    */
+   public boolean isInject() 
+   {
+      return hasElement("inject");
+   }
+
+   /**
+    * Get the concentration boundary path
+    * 
+    * @return
+    *       path
+    */
+   public String getConcBoundFile() 
+   {
+      Element element = getFirstChildElement("concbound");
+      return element.getAttribute("path");
+   }
+
+   /**
+    * Get the type of interpolation
+    * 
+    * @return
+    *       interpolation type
+    */
+   public String getInterpolationType() 
+   {
+      Element element = getFirstChildElement("concbound");
+      return element.getAttribute("type");
+   }
+
+   /**
+    * Get the delimiter
+    * 
+    * @return
+    *       delimiter
+    */
+   public String getDelimiter() 
+   {
+      Element element = getFirstChildElement("concbound");
+      return element.getAttribute("delimiter");
    }
 
 }
