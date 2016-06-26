@@ -4,9 +4,9 @@ import java.io.File;
 
 import currencies.solute.CurrencySolute;
 import currencies.solute.boundary.BehaviorSoluteActiveMM;
+import currencies.solute.boundary.BehaviorSoluteBoundInject;
 import currencies.solute.boundary.BehaviorSoluteFlow;
 import currencies.solute.boundary.BehaviorSoluteFlowBound;
-import currencies.solute.boundary.BehaviorSoluteInject;
 import currencies.solute.cell.BehaviorSoluteStorage;
 import edu.montana.cerg.simmanager.InputProcessor;
 import neolite.behaviors.BehaviorMatrix;
@@ -98,40 +98,30 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
          if (metaInput.isInject())
          {
             boundaryName = "ext_" + cellName;
+            
+            // Conservative tracer
             elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
             elementBehavior = elementBoundary.createBehaviorElement(
-                  consCurrency.getBehavior(CurrencySolute.BEHAVIOR_FLOWBOUND)
-                  );
-            elementBehavior.createInitValueElement(BehaviorSoluteFlowBound.REQ_STATE_FLOW, new Double(-flow).toString(), null);
-            elementBehavior.createInitValueElement(consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, "0", null);
-            elementBehavior = elementBoundary.createBehaviorElement(
-                  actCurrency.getBehavior(CurrencySolute.BEHAVIOR_FLOWBOUND)
-                  );
-            elementBehavior.createInitValueElement(actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, bkgConc.toString(), null);
-   
-            boundaryName = "inj_" + cellName;
-            elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
-            elementBehavior = elementBoundary.createBehaviorElement(
-                  consCurrency.getBehavior(CurrencySolute.BEHAVIOR_INJECT_CONC)
+                  consCurrency.getBehavior(CurrencySolute.BEHAVIOR_CONCBOUND_INJECT)
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteInject.REQ_STATE_MASS, 
-                  metaInput.getInjectMass().toString(), 
+                  consCurrency.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
+                  metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteInject.REQ_STATE_DURATION, 
-                  metaInput.getInjectDuration().toString(), 
+                  consCurrency.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_TYPE, 
+                  metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteInject.REQ_STATE_START, 
-                  metaInput.getInjectStartInterval().toString(), 
+                  consCurrency.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
+                  metaInput.getDelimiter(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteFlow.REQ_STATE_FLOW, 
-                  metaInput.getFlow().toString(), 
+                  BehaviorSoluteFlowBound.REQ_STATE_FLOW, 
+                  new Double(-flow).toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
@@ -149,9 +139,65 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
                   boundaryArea.toString(), 
                   null
                   );
-            elementBehavior = elementBoundary.createBehaviorElement(
-                  actCurrency.getBehavior(CurrencySolute.BEHAVIOR_INJECT_CONC)
+            elementBehavior.createInitValueElement(
+                  consCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_MASS, 
+                  metaInput.getInjectMass().toString(), 
+                  null
                   );
+            elementBehavior.createInitValueElement(
+                  consCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_DURATION, 
+                  metaInput.getInjectDuration().toString(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  consCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_START, 
+                  metaInput.getInjectStartInterval().toString(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+                  "0", 
+                  null
+                  );
+            
+            // Active Tracer
+            elementBehavior = elementBoundary.createBehaviorElement(
+                  actCurrency.getBehavior(CurrencySolute.BEHAVIOR_CONCBOUND_INJECT)
+                  );
+            elementBehavior.createInitValueElement(
+                  actCurrency.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
+                  metaInput.getConcBoundFile(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  actCurrency.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_TYPE, 
+                  metaInput.getInterpolationType(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  actCurrency.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
+                  metaInput.getDelimiter(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_MASS, 
+                  metaInput.getInjectMass().toString(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_DURATION, 
+                  metaInput.getInjectDuration().toString(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_START, 
+                  metaInput.getInjectStartInterval().toString(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+                  bkgConc.toString(), 
+                  null);
          }
          else
          {

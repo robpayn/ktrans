@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 
 import currencies.solute.CurrencySolute;
 import currencies.solute.boundary.BehaviorSoluteActiveMM;
-import currencies.solute.boundary.BehaviorSoluteInject;
+import currencies.solute.boundary.BehaviorSoluteBoundInject;
 import edu.montana.cerg.simmanager.interfaces.IMetaInput;
 import statemachine.io.xml.ElementHelper;
 import statemachine.io.xml.XMLDocument;
@@ -145,7 +145,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    public Double getInjectMass() 
    {
       Element element = getFirstChildElement("inject");
-      return Double.valueOf(element.getAttribute(BehaviorSoluteInject.REQ_STATE_MASS));
+      return Double.valueOf(element.getAttribute(BehaviorSoluteBoundInject.REQ_STATE_MASS));
    }
 
    /**
@@ -157,7 +157,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    public Long getInjectDuration() 
    {
       Element element = getFirstChildElement("inject");
-      return Long.valueOf(element.getAttribute(BehaviorSoluteInject.REQ_STATE_DURATION));
+      return Long.valueOf(element.getAttribute(BehaviorSoluteBoundInject.REQ_STATE_DURATION));
    }
 
    /**
@@ -169,7 +169,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    public Long getInjectStartInterval() 
    {
       Element element = getFirstChildElement("inject");
-      return Long.valueOf(element.getAttribute(BehaviorSoluteInject.REQ_STATE_START));
+      return Long.valueOf(element.getAttribute(BehaviorSoluteBoundInject.REQ_STATE_START));
    }
 
    /**
