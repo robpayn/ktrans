@@ -4,9 +4,9 @@ import java.io.File;
 
 import org.w3c.dom.Element;
 
+import chsm.io.xml.XMLDocument;
 import edu.montana.cerg.simmanager.InputProcessorFactory;
 import edu.montana.cerg.simmanager.metainputs.DoubleMetaInput;
-import statemachine.io.xml.XMLDocument;
 
 /**
  * Generic input processor factory for the stream solute simulator

@@ -2,6 +2,7 @@ package ktrans;
 
 import java.io.File;
 
+import chsm.io.file.interpolate.ProcessorInterpolateSnapshotTable;
 import currencies.solute.CurrencySolute;
 import currencies.solute.boundary.BehaviorSoluteActiveMM;
 import currencies.solute.boundary.BehaviorSoluteBoundInject;
@@ -9,13 +10,12 @@ import currencies.solute.boundary.BehaviorSoluteFlow;
 import currencies.solute.boundary.BehaviorSoluteFlowBound;
 import currencies.solute.cell.BehaviorSoluteStorage;
 import edu.montana.cerg.simmanager.InputProcessor;
-import neolite.behaviors.BehaviorMatrix;
-import neolite.io.xml.DocumentBoundary;
-import neolite.io.xml.DocumentCell;
-import neolite.io.xml.ElementBehaviorMatrix;
-import neolite.io.xml.ElementBoundary;
-import neolite.io.xml.ElementHolonMatrix;
-import statemachine.io.file.interpolate.ProcessorInterpolateSnapshotTable;
+import neoch.behaviors.BehaviorMatrix;
+import neoch.io.xml.DocumentBoundary;
+import neoch.io.xml.DocumentCell;
+import neoch.io.xml.ElementBehaviorMatrix;
+import neoch.io.xml.ElementBoundary;
+import neoch.io.xml.ElementHolonMatrix;
 
 /**
  * Input processor for building NEO input for a simple stream solute model

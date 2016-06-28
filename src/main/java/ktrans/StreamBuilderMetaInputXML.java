@@ -4,12 +4,12 @@ import java.io.File;
 
 import org.w3c.dom.Element;
 
+import chsm.io.xml.ElementHelper;
+import chsm.io.xml.XMLDocument;
 import currencies.solute.CurrencySolute;
 import currencies.solute.boundary.BehaviorSoluteActiveMM;
 import currencies.solute.boundary.BehaviorSoluteBoundInject;
 import edu.montana.cerg.simmanager.interfaces.IMetaInput;
-import statemachine.io.xml.ElementHelper;
-import statemachine.io.xml.XMLDocument;
 
 /**
  * Characterizes XML metainput for the stream solute simulator

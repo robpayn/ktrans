@@ -6,8 +6,8 @@ import java.util.HashMap;
 import edu.montana.cerg.simmanager.Simulator;
 import edu.montana.cerg.simmanager.interfaces.IInputProcessorFactory;
 import edu.montana.cerg.simmanager.interfaces.IOutputProcessorFactory;
-import neolite.HolonMatrix;
-import neolite.MatrixBuilder;
+import neoch.HolonMatrix;
+import neoch.MatrixBuilder;
 
 /**
  * A solute transport stream simulator using the NEO framework
