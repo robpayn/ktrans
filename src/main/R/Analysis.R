@@ -1152,6 +1152,7 @@ createMetrics.MultilevelAnalysis <- function(analysis)
       analysis$indeces,
       sprintf("matrix.cell%s.activeConc", analysis$location)
       ];
+	analysis$metrics$consbc <- analysis$metrics$cons - analysis$consbkg;
    analysis$metrics$actbc <- analysis$metrics$act - analysis$actbkg;
    analysis$metrics$k <- (log(analysis$injectateRatio) - log(analysis$metrics$actbc / analysis$metrics$consbc)) / 
       analysis$travelTime;
