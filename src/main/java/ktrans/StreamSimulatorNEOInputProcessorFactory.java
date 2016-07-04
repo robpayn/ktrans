@@ -4,9 +4,9 @@ import java.io.File;
 
 import org.w3c.dom.Element;
 
-import chsm.io.xml.XMLDocument;
 import edu.montana.cerg.simmanager.InputProcessorFactory;
 import edu.montana.cerg.simmanager.metainputs.DoubleMetaInput;
+import neoch.io.xml.XMLDocumentConfig;
 
 /**
  * Generic input processor factory for the stream solute simulator
@@ -25,7 +25,7 @@ public class StreamSimulatorNEOInputProcessorFactory extends InputProcessorFacto
    @Override
    public void addBuilderInputProcessor(File configFile, File workingDir) throws Exception 
    {
-      XMLDocument doc = new XMLDocument(configFile);
+      XMLDocumentConfig doc = new XMLDocumentConfig(configFile);
       StreamBuilderMetaInputXML metaInput = new StreamBuilderMetaInputXML(
             (Element)doc.getRootElementHelper().getFirstChildElement("streambuilder"),
             doc,

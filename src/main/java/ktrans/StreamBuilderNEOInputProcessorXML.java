@@ -61,14 +61,19 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
          Double flow = -metaInput.getFlow();
          Double disp = metaInput.getDispersion();
          
+         // Conservative solute
+         Double consBkgConc = metaInput.getConsBkgConc();
+         
          // Active solute
-         Double bkgConc = metaInput.getBkgConc();
+         Double activeBkgConc = metaInput.getActiveBkgConc();
          Double uMax = metaInput.getUMax();
          Double halfSat = metaInput.getHalfSat();
          
          // Cell and Boundary input files
-         DocumentCell documentCell = new DocumentCell();
-         DocumentBoundary documentBoundary = new DocumentBoundary();
+         File cellFile = metaInput.getCellFile();
+         DocumentCell documentCell = new DocumentCell(cellFile.getName());
+         File boundaryFile = metaInput.getBoundaryFile();
+         DocumentBoundary documentBoundary = new DocumentBoundary(boundaryFile.getName());
          
          Integer numCellsDigits = new Integer(1 + (int)Math.log10(numCells));
          String cellName = "";
@@ -141,22 +146,22 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
                   );
             elementBehavior.createInitValueElement(
                   consCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_MASS, 
-                  metaInput.getInjectMass().toString(), 
+                  metaInput.getConservativeInjectMass().toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
                   consCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_DURATION, 
-                  metaInput.getInjectDuration().toString(), 
+                  metaInput.getConservativeInjectDuration().toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
                   consCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_START, 
-                  metaInput.getInjectStartInterval().toString(), 
+                  metaInput.getConservativeInjectStartInterval().toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
                   consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
-                  "0", 
+                  consBkgConc.toString(), 
                   null
                   );
             
@@ -179,24 +184,45 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
                   metaInput.getDelimiter(), 
                   null
                   );
-            elementBehavior.createInitValueElement(
-                  actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_MASS, 
-                  metaInput.getInjectMass().toString(), 
-                  null
-                  );
-            elementBehavior.createInitValueElement(
-                  actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_DURATION, 
-                  metaInput.getInjectDuration().toString(), 
-                  null
-                  );
-            elementBehavior.createInitValueElement(
-                  actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_START, 
-                  metaInput.getInjectStartInterval().toString(), 
-                  null
-                  );
+            if (metaInput.isActivInjUnique())
+            {
+               elementBehavior.createInitValueElement(
+                     actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_MASS, 
+                     metaInput.getActiveInjectMass().toString(), 
+                     null
+                     );
+               elementBehavior.createInitValueElement(
+                     actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_DURATION, 
+                     metaInput.getActiveInjectDuration().toString(), 
+                     null
+                     );
+               elementBehavior.createInitValueElement(
+                     actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_START, 
+                     metaInput.getActiveInjectStartInterval().toString(), 
+                     null
+                     );
+            }
+            else
+            {
+               elementBehavior.createInitValueElement(
+                     actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_MASS, 
+                     metaInput.getConservativeInjectMass().toString(), 
+                     null
+                     );
+               elementBehavior.createInitValueElement(
+                     actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_DURATION, 
+                     metaInput.getConservativeInjectDuration().toString(), 
+                     null
+                     );
+               elementBehavior.createInitValueElement(
+                     actCurrency.getName() + BehaviorSoluteBoundInject.REQ_STATE_START, 
+                     metaInput.getConservativeInjectStartInterval().toString(), 
+                     null
+                     );
+            }
             elementBehavior.createInitValueElement(
                   actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
-                  bkgConc.toString(), 
+                  activeBkgConc.toString(), 
                   null);
          }
          else
@@ -269,26 +295,48 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
             // Cell
             cellName = String.format("cell%0" + numCellsDigits.toString() + "d", i);
             elementCell = documentCell.createCellElement(cellName);
-            elementBehavior = elementCell.createBehaviorElement(consBehaviorStorage);
-            elementBehavior.createInitValueElement(BehaviorSoluteStorage.REQ_STATE_VOLUME, storageVolume.toString(), null);
-            elementBehavior.createInitValueElement(consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, "0", null);
-            elementBehavior = elementCell.createBehaviorElement(actBehaviorStorage);
-            elementBehavior.createInitValueElement(actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, bkgConc.toString(), null);
             
-            // Downstream boundary with adjacent boundary
+            // Cell conservative tracer
+            elementBehavior = elementCell.createBehaviorElement(consBehaviorStorage);
+            elementBehavior.createInitValueElement(
+                  BehaviorSoluteStorage.REQ_STATE_VOLUME, 
+                  storageVolume.toString(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+                  consBkgConc.toString(), 
+                  null
+                  );
+            
+            // Cell active tracer
+            elementBehavior = elementCell.createBehaviorElement(actBehaviorStorage);
+            elementBehavior.createInitValueElement(
+                  actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+                  activeBkgConc.toString(), 
+                  null
+                  );
+            
+            // Downstream boundary 
             boundaryName = cellName + String.format("_%0" + numCellsDigits.toString() + "d", i + 1);
             elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
+            
+            // Downstream boundary conservative tracer
             elementBehavior = elementBoundary.createBehaviorElement(consBehaviorFlow);
             elementBehavior.createInitValueElement(BehaviorSoluteFlow.REQ_STATE_LENGTH, length.toString(), null);
             elementBehavior.createInitValueElement(BehaviorSoluteFlow.REQ_STATE_AREA_XSECT, boundaryArea.toString(), null);
             elementBehavior.createInitValueElement(BehaviorSoluteFlow.REQ_STATE_FLOW, flow.toString(), null);
             elementBehavior.createInitValueElement(BehaviorSoluteFlow.REQ_STATE_DISP, disp.toString(), null);
+            
+            // Downstream boundary active tracer
             elementBehavior = elementBoundary.createBehaviorElement(actBehaviorFlow);
+            
+            // Downstream boundary create cell and boundary name for adjacent boundary
             cellName = String.format("cell%0" + numCellsDigits.toString() + "d", i + 1);
             boundaryName = cellName + String.format("_%0" + numCellsDigits.toString() + "d", i);
             elementBoundary = elementBoundary.createAdjacentElement(boundaryName, cellName);
             
-            // Uptake boundary
+            // Uptake boundary (external boundary for active tracer only)
             cellName = String.format("cell%0" + numCellsDigits.toString() + "d", i);
             boundaryName = cellName + String.format("_uptake", numCells);
             elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
@@ -296,16 +344,25 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
             elementBehavior.createInitValueElement(BehaviorSoluteActiveMM.REQ_STATE_UMAX, uMax.toString(), null);
             elementBehavior.createInitValueElement(BehaviorSoluteActiveMM.REQ_STATE_HALFSAT, halfSat.toString(), null);
             elementBehavior.createInitValueElement(BehaviorSoluteActiveMM.REQ_STATE_PLANAREA, planarea.toString(), null);
-            elementBehavior.createInitValueElement(BehaviorSoluteActiveMM.REQ_STATE_BKG_CONC, bkgConc.toString(), null);
+            elementBehavior.createInitValueElement(BehaviorSoluteActiveMM.REQ_STATE_BKG_CONC, activeBkgConc.toString(), null);
          }
          // Last cell
          cellName = String.format("cell%0" + numCellsDigits.toString() + "d", numCells);
          elementCell = documentCell.createCellElement(cellName);
+         
+         // Last cell conservative tracer
          elementBehavior = elementCell.createBehaviorElement(consBehaviorStorage);
          elementBehavior.createInitValueElement(BehaviorSoluteStorage.REQ_STATE_VOLUME, storageVolume.toString(), null);
-         elementBehavior.createInitValueElement(consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, "0", null);
+         elementBehavior.createInitValueElement(
+               consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+               consBkgConc.toString(),
+               "null"
+               );
+         
+         // Last cell active tracer
          elementBehavior = elementCell.createBehaviorElement(actBehaviorStorage);
-         elementBehavior.createInitValueElement(actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, bkgConc.toString(), null);
+         elementBehavior.createInitValueElement(actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, activeBkgConc.toString(), null);
+         
          // Uptake boundary for last cell
          boundaryName = cellName + String.format("_uptake", numCells);
          elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
@@ -313,23 +370,36 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
          elementBehavior.createInitValueElement(BehaviorSoluteActiveMM.REQ_STATE_UMAX, uMax.toString(), null);
          elementBehavior.createInitValueElement(BehaviorSoluteActiveMM.REQ_STATE_HALFSAT, halfSat.toString(), null);
          elementBehavior.createInitValueElement(BehaviorSoluteActiveMM.REQ_STATE_PLANAREA, planarea.toString(), null);
-         elementBehavior.createInitValueElement(BehaviorSoluteActiveMM.REQ_STATE_BKG_CONC, bkgConc.toString(), null);
+         elementBehavior.createInitValueElement(BehaviorSoluteActiveMM.REQ_STATE_BKG_CONC, activeBkgConc.toString(), null);
 
          // Downstream boundary
          boundaryName = cellName + String.format("_ext", numCells);
          elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
+         
+         // Downstream boundary conservative tracer
          elementBehavior = elementBoundary.createBehaviorElement(
                consCurrency.getBehavior(CurrencySolute.BEHAVIOR_FLOWBOUND)
                );
          elementBehavior.createInitValueElement(BehaviorSoluteFlowBound.REQ_STATE_FLOW, flow.toString(), null);
-         elementBehavior.createInitValueElement(consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, "0", null);
+         elementBehavior.createInitValueElement(
+               consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+               consBkgConc.toString(), 
+               null
+               );
+         
+         // Downstream boundary active tracer
          elementBehavior = elementBoundary.createBehaviorElement(
                actCurrency.getBehavior(CurrencySolute.BEHAVIOR_FLOWBOUND)
                );
-         elementBehavior.createInitValueElement(actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, bkgConc.toString(), null);
+         elementBehavior.createInitValueElement(
+               actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+               activeBkgConc.toString(), 
+               null
+               );
          
-         documentCell.write(new File(metaInput.getWorkingDir().getAbsolutePath() + File.separator + "input"));
-         documentBoundary.write(new File(metaInput.getWorkingDir().getAbsolutePath() + File.separator + "input"));
+         // Write the cell and boundary XML files
+         documentCell.write(cellFile.getParentFile());
+         documentBoundary.write(boundaryFile.getParentFile());
       }
       sim.loadMatrix();
    }

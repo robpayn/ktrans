@@ -5,11 +5,12 @@ import java.io.File;
 import org.w3c.dom.Element;
 
 import chsm.io.xml.ElementHelper;
-import chsm.io.xml.XMLDocument;
 import currencies.solute.CurrencySolute;
 import currencies.solute.boundary.BehaviorSoluteActiveMM;
 import currencies.solute.boundary.BehaviorSoluteBoundInject;
 import edu.montana.cerg.simmanager.interfaces.IMetaInput;
+import neoch.io.xml.ElementXMLInput;
+import neoch.io.xml.XMLDocumentConfig;
 
 /**
  * Characterizes XML metainput for the stream solute simulator
@@ -22,7 +23,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    /**
     * XML document with configuration information
     */
-   private XMLDocument document;
+   private XMLDocumentConfig document;
    
    /**
     * Getter
@@ -30,7 +31,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     * @return
     *       XML document
     */
-   public XMLDocument getXMLDocument()
+   public XMLDocumentConfig getXMLDocument()
    {
       return document;
    }
@@ -50,6 +51,12 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    {
       return workingDir;
    }
+
+   /**
+    * XML input element from the NEO settings
+    */
+   private ElementXMLInput xmlInputElement;
+
    
    /**
     * Constructor based on XML input
@@ -60,12 +67,14 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     *       document containing the element
     * @param workingDir
     *       working directory for the model
+    * @throws Exception 
     */
-   public StreamBuilderMetaInputXML(Element element, XMLDocument document, File workingDir) 
+   public StreamBuilderMetaInputXML(Element element, XMLDocumentConfig document, File workingDir) throws Exception 
    {
       super(element);
       this.document = document;
       this.workingDir = workingDir;
+      this.xmlInputElement = document.getBuilderElement().getXMLInputElement(workingDir);
    }
 
    /**
@@ -137,27 +146,48 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    }
 
    /**
+    * Get an attribute for a specific solute in the inject
+    * 
+    * @param tracerTag
+    *       tag for the attribute containing the value
+    * @param attribute
+    *       attribute containing the value
+    * @return
+    *       string value of attribute
+    */
+   public String getInjectAttribute(String tracerTag, String attribute)
+   {
+      ElementHelper element = getFirstChildElementHelper("inject");
+      Element elementCons = element.getFirstChildElement(tracerTag);
+      return elementCons.getAttribute(attribute);
+   }
+   
+   /**
     * Get the injection total mass
     * 
     * @return
     *       injection mass
     */
-   public Double getInjectMass() 
+   public Double getConservativeInjectMass() 
    {
-      Element element = getFirstChildElement("inject");
-      return Double.valueOf(element.getAttribute(BehaviorSoluteBoundInject.REQ_STATE_MASS));
+      return Double.valueOf(getInjectAttribute(
+            "conservativeinj", 
+            BehaviorSoluteBoundInject.REQ_STATE_MASS
+            ));
    }
-
+   
    /**
     * Get the injection duration (in intervals)
     * 
     * @return
     *       injection duration
     */
-   public Long getInjectDuration() 
+   public Long getConservativeInjectDuration() 
    {
-      Element element = getFirstChildElement("inject");
-      return Long.valueOf(element.getAttribute(BehaviorSoluteBoundInject.REQ_STATE_DURATION));
+      return Long.valueOf(getInjectAttribute(
+            "conservativeinj", 
+            BehaviorSoluteBoundInject.REQ_STATE_DURATION
+            ));
    }
 
    /**
@@ -166,10 +196,54 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     * @return
     *       injection start interval
     */
-   public Long getInjectStartInterval() 
+   public Long getConservativeInjectStartInterval() 
    {
-      Element element = getFirstChildElement("inject");
-      return Long.valueOf(element.getAttribute(BehaviorSoluteBoundInject.REQ_STATE_START));
+      return Long.valueOf(getInjectAttribute(
+            "conservativeinj", 
+            BehaviorSoluteBoundInject.REQ_STATE_START
+            ));
+   }
+
+   /**
+    * Get the injection total mass
+    * 
+    * @return
+    *       injection mass
+    */
+   public Double getActiveInjectMass() 
+   {
+      return Double.valueOf(getInjectAttribute(
+            "activeinj", 
+            BehaviorSoluteBoundInject.REQ_STATE_MASS
+            ));
+   }
+   
+   /**
+    * Get the injection duration (in intervals)
+    * 
+    * @return
+    *       injection duration
+    */
+   public Long getActiveInjectDuration() 
+   {
+      return Long.valueOf(getInjectAttribute(
+            "activeinj", 
+            BehaviorSoluteBoundInject.REQ_STATE_DURATION
+            ));
+   }
+
+   /**
+    * Get the start interval for the injection
+    * 
+    * @return
+    *       injection start interval
+    */
+   public Long getActiveInjectStartInterval() 
+   {
+      return Long.valueOf(getInjectAttribute(
+            "activeinj", 
+            BehaviorSoluteBoundInject.REQ_STATE_START
+            ));
    }
 
    /**
@@ -202,7 +276,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     * @return
     *       background concentration
     */
-   public Double getBkgConc() 
+   public Double getActiveBkgConc() 
    {
       Element element = getFirstChildElement("active");
       return Double.valueOf(element.getAttribute("bkg" + CurrencySolute.NAME_SOLUTE_CONC));
@@ -253,6 +327,52 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    {
       Element element = getFirstChildElement("concbound");
       return element.getAttribute("delimiter");
+   }
+
+   /**
+    * Get the background concentration of the conservative tracer
+    * @return
+    *       background concentration
+    */
+   public Double getConsBkgConc() 
+   {
+      Element element = getFirstChildElement("conservative");
+      return Double.valueOf(element.getAttribute("bkg" + CurrencySolute.NAME_SOLUTE_CONC));
+   }
+
+   /**
+    * Determine if the active injection should have unique settings
+    * 
+    * @return
+    *       true if unique, false otherwise
+    */
+   public boolean isActivInjUnique() 
+   {
+      return Boolean.valueOf(getInjectAttribute("activeinj", "unique"));
+   }
+
+   /**
+    * Get the cell file from the NEO settings
+    * 
+    * @return
+    *       cell file
+    * @throws Exception
+    */
+   public File getCellFile() throws Exception 
+   {
+      return xmlInputElement.getCellFile();
+   }
+
+   /**
+    * Get the boundary file from the NEO settings
+    * 
+    * @return
+    *       boundary file
+    * @throws Exception
+    */
+   public File getBoundaryFile() throws Exception 
+   {
+      return xmlInputElement.getBoundaryFile();
    }
 
 }
