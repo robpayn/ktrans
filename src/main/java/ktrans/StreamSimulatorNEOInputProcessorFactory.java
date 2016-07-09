@@ -6,7 +6,7 @@ import org.w3c.dom.Element;
 
 import edu.montana.cerg.simmanager.InputProcessorFactory;
 import edu.montana.cerg.simmanager.metainputs.DoubleMetaInput;
-import neoch.io.xml.XMLDocumentConfig;
+import neoch.io.xmltools.XMLDocumentConfig;
 
 /**
  * Generic input processor factory for the stream solute simulator

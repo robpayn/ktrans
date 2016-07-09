@@ -11,11 +11,11 @@ import currencies.solute.boundary.BehaviorSoluteFlowBound;
 import currencies.solute.cell.BehaviorSoluteStorage;
 import edu.montana.cerg.simmanager.InputProcessor;
 import neoch.behaviors.BehaviorMatrix;
-import neoch.io.xml.DocumentBoundary;
-import neoch.io.xml.DocumentCell;
-import neoch.io.xml.ElementBehaviorMatrix;
-import neoch.io.xml.ElementBoundary;
-import neoch.io.xml.ElementHolonMatrix;
+import neoch.io.xmltools.DocumentBoundary;
+import neoch.io.xmltools.DocumentCell;
+import neoch.io.xmltools.ElementBehaviorMatrix;
+import neoch.io.xmltools.ElementBoundary;
+import neoch.io.xmltools.ElementHolonMatrix;
 
 /**
  * Input processor for building NEO input for a simple stream solute model

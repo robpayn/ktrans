@@ -9,8 +9,8 @@ import currencies.solute.CurrencySolute;
 import currencies.solute.boundary.BehaviorSoluteActiveMM;
 import currencies.solute.boundary.BehaviorSoluteBoundInject;
 import edu.montana.cerg.simmanager.interfaces.IMetaInput;
-import neoch.io.xml.ElementXMLInput;
-import neoch.io.xml.XMLDocumentConfig;
+import neoch.io.xmltools.ElementXMLInput;
+import neoch.io.xmltools.XMLDocumentConfig;
 
 /**
  * Characterizes XML metainput for the stream solute simulator
