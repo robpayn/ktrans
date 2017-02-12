@@ -16,7 +16,7 @@ mmnet <- function(umax, halfsat, concadd, concbkg)
 
 # Constructor 
 Analysis <- function(rootDir, configFile, locations, legend, colors, types, 
-                     location, reachLength, timeStep, injectateRatio)
+                     location, reachLength, timeStep, injectateRatio, releaseTime, massUnits)
 {
    analysis <- new.env();
    class(analysis) <- c("Analysis", class(analysis));
@@ -31,6 +31,8 @@ Analysis <- function(rootDir, configFile, locations, legend, colors, types,
    analysis$reachLength <- reachLength;
    analysis$timeStep <- timeStep;
    analysis$injectateRatio <- injectateRatio;
+   analysis$releaseTime <- releaseTime;
+   analysis$massUnits <- massUnits;
    
    return(analysis);
 }
@@ -226,11 +228,18 @@ runAnalysis.Analysis <- function(analysis)
    intercept = as.numeric(lmresults$coefficients["(Intercept)"]);
    slope = as.numeric(lmresults$coefficients["cefftot"]);
    vfambest = 1 / intercept;
+   slopeActual <- (analysis$discharge * (analysis$halfsat + actbkg)) / 
+      (analysis$streamwidth * analysis$umax * analysis$halfsat);
    analysis$vfEstimates = list(
       intercept = intercept,
       slope = slope,
       vfamb = vfambest,
-      uamb = vfambest * actbkg
+      uamb = vfambest * actbkg,
+      interceptActual = (1 / (analysis$streamdepth * analysis$streamvel)) *
+         (((analysis$discharge * (analysis$halfsat + actbkg)^2) / 
+         (analysis$streamwidth * analysis$umax * analysis$halfsat)) + 
+         slopeActual * -actbkg),
+      slopeActual = (1 / (analysis$streamdepth * analysis$streamvel)) * slopeActual
    );
 
 }
@@ -242,11 +251,37 @@ createMetrics <- function(analysis)
 
 createMetrics.Analysis <- function(analysis)
 {
-   analysis$metrics$ceff <- (analysis$metrics$actbc * analysis$metrics$consbc) ^ 0.5;
+   analysis$metrics$expected <- analysis$metrics$actbc / 
+      ((analysis$metrics$actbc / analysis$metrics$consbc) / analysis$injectateRatio);
+   analysis$metrics$ceff <- (analysis$metrics$actbc * analysis$metrics$expected) ^ 0.5;
    analysis$metrics$cefftot <- analysis$actbkg + analysis$metrics$ceff;
    analysis$metrics$sw <- analysis$streamvel / analysis$metrics$k;
    analysis$metrics$vf <- analysis$metrics$k * analysis$streamdepth;
    analysis$metrics$u <- analysis$metrics$vf * analysis$metrics$ceff;
+}
+
+plotConservative <- function(analysis, xlim, ylim, ...)
+{
+   UseMethod("plotConservative", analysis);
+}
+
+plotConservative.Analysis <- function(
+   analysis, 
+   xlim = c(
+      0, 
+      max(analysis$solstore$Time)
+   ),
+   ylim = c(
+      0,
+      max(analysis$solstore[,sprintf(
+         "matrix.cell%s.consConc",
+         analysis$locations[1]
+      )])
+   ),
+   ...
+)
+{
+   
 }
 
 plotSummary <- function(analysis, xlim, ylim, ...)
@@ -441,7 +476,7 @@ marginValues.Analysis <- function(analysis, ypos, yposinterval, outer,
       text = bquote(paste(
          "Active ", C[amb], " = ",
          .(formatC(analysis$actbkg, format = "e", digits = 2)),
-         ~ g ~ m^-3
+         ~ .(analysis$massUnits) ~ m^-3
          )),
       ypos = ypos
       );
@@ -461,7 +496,7 @@ marginValues.Analysis <- function(analysis, ypos, yposinterval, outer,
       text = bquote(paste(
          "Actual ambient ", U[tot], " = ",
          .(formatC(analysis$uambactual, format = "e", digits = 2)),
-         ~ g ~ m^-2 ~ sec^-1 
+         ~ .(analysis$massUnits) ~ m^-2 ~ sec^-1 
          )),
       ypos = ypos
       );
@@ -471,7 +506,7 @@ marginValues.Analysis <- function(analysis, ypos, yposinterval, outer,
       text = bquote(paste(
          "Actual ", U[max], " = ",
          .(formatC(analysis$umax, format = "e", digits = 2)),
-         ~ g ~ m^-2 ~ sec^-1 
+         ~ .(analysis$massUnits) ~ m^-2 ~ sec^-1 
          )),
       ypos = ypos
       );
@@ -481,7 +516,7 @@ marginValues.Analysis <- function(analysis, ypos, yposinterval, outer,
       text = bquote(paste(
          "Actual ", C[half], " = ",
          .(formatC(analysis$halfsat, format = "e", digits = 2)),
-         ~ g ~ m^-3 
+         ~ .(analysis$massUnits) ~ m^-3 
          )),
       ypos = ypos
       );
@@ -530,8 +565,10 @@ plot.Analysis <- function(analysis)
    plotU(analysis);
    plotVf(analysis);
    mtext(
-      text = expression(paste(
-         "Concentration (g  ",
+      text = bquote(paste(
+         "Concentration (",
+         .(analysis$massUnits),
+         "  ",
          m^-3,
          ")"
          )),
@@ -626,7 +663,7 @@ plotSw.Analysis <- function(
            format = "e", 
            digits = 2)
          ),
-         ~ g ~ m^-2 ~ sec^-1
+         ~ .(analysis$massUnits) ~ m^-2 ~ sec^-1
          )
        )
      );
@@ -646,7 +683,7 @@ plotSw.Analysis <- function(
            format = "e", 
            digits = 2)
          ),
-         ~ g ~ m^-2 ~ sec^-1
+         ~ .(analysis$massUnits) ~ m^-2 ~ sec^-1
          )
        )
      );
@@ -666,7 +703,7 @@ plotSw.Analysis <- function(
            format = "e", 
            digits = 2)
          ),
-         ~ g ~ m^-3
+         ~ .(analysis$massUnits) ~ m^-3
          )
        )
      );
@@ -682,7 +719,7 @@ plotU.Analysis <- function(
    analysis, 
    xlim = c(
       0, 
-      analysis$actbkg + max(analysis$metrics$cons)
+      max(analysis$metrics$cefftot)
    ), 
    ylim = c(
       0, 
@@ -701,7 +738,9 @@ plotU.Analysis <- function(
       xlab = "",
       ylab = bquote(paste(
          U[tot],
-         " (g  ",
+         " (",
+         .(analysis$massUnits),
+         "  ",
          m^-2,
          " ",
          sec^-1,
@@ -767,7 +806,7 @@ plotU.Analysis <- function(
                format = "e", 
                digits = 2)
                ),
-            ~ g ~ m^-2 ~ sec^-1
+            ~ .(analysis$massUnits) ~ m^-2 ~ sec^-1
             )
          )
       );
@@ -787,7 +826,7 @@ plotU.Analysis <- function(
                format = "e", 
                digits = 2
                )),
-            ~ g ~ m^-2 ~ sec^-1
+            ~ .(analysis$massUnits) ~ m^-2 ~ sec^-1
             )
          )
       );
@@ -807,7 +846,7 @@ plotU.Analysis <- function(
                format = "e", 
                digits = 2
                )),
-            ~ g ~ m^-3
+            ~ .(analysis$massUnits) ~ m^-3
             )
          )
       );
@@ -846,6 +885,12 @@ plotVf.Analysis <- function(
       analysis$vfEstimates$intercept + 
          analysis$vfEstimates$slope * xlim
    );
+   lines(
+      x = xlim, 
+      y = analysis$vfEstimates$interceptActual +
+         analysis$vfEstimates$slopeActual * xlim,
+      lty = "dashed"
+      );
    
    yinterval = 0.07;
    
@@ -883,7 +928,7 @@ plotVf.Analysis <- function(
                format = "e", 
                digits = 2)
             ),
-            ~ g ~ m^-2 ~ sec^-1
+            ~ .(analysis$massUnits) ~ m^-2 ~ sec^-1
          )
       )
    );
@@ -932,6 +977,7 @@ createMetrics.TasccAnalysis <- function(analysis)
       actbc = numeric(length = length),
       ceff = numeric(length = length),
       cefftot = numeric(length = length),
+      expected = numeric(length = length),
       k = numeric(length = length),
       sw = numeric(length = length),
       vf = numeric(length = length),
@@ -953,7 +999,9 @@ createMetrics.TasccAnalysis <- function(analysis)
    analysis$metrics$consbc <- analysis$metrics$cons - analysis$consbkg;
    analysis$metrics$actbc <- analysis$metrics$act - analysis$actbkg;
    analysis$metrics$k <- (log(analysis$injectateRatio) - log(analysis$metrics$actbc / analysis$metrics$consbc)) / 
-      (analysis$metrics$time - 8);
+      (analysis$metrics$time - analysis$releaseTime);
+#    analysis$metrics$k <- (log(analysis$injectateRatio) - log(analysis$metrics$actbc / analysis$metrics$consbc)) / 
+#       (590 / analysis$streamvel);
    
    createMetrics.Analysis(analysis);
 
@@ -1025,7 +1073,7 @@ plotSw.TasccAnalysis <- function(
 
 plotU.TasccAnalysis <- function(
    analysis, 
-   xlim = c(0, analysis$actbkg + max(analysis$metrics$cons)),
+   xlim = c(0, max(analysis$metrics$cefftot)),
    ylim = c(0, max(
       analysis$metrics$u + analysis$uEstimates$uamb,
       analysis$metrics$uo + analysis$uEstimates$uamb,
@@ -1040,7 +1088,9 @@ plotU.TasccAnalysis <- function(
       xlab = "",
       ylab = bquote(paste(
          U[tot],
-         " (g  ",
+         " (",
+         .(analysis$massUnits),
+         "  ",
          m^-2,
          " ",
          sec^-1,
@@ -1081,8 +1131,247 @@ plotVf.TasccAnalysis <- function(
          ")"
       ))
    );
+   lines(
+      x = xlim, 
+      y = analysis$vfEstimates$interceptActual + 
+         analysis$vfEstimates$slopeActual * xlim,
+      lty = "dashed"
+      );
    plotVf.Analysis(analysis, xlim, ylim, ...)
 }
+
+
+# CLASS TasccAnalysisLagrange ####
+
+# Constructor 
+TasccAnalysisLagrange <- function(..., particlePath, window)
+{
+   analysis <- TasccAnalysis(...);
+   class(analysis) <- c("TasccAnalysisLagrange", class(analysis));
+   
+   analysis$particlePath <- particlePath;
+   analysis$window <- window;
+
+   return(analysis);
+}
+
+loadStreamData.TasccAnalysisLagrange <- function(analysis)
+{
+   loadStreamData.Analysis(analysis);
+   con <- file(
+      description = paste(
+         analysis$rootDir, 
+         analysis$particlePath,
+         sep = ""
+         ),
+      open = "r"
+      );
+   count = 0;
+   while (length(readLines(con=con, n=1)) > 0)
+   {
+      count = count + 1;
+   }
+   close(con);
+   
+   length = count - 1;
+   analysis$particle <- data.frame(
+      time = numeric(length = length),
+      mean = numeric(length = length)
+      );
+   
+   con <- file(
+      description = paste(
+         analysis$rootDir, 
+         analysis$particlePath,
+         sep = ""
+         ),
+      open = "r"
+      );
+   count = 1;
+   readLines(con=con, n=1);
+   while (length(line <- strsplit(readLines(con=con, n=1), split=" ")) > 0)
+   {
+      analysis$particle$time[count] <- as.numeric(line[[1]][2]);
+      analysis$particle$mean[count] <- as.numeric(line[[1]][4]);
+      count = count + 1;
+   }
+   close(con);
+
+   con <- file(
+      description = paste(
+         analysis$rootDir, 
+         analysis$particlePath,
+         sep = ""
+         ),
+      open = "r"
+      );
+   
+   readLines(con = con, n = 1);
+   line <- strsplit(readLines(con = con, n = 1), split = " ");
+   
+   times <- seq(from = analysis$startTime, to = analysis$stopTime, by = analysis$timeStep);
+   
+   analysis$paths <- vector("list", length(times));
+   for (i in 1:length(times))
+   {
+      while (as.numeric(line[[1]][2]) <= times[i])
+      {
+         line <- strsplit(x = readLines(con = con, n = 1), split = " ");
+      }
+      
+      timeSeriesSplit <- strsplit(x = line[[1]][5], split = ":")[[1]];
+      timeSeriesSplit2 <- strsplit(x = timeSeriesSplit, split = ",");
+      analysis$paths[[i]] <- data.frame(
+         time = numeric(length=length(timeSeriesSplit2)),
+         active = numeric(length=length(timeSeriesSplit2)),
+         cons = numeric(length=length(timeSeriesSplit2))
+         );
+      analysis$paths[[i]]$time <- as.numeric(sapply(
+         timeSeriesSplit2,
+         function(x, index = 1) { return(x[index]) }
+      ));
+      analysis$paths[[i]]$active <- as.numeric(sapply(
+         timeSeriesSplit2,
+         function(x, index = 2) { return(x[index]) }
+      ));
+   
+      timeSeriesSplit <- strsplit(x = line[[1]][7], split = ":")[[1]];
+      timeSeriesSplit2 <- strsplit(x = timeSeriesSplit, split = ",");
+      analysis$paths[[i]]$cons <- as.numeric(sapply(
+         timeSeriesSplit2,
+         function(x, index = 2) { return(x[index]) }
+      ));
+      finalTime <- analysis$paths[[i]]$time[
+         length(analysis$paths[[i]]$time)
+         ];
+      analysis$paths[[i]] <- analysis$paths[[i]][
+         which(analysis$paths[[i]]$time - analysis$releaseTime >= analysis$window / 
+                  (analysis$reachLength / (finalTime - analysis$releaseTime)))
+            ,];
+#       analysis$paths[[i]] <- analysis$paths[[i]][
+#          which(analysis$paths[[i]]$time >= finalTime - analysis$window),
+#          ];
+   }
+
+   close(con);
+
+}
+
+createMetrics.TasccAnalysisLagrange <- function(analysis)
+{
+   startIndex = trunc(analysis$startTime / analysis$timeStep) + 1;
+   stopIndex = trunc(analysis$stopTime / analysis$timeStep) + 1;
+   length <- (stopIndex - startIndex) + 1;
+   analysis$metrics <- data.frame(
+      time = numeric(length = length),
+      cons = numeric(length = length),
+      act = numeric(length = length),
+      consbc = numeric(length = length),
+      actbc = numeric(length = length),
+      ceff = numeric(length = length),
+      cefftot = numeric(length = length),
+      expected = numeric(length = length),
+      k = numeric(length = length),
+      sw = numeric(length = length),
+      vf = numeric(length = length),
+      u = numeric(length = length),
+      swo = numeric(length = length),
+      vfo = numeric(length = length),
+      uo = numeric(length = length),
+      stringsAsFactors = FALSE
+   );
+   analysis$metrics$time <- analysis$solstore$Time[startIndex:stopIndex];
+   analysis$metrics$cons <- analysis$solstore[
+      startIndex:stopIndex,
+      sprintf("matrix.cell%s.consConc", analysis$location)
+      ];
+   analysis$metrics$act <- analysis$solact[
+      startIndex:stopIndex,
+      sprintf("matrix.cell%s.activeConc", analysis$location)
+      ];
+   analysis$metrics$consbc <- analysis$metrics$cons - analysis$consbkg;
+   analysis$metrics$actbc <- analysis$metrics$act - analysis$actbkg;
+   analysis$metrics$expected <- analysis$metrics$actbc / 
+      ((analysis$metrics$actbc / analysis$metrics$consbc) / analysis$injectateRatio);
+   for (i in 1:length(analysis$metrics$time))
+   {
+      logy <- log(
+         (analysis$paths[[i]]$active - analysis$actbkg) / 
+         (analysis$paths[[i]]$cons - analysis$consbkg)
+         );
+      x <- analysis$paths[[i]]$time;
+      lmresults <- lm(logy ~ x);
+      analysis$metrics$k[i] <- -lmresults$coefficients["x"];
+      analysis$metrics$ceff[i] <- exp(
+         mean(log(analysis$paths[[i]]$active - analysis$actbkg))
+         );
+#       size <- length(analysis$paths[[i]]$time);
+#       ratiostart <- (analysis$paths[[i]]$active[1] - analysis$actbkg) / 
+#          (analysis$paths[[i]]$cons[1] - analysis$consbkg);
+#       ratioend <- (analysis$paths[[i]]$active[size] - analysis$actbkg) / 
+#          (analysis$paths[[i]]$cons[size] - analysis$consbkg);
+#       deltat <- analysis$paths[[i]]$time[size] - analysis$paths[[i]]$time[1];
+#       deltat <- 100 / analysis$streamvel;
+#       analysis$metrics$k[i] <- (log(ratiostart) - log(ratioend)) / deltat;
+#       analysis$metrics$ceff[i] <-
+#          ((analysis$paths[[i]]$active[1] - analysis$actbkg) * 
+#              (analysis$paths[[i]]$active[size] - analysis$actbkg)) ^ 0.5;
+   }
+   analysis$metrics$cefftot <- analysis$metrics$ceff + analysis$actbkg;
+#    analysis$metrics$k <- (log(analysis$injectateRatio) - log(analysis$metrics$actbc / analysis$metrics$consbc)) / 
+#       (analysis$metrics$time - analysis$releaseTime);
+#    analysis$metrics$cefftot <- analysis$particle$mean[startIndex:stopIndex];
+#    analysis$metrics$ceff <- analysis$metrics$cefftot - analysis$actbkg;
+   analysis$metrics$sw <- analysis$streamvel / analysis$metrics$k;
+   analysis$metrics$vf <- analysis$metrics$k * analysis$streamdepth;
+   analysis$metrics$u <- analysis$metrics$vf * analysis$metrics$ceff;
+
+   analysis$metrics$swo <- analysis$reachLength / 
+      (log(analysis$injectateRatio) - log(analysis$metrics$actbc / analysis$metrics$consbc));
+   analysis$metrics$uo <- (analysis$discharge * analysis$metrics$ceff) / 
+      (analysis$streamwidth * analysis$metrics$swo);
+   analysis$metrics$vfo <- analysis$metrics$uo / analysis$metrics$ceff;
+}
+
+initializePlot.TasccAnalysisLagrange <- function(analysis)
+{
+   par(mfcol = c(3,1), mar=c(1.5,5,1,2), oma=c(4,1,1,17));
+}
+
+plotAnalysis.TasccAnalysisLagrange <- function(analysis, ...)
+{
+   plotAnalysis.Analysis(analysis, ...);
+}
+
+plot.TasccAnalysisLagrange <- function(analysis)
+{
+   plot.Analysis(analysis);
+}
+
+plotSw.TasccAnalysisLagrange <- function(
+   analysis, 
+   ...
+)
+{
+   plotSw.Analysis(analysis, ...);
+}
+
+plotU.TasccAnalysisLagrange <- function(
+   analysis, 
+   ...
+)
+{
+   plotU.Analysis(analysis, ...);
+}
+
+plotVf.TasccAnalysisLagrange <- function(
+   analysis, 
+   ...
+)
+{
+   plotVf.Analysis(analysis, ...)
+}
+
 
 # CLASS MultilevelAnalysis ####
 
@@ -1136,6 +1425,7 @@ createMetrics.MultilevelAnalysis <- function(analysis)
       actbc = numeric(length = length),
       ceff = numeric(length = length),
       cefftot = numeric(length = length),
+      expected = numeric(length = length),
       k = numeric(length = length),
       sw = numeric(length = length),
       vf = numeric(length = length),

@@ -98,7 +98,7 @@ public class StreamSimulatorNEO extends Simulator {
       matrix = MatrixBuilder.createMatrix(
             argMap, 
             workingDir,
-            new StreamSimulatorMatrixBuilderLoader()
+            new StreamSimulatorMatrixLoader()
             );
       matrix.getController().initializeController();
    }

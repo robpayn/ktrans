@@ -2,12 +2,14 @@ package ktrans;
 
 import java.io.File;
 
+import org.payn.chsm.io.xml.ElementHelper;
+import org.payn.resources.particle.cell.BehaviorConcTrackerAlt;
+import org.payn.resources.particle.cell.BehaviorParticle;
+import org.payn.resources.solute.ResourceSolute;
+import org.payn.resources.solute.boundary.BehaviorSoluteActiveMM;
+import org.payn.resources.solute.boundary.BehaviorSoluteBoundInject;
 import org.w3c.dom.Element;
 
-import chsm.io.xml.ElementHelper;
-import currencies.solute.CurrencySolute;
-import currencies.solute.boundary.BehaviorSoluteActiveMM;
-import currencies.solute.boundary.BehaviorSoluteBoundInject;
 import edu.montana.cerg.simmanager.interfaces.IMetaInput;
 import neoch.io.xmltools.ElementXMLInput;
 import neoch.io.xmltools.XMLDocumentConfig;
@@ -56,6 +58,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     * XML input element from the NEO settings
     */
    private ElementXMLInput xmlInputElement;
+   private ElementHelper particleElement;
 
    
    /**
@@ -279,7 +282,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    public Double getActiveBkgConc() 
    {
       Element element = getFirstChildElement("active");
-      return Double.valueOf(element.getAttribute("bkg" + CurrencySolute.NAME_SOLUTE_CONC));
+      return Double.valueOf(element.getAttribute("bkg" + ResourceSolute.NAME_SOLUTE_CONC));
    }
 
    /**
@@ -337,7 +340,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    public Double getConsBkgConc() 
    {
       Element element = getFirstChildElement("conservative");
-      return Double.valueOf(element.getAttribute("bkg" + CurrencySolute.NAME_SOLUTE_CONC));
+      return Double.valueOf(element.getAttribute("bkg" + ResourceSolute.NAME_SOLUTE_CONC));
    }
 
    /**
@@ -373,6 +376,65 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
    public File getBoundaryFile() throws Exception 
    {
       return xmlInputElement.getBoundaryFile();
+   }
+
+   /**
+    * Determines if a particle tracker is configured
+    * 
+    * @return
+    *       true if particle tracker is configured, false otherwise
+    */
+   public boolean isParticle() 
+   {
+      return hasElement("particle");
+   }
+
+   public long getParticleReleaseCell() 
+   {
+      return Long.valueOf(getParticleElement().getAttribute("releaseCell"));
+   }
+
+   public long getParticleEndCell() 
+   {
+      return Long.valueOf(getParticleElement().getAttribute("endCell"));
+   }
+
+   public ElementHelper getParticleElement() 
+   {
+      if (particleElement == null)
+      {
+         particleElement = new ElementHelper(this.getFirstChildElement("particle"));
+         return particleElement;
+      }
+      else
+      {
+         return particleElement;
+      }
+   }
+
+   public String getParticleReleaseInterval() 
+   {
+      return getParticleElement().getAttribute(BehaviorParticle.REQ_STATE_INTERVAL_RELEASE);
+   }
+
+   public String getParticleRecordInterval() 
+   {
+      return getParticleElement().getAttribute(BehaviorParticle.REQ_STATE_INTERVAL_RECORD);
+   }
+
+   public String getParticleCurrency() 
+   {
+      return getParticleElement().getAttribute(BehaviorParticle.REQ_STATE_CURRENCY);
+   }
+
+   public String getParticleBehaviorName() 
+   {
+      return getParticleElement().getAttribute("behavior");
+   }
+
+   public String getParticleCount() 
+   {
+      return getParticleElement().getAttribute(BehaviorConcTrackerAlt.REQ_STATE_RELEASE_COUNT);
    }
 
 }

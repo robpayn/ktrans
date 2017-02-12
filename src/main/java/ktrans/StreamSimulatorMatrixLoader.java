@@ -1,20 +1,19 @@
 package ktrans;
 
-import chsm.Behavior;
-import chsm.behaviors.time.BehaviorTime;
-import chsm.io.OutputHandlerFactoryXML;
-import chsm.io.file.OutputHandlerBehaviorFactoryXML;
-import chsm.io.logger.LoggerSystemOut;
-import chsm.io.xml.ElementBehavior;
-import chsm.io.xml.ElementOutput;
-import chsm.processors.ControllerHolon;
-import currencies.solute.CurrencySolute;
-import neoch.Currency;
+import org.payn.chsm.Resource;
+import org.payn.chsm.io.OutputHandlerFactoryXML;
+import org.payn.chsm.io.file.OutputHandlerBehaviorFactoryXML;
+import org.payn.chsm.io.logger.LoggerSystemOut;
+import org.payn.chsm.io.xml.ElementOutput;
+import org.payn.chsm.io.xml.ElementResource;
+import org.payn.chsm.processors.ControllerHolon;
+import org.payn.resources.particle.ResourceParticle;
+import org.payn.resources.solute.ResourceSolute;
+
 import neoch.MatrixBuilder;
 import neoch.io.MatrixLoaderXML;
 import neoch.io.MatrixBuilderXML;
 import neoch.io.OutputHandlerXMLSerialFactoryXML;
-import neoch.io.xmltools.ElementCurrency;
 import neoch.processors.ControllerNEORKTwo;
 
 /**
@@ -23,7 +22,7 @@ import neoch.processors.ControllerNEORKTwo;
  * @author robpayn
  *
  */
-public class StreamSimulatorMatrixBuilderLoader extends MatrixLoaderXML {
+public class StreamSimulatorMatrixLoader extends MatrixLoaderXML {
    
    /**
     * Serial output handler name
@@ -34,11 +33,6 @@ public class StreamSimulatorMatrixBuilderLoader extends MatrixLoaderXML {
     * Behavior output handler name
     */
    private static final String OUTPUT_HANDLER_BEHAVIOR = "behavior";
-
-   /**
-    * Global behavior for time
-    */
-   private static final String GLOBAL_BEHAVIOR_TIME = "BehaviorTime";
 
    @Override
    protected void initializeLoggers() throws Exception {
@@ -69,14 +63,21 @@ public class StreamSimulatorMatrixBuilderLoader extends MatrixLoaderXML {
    }
    
    @Override
-   protected Currency getCurrency(ElementCurrency currencyElem) throws Exception 
+   protected Resource getResource(ElementResource resourceElem) throws Exception 
    {
-      Currency currency = super.getCurrency(currencyElem);
-      if (currency == null)
+      Resource resource = super.getResource(resourceElem);
+      if (resource == null)
       {
-         currency = new CurrencySolute();
+         if (resourceElem.getName().equals("particle"))
+         {
+            resource = new ResourceParticle();
+         }
+         else
+         {
+            resource = new ResourceSolute();
+         }
       }
-      return currency;
+      return resource;
    }
    
    @Override
@@ -98,15 +99,4 @@ public class StreamSimulatorMatrixBuilderLoader extends MatrixLoaderXML {
       return factory;
    }
 
-   @Override
-   protected Behavior getBehavior(ElementBehavior behaviorElem) throws Exception 
-   {
-      Behavior behavior = super.getBehavior(behaviorElem);
-      if (behavior == null && behaviorElem.getName().matches(GLOBAL_BEHAVIOR_TIME))
-      {
-            return new BehaviorTime();
-      }
-      return behavior;
-   }
-   
 }

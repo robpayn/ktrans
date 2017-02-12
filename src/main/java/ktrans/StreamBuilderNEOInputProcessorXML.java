@@ -2,13 +2,20 @@ package ktrans;
 
 import java.io.File;
 
-import chsm.io.file.interpolate.ProcessorInterpolateSnapshotTable;
-import currencies.solute.CurrencySolute;
-import currencies.solute.boundary.BehaviorSoluteActiveMM;
-import currencies.solute.boundary.BehaviorSoluteBoundInject;
-import currencies.solute.boundary.BehaviorSoluteFlow;
-import currencies.solute.boundary.BehaviorSoluteFlowBound;
-import currencies.solute.cell.BehaviorSoluteStorage;
+import org.payn.chsm.Behavior;
+import org.payn.chsm.Resource;
+import org.payn.chsm.io.file.interpolate.ProcessorInterpolateSnapshotTable;
+import org.payn.resources.particle.ResourceParticle;
+import org.payn.resources.particle.cell.BehaviorConcTracker;
+import org.payn.resources.particle.cell.BehaviorConcTrackerAlt;
+import org.payn.resources.particle.cell.BehaviorConcTrackerLagrange;
+import org.payn.resources.solute.ResourceSolute;
+import org.payn.resources.solute.boundary.BehaviorSoluteActiveMM;
+import org.payn.resources.solute.boundary.BehaviorSoluteBoundInject;
+import org.payn.resources.solute.boundary.BehaviorSoluteFlow;
+import org.payn.resources.solute.boundary.BehaviorSoluteFlowBound;
+import org.payn.resources.solute.cell.BehaviorSoluteStorage;
+
 import edu.montana.cerg.simmanager.InputProcessor;
 import neoch.behaviors.BehaviorMatrix;
 import neoch.io.xmltools.DocumentBoundary;
@@ -24,6 +31,10 @@ import neoch.io.xmltools.ElementHolonMatrix;
  *
  */
 public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuilderMetaInputXML,StreamSimulatorNEO> {
+
+   private String particleBehaviorName;
+   private Resource particleResource;
+   private boolean isParticleAlt;
 
    /**
     * Constructor 
@@ -83,20 +94,42 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
          ElementBehaviorMatrix elementBehavior = null;
          
          // Set up the currencies
-         CurrencySolute consCurrency = new CurrencySolute();
+         ResourceSolute consCurrency = new ResourceSolute();
          consCurrency.initialize("cons");
          
-         CurrencySolute actCurrency = new CurrencySolute();
+         ResourceSolute actCurrency = new ResourceSolute();
          actCurrency.initialize("active");
-         
-         // Set up the behaviors
-         BehaviorMatrix consBehaviorFlow = consCurrency.getBehavior(CurrencySolute.BEHAVIOR_FLOW);
-         BehaviorMatrix consBehaviorStorage = consCurrency.getBehavior(CurrencySolute.BEHAVIOR_STORAGE);
 
-         BehaviorMatrix actBehaviorFlow = actCurrency.getBehavior(CurrencySolute.BEHAVIOR_FLOW);
-         BehaviorMatrix actBehaviorStorage = actCurrency.getBehavior(CurrencySolute.BEHAVIOR_STORAGE);
-         BehaviorMatrix actBehaviorUptake = actCurrency.getBehavior(CurrencySolute.BEHAVIOR_ACTIVEMM);
-         
+         particleResource = null;
+         if (metaInput.isParticle())
+         {
+            particleResource = new ResourceParticle();
+            particleResource.initialize("particle");
+         }
+
+         // Set up the behaviors
+         Behavior consBehaviorFlow = consCurrency.getBehavior(ResourceSolute.BEHAVIOR_FLOW);
+         Behavior consBehaviorStorage = consCurrency.getBehavior(ResourceSolute.BEHAVIOR_STORAGE);
+
+         Behavior actBehaviorFlow = actCurrency.getBehavior(ResourceSolute.BEHAVIOR_FLOW);
+         Behavior actBehaviorStorage = actCurrency.getBehavior(ResourceSolute.BEHAVIOR_STORAGE);
+         Behavior actBehaviorUptake = actCurrency.getBehavior(ResourceSolute.BEHAVIOR_ACTIVEMM);
+
+         isParticleAlt = false;
+         particleBehaviorName = null;
+         Behavior behaviorParticleStorage = null;
+         Behavior behaviorParticleMove = null;
+         if (metaInput.isParticle())
+         {
+            particleBehaviorName = metaInput.getParticleBehaviorName();
+            isParticleAlt = particleBehaviorName.equals(ResourceParticle.BEHAVIOR_CONC_TRACKER_ALT);
+            if (isParticleAlt)
+            {
+               behaviorParticleStorage = particleResource.getBehavior(ResourceParticle.BEHAVIOR_PARTICLE_STORAGE);
+               behaviorParticleMove = particleResource.getBehavior(ResourceParticle.BEHAVIOR_PARTICLE_MOVEMENT);
+            }
+         }
+
          // Upstream boundaries
          cellName = String.format("cell%0" + numCellsDigits.toString() + "d", 1);
          
@@ -107,7 +140,7 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
             // Conservative tracer
             elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
             elementBehavior = elementBoundary.createBehaviorElement(
-                  consCurrency.getBehavior(CurrencySolute.BEHAVIOR_CONCBOUND_INJECT)
+                  consCurrency.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND_INJECT)
                   );
             elementBehavior.createInitValueElement(
                   consCurrency.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
@@ -160,14 +193,14 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+                  consCurrency.getName() + ResourceSolute.NAME_SOLUTE_CONC, 
                   consBkgConc.toString(), 
                   null
                   );
             
             // Active Tracer
             elementBehavior = elementBoundary.createBehaviorElement(
-                  actCurrency.getBehavior(CurrencySolute.BEHAVIOR_CONCBOUND_INJECT)
+                  actCurrency.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND_INJECT)
                   );
             elementBehavior.createInitValueElement(
                   actCurrency.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
@@ -221,7 +254,7 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
                      );
             }
             elementBehavior.createInitValueElement(
-                  actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+                  actCurrency.getName() + ResourceSolute.NAME_SOLUTE_CONC, 
                   activeBkgConc.toString(), 
                   null);
          }
@@ -231,7 +264,7 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
             
             elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
             elementBehavior = elementBoundary.createBehaviorElement(
-                  consCurrency.getBehavior(CurrencySolute.BEHAVIOR_CONCBOUND)
+                  consCurrency.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND)
                   );
             elementBehavior.createInitValueElement(
                   consCurrency.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
@@ -270,7 +303,7 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
                   );
             
             elementBehavior = elementBoundary.createBehaviorElement(
-                  actCurrency.getBehavior(CurrencySolute.BEHAVIOR_CONCBOUND)
+                  actCurrency.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND)
                   );
             elementBehavior.createInitValueElement(
                   actCurrency.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
@@ -304,7 +337,7 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+                  consCurrency.getName() + ResourceSolute.NAME_SOLUTE_CONC, 
                   consBkgConc.toString(), 
                   null
                   );
@@ -312,10 +345,16 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
             // Cell active tracer
             elementBehavior = elementCell.createBehaviorElement(actBehaviorStorage);
             elementBehavior.createInitValueElement(
-                  actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+                  actCurrency.getName() + ResourceSolute.NAME_SOLUTE_CONC, 
                   activeBkgConc.toString(), 
                   null
                   );
+            
+            // Cell particle
+            if (isParticleAlt)
+            {
+               elementCell.createBehaviorElement(behaviorParticleStorage);
+            }
             
             // Downstream boundary 
             boundaryName = cellName + String.format("_%0" + numCellsDigits.toString() + "d", i + 1);
@@ -330,6 +369,12 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
             
             // Downstream boundary active tracer
             elementBehavior = elementBoundary.createBehaviorElement(actBehaviorFlow);
+            
+            // Downstream boundary particle
+            if (isParticleAlt)
+            {
+               elementBoundary.createBehaviorElement(behaviorParticleMove);
+            }
             
             // Downstream boundary create cell and boundary name for adjacent boundary
             cellName = String.format("cell%0" + numCellsDigits.toString() + "d", i + 1);
@@ -354,14 +399,14 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
          elementBehavior = elementCell.createBehaviorElement(consBehaviorStorage);
          elementBehavior.createInitValueElement(BehaviorSoluteStorage.REQ_STATE_VOLUME, storageVolume.toString(), null);
          elementBehavior.createInitValueElement(
-               consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+               consCurrency.getName() + ResourceSolute.NAME_SOLUTE_CONC, 
                consBkgConc.toString(),
                "null"
                );
          
          // Last cell active tracer
          elementBehavior = elementCell.createBehaviorElement(actBehaviorStorage);
-         elementBehavior.createInitValueElement(actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, activeBkgConc.toString(), null);
+         elementBehavior.createInitValueElement(actCurrency.getName() + ResourceSolute.NAME_SOLUTE_CONC, activeBkgConc.toString(), null);
          
          // Uptake boundary for last cell
          boundaryName = cellName + String.format("_uptake", numCells);
@@ -378,29 +423,87 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessor<StreamBuil
          
          // Downstream boundary conservative tracer
          elementBehavior = elementBoundary.createBehaviorElement(
-               consCurrency.getBehavior(CurrencySolute.BEHAVIOR_FLOWBOUND)
+               consCurrency.getBehavior(ResourceSolute.BEHAVIOR_FLOWBOUND)
                );
          elementBehavior.createInitValueElement(BehaviorSoluteFlowBound.REQ_STATE_FLOW, flow.toString(), null);
          elementBehavior.createInitValueElement(
-               consCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+               consCurrency.getName() + ResourceSolute.NAME_SOLUTE_CONC, 
                consBkgConc.toString(), 
                null
                );
          
          // Downstream boundary active tracer
          elementBehavior = elementBoundary.createBehaviorElement(
-               actCurrency.getBehavior(CurrencySolute.BEHAVIOR_FLOWBOUND)
+               actCurrency.getBehavior(ResourceSolute.BEHAVIOR_FLOWBOUND)
                );
          elementBehavior.createInitValueElement(
-               actCurrency.getName() + CurrencySolute.NAME_SOLUTE_CONC, 
+               actCurrency.getName() + ResourceSolute.NAME_SOLUTE_CONC, 
                activeBkgConc.toString(), 
                null
                );
+         
+         if (metaInput.isParticle())
+         {
+            configureParticle(documentCell, numCellsDigits);
+         }
          
          // Write the cell and boundary XML files
          documentCell.write(cellFile.getParentFile());
          documentBoundary.write(boundaryFile.getParentFile());
       }
+      
       sim.loadMatrix();
+   }
+
+   /**
+    * Configure the particle trackers
+    * 
+    * @param documentCell
+    * @param numCellsDigits
+    * @throws Exception
+    */
+   private void configureParticle(DocumentCell documentCell, Integer numCellsDigits) throws Exception 
+   {
+      long releaseCellNum = metaInput.getParticleReleaseCell();
+      long endCellNum = metaInput.getParticleEndCell();
+      
+      String cellName = "cellParticle";
+      ElementHolonMatrix elementCell = documentCell.createCellElement(cellName);
+      ElementBehaviorMatrix elementBehaviorParticle = elementCell.createBehaviorElement(
+            particleResource.getBehavior(particleBehaviorName)
+            );
+      if (isParticleAlt || particleBehaviorName.equals(ResourceParticle.BEHAVIOR_CONC_TRACKER_VEL))
+      {
+         elementBehaviorParticle.createInitValueElement(
+               BehaviorConcTrackerAlt.REQ_STATE_RELEASE_COUNT, 
+               metaInput.getParticleCount(), 
+               null
+               );
+      }
+      elementBehaviorParticle.createInitValueElement(
+            BehaviorConcTracker.REQ_STATE_CURRENCY, 
+            metaInput.getParticleCurrency(), 
+            null
+            );
+      elementBehaviorParticle.createInitValueElement(
+            BehaviorConcTracker.REQ_STATE_INTERVAL_RELEASE, 
+            metaInput.getParticleReleaseInterval(), 
+            null
+            );
+      elementBehaviorParticle.createInitValueElement(
+            BehaviorConcTrackerLagrange.REQ_STATE_INTERVAL_RECORD, 
+            metaInput.getParticleRecordInterval(), 
+            null
+            );
+      elementBehaviorParticle.createInitValueElement(
+            BehaviorConcTrackerLagrange.REQ_STATE_RELEASE_NAME, 
+            String.format("cell%0" + numCellsDigits.toString() + "d", releaseCellNum), 
+            null
+            );
+      elementBehaviorParticle.createInitValueElement(
+            BehaviorConcTrackerLagrange.REQ_STATE_END_NAME, 
+            String.format("cell%0" + numCellsDigits.toString() + "d", endCellNum), 
+            null
+            );   
    }
 }
