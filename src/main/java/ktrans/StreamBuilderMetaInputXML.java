@@ -3,8 +3,7 @@ package ktrans;
 import java.io.File;
 
 import org.payn.chsm.io.xml.ElementHelper;
-import org.payn.resources.particle.cell.BehaviorConcTrackerAlt;
-import org.payn.resources.particle.cell.BehaviorParticle;
+import org.payn.resources.particle.cell.BehaviorConcTrackerVel;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.boundary.BehaviorSoluteActiveMM;
 import org.payn.resources.solute.boundary.BehaviorSoluteBoundInject;
@@ -414,17 +413,17 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
 
    public String getParticleReleaseInterval() 
    {
-      return getParticleElement().getAttribute(BehaviorParticle.REQ_STATE_INTERVAL_RELEASE);
+      return getParticleElement().getAttribute(BehaviorConcTrackerVel.REQ_STATE_INTERVAL_RELEASE);
    }
 
    public String getParticleRecordInterval() 
    {
-      return getParticleElement().getAttribute(BehaviorParticle.REQ_STATE_INTERVAL_RECORD);
+      return getParticleElement().getAttribute(BehaviorConcTrackerVel.REQ_STATE_INTERVAL_RECORD);
    }
 
-   public String getParticleCurrency() 
+   public String getParticleResource() 
    {
-      return getParticleElement().getAttribute(BehaviorParticle.REQ_STATE_CURRENCY);
+      return getParticleElement().getAttribute(BehaviorConcTrackerVel.REQ_STATE_RESOURCE);
    }
 
    public String getParticleBehaviorName() 
@@ -432,9 +431,14 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
       return getParticleElement().getAttribute("behavior");
    }
 
-   public String getParticleCount() 
+   public String getParticleVelocityFile() 
    {
-      return getParticleElement().getAttribute(BehaviorConcTrackerAlt.REQ_STATE_RELEASE_COUNT);
+      return getParticleElement().getAttribute(BehaviorConcTrackerVel.REQ_STATE_VEL_FILE);
+   }
+
+   public String getParticleOutputLocation() 
+   {
+      return getParticleElement().getAttribute(BehaviorConcTrackerVel.REQ_STATE_OUTPUT_LOC);
    }
 
 }
