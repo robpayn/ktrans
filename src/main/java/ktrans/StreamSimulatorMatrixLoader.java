@@ -34,6 +34,11 @@ public class StreamSimulatorMatrixLoader extends MatrixLoaderXML {
     */
    private static final String OUTPUT_HANDLER_BEHAVIOR = "behavior";
 
+   /**
+    * Behavior output handler name
+    */
+   private static final String OUTPUT_HANDLER_TASCC = "tascc";
+
    @Override
    protected void initializeLoggers() throws Exception {
       loggerList.add(LoggerSystemOut.class);
@@ -93,6 +98,9 @@ public class StreamSimulatorMatrixLoader extends MatrixLoaderXML {
                break;
             case OUTPUT_HANDLER_BEHAVIOR:
                factory = new OutputHandlerBehaviorFactoryXML();
+               break;
+            case OUTPUT_HANDLER_TASCC:
+               factory = new OutputHandlerTASCCFactoryXML();
                break;
          }
       }
