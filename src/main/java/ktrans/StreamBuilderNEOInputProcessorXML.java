@@ -5,6 +5,11 @@ import java.io.File;
 import org.payn.chsm.Behavior;
 import org.payn.chsm.Resource;
 import org.payn.chsm.io.file.interpolate.ProcessorInterpolateSnapshotTable;
+import org.payn.neoch.io.xmltools.DocumentBoundary;
+import org.payn.neoch.io.xmltools.DocumentCell;
+import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
+import org.payn.neoch.io.xmltools.ElementBoundary;
+import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 import org.payn.resources.particle.ResourceParticle;
 import org.payn.resources.particle.cell.BehaviorConcTrackerVel;
 import org.payn.resources.solute.ResourceSolute;
@@ -15,11 +20,6 @@ import org.payn.resources.solute.boundary.BehaviorSoluteFlowBound;
 import org.payn.resources.solute.cell.BehaviorSoluteStorage;
 
 import edu.montana.cerg.simmanager.InputProcessor;
-import neoch.io.xmltools.DocumentBoundary;
-import neoch.io.xmltools.DocumentCell;
-import neoch.io.xmltools.ElementBehaviorMatrix;
-import neoch.io.xmltools.ElementBoundary;
-import neoch.io.xmltools.ElementHolonMatrix;
 
 /**
  * Input processor for building NEO input for a simple stream solute model

@@ -9,11 +9,10 @@ import java.util.ArrayList;
 import org.payn.chsm.State;
 import org.payn.chsm.values.ValueDouble;
 import org.payn.chsm.values.ValueLong;
+import org.payn.neoch.HolonBoundary;
+import org.payn.neoch.HolonCell;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.boundary.BehaviorSoluteFlow;
-
-import neoch.HolonBoundary;
-import neoch.HolonCell;
 
 public class ParticleConcTrackerTASCC {
 

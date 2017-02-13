@@ -2,11 +2,11 @@ package ktrans;
 
 import java.io.File;
 
+import org.payn.neoch.io.xmltools.XMLDocumentConfig;
 import org.w3c.dom.Element;
 
 import edu.montana.cerg.simmanager.InputProcessorFactory;
 import edu.montana.cerg.simmanager.metainputs.DoubleMetaInput;
-import neoch.io.xmltools.XMLDocumentConfig;
 
 /**
  * Generic input processor factory for the stream solute simulator

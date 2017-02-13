@@ -7,14 +7,13 @@ import org.payn.chsm.io.logger.LoggerSystemOut;
 import org.payn.chsm.io.xml.ElementOutput;
 import org.payn.chsm.io.xml.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
+import org.payn.neoch.MatrixBuilder;
+import org.payn.neoch.io.MatrixBuilderXML;
+import org.payn.neoch.io.MatrixLoaderXML;
+import org.payn.neoch.io.OutputHandlerXMLSerialFactoryXML;
+import org.payn.neoch.processors.ControllerNEORKTwo;
 import org.payn.resources.particle.ResourceParticle;
 import org.payn.resources.solute.ResourceSolute;
-
-import neoch.MatrixBuilder;
-import neoch.io.MatrixLoaderXML;
-import neoch.io.MatrixBuilderXML;
-import neoch.io.OutputHandlerXMLSerialFactoryXML;
-import neoch.processors.ControllerNEORKTwo;
 
 /**
  * Matrix loader implementing some default configuration

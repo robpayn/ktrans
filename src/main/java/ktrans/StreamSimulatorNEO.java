@@ -3,11 +3,12 @@ package ktrans;
 import java.io.File;
 import java.util.HashMap;
 
+import org.payn.neoch.HolonMatrix;
+import org.payn.neoch.MatrixBuilder;
+
 import edu.montana.cerg.simmanager.Simulator;
 import edu.montana.cerg.simmanager.interfaces.IInputProcessorFactory;
 import edu.montana.cerg.simmanager.interfaces.IOutputProcessorFactory;
-import neoch.HolonMatrix;
-import neoch.MatrixBuilder;
 
 /**
  * A solute transport stream simulator using the NEO framework

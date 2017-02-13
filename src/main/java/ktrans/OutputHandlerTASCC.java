@@ -11,8 +11,8 @@ import org.payn.chsm.io.file.OutputHandlerSingleThread;
 import org.payn.chsm.resources.time.BehaviorTime;
 import org.payn.chsm.values.ValueDouble;
 import org.payn.chsm.values.ValueLong;
-import neoch.HolonCell;
-import neoch.HolonMatrix;
+import org.payn.neoch.HolonCell;
+import org.payn.neoch.HolonMatrix;
 
 public class OutputHandlerTASCC extends OutputHandlerSingleThread {
 

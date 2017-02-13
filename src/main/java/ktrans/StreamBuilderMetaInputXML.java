@@ -3,6 +3,8 @@ package ktrans;
 import java.io.File;
 
 import org.payn.chsm.io.xml.ElementHelper;
+import org.payn.neoch.io.xmltools.ElementXMLInput;
+import org.payn.neoch.io.xmltools.XMLDocumentConfig;
 import org.payn.resources.particle.cell.BehaviorConcTrackerVel;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.boundary.BehaviorSoluteActiveMM;
@@ -10,8 +12,6 @@ import org.payn.resources.solute.boundary.BehaviorSoluteBoundInject;
 import org.w3c.dom.Element;
 
 import edu.montana.cerg.simmanager.interfaces.IMetaInput;
-import neoch.io.xmltools.ElementXMLInput;
-import neoch.io.xmltools.XMLDocumentConfig;
 
 /**
  * Characterizes XML metainput for the stream solute simulator
