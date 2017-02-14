@@ -9,9 +9,8 @@ import org.payn.resources.particle.cell.BehaviorConcTrackerVel;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.boundary.BehaviorSoluteActiveMM;
 import org.payn.resources.solute.boundary.BehaviorSoluteBoundInject;
+import org.payn.simulation.interfaces.IMetaInput;
 import org.w3c.dom.Element;
-
-import edu.montana.cerg.simmanager.interfaces.IMetaInput;
 
 /**
  * Characterizes XML metainput for the stream solute simulator

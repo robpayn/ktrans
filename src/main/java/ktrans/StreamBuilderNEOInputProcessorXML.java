@@ -18,8 +18,7 @@ import org.payn.resources.solute.boundary.BehaviorSoluteBoundInject;
 import org.payn.resources.solute.boundary.BehaviorSoluteFlow;
 import org.payn.resources.solute.boundary.BehaviorSoluteFlowBound;
 import org.payn.resources.solute.cell.BehaviorSoluteStorage;
-
-import edu.montana.cerg.simmanager.InputProcessor;
+import org.payn.simulation.InputProcessor;
 
 /**
  * Input processor for building NEO input for a simple stream solute model

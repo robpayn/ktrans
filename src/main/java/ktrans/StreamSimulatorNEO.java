@@ -5,10 +5,9 @@ import java.util.HashMap;
 
 import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixBuilder;
-
-import edu.montana.cerg.simmanager.Simulator;
-import edu.montana.cerg.simmanager.interfaces.IInputProcessorFactory;
-import edu.montana.cerg.simmanager.interfaces.IOutputProcessorFactory;
+import org.payn.simulation.Simulator;
+import org.payn.simulation.interfaces.IInputProcessorFactory;
+import org.payn.simulation.interfaces.IOutputProcessorFactory;
 
 /**
  * A solute transport stream simulator using the NEO framework

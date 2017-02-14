@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map.Entry;
-
 import org.payn.chsm.io.file.OutputHandlerSingleThread;
 import org.payn.chsm.resources.time.BehaviorTime;
 import org.payn.chsm.values.ValueDouble;
@@ -19,7 +16,7 @@ public class OutputHandlerTASCC extends OutputHandlerSingleThread {
    /**
     * Map of resources being tracked by particles
     */
-   LinkedHashMap<String, ArrayList<ParticleConcTrackerTASCC>> finishedParticles;
+   ArrayList<ParticleConcTrackerTASCC> finishedParticles;
    /**
     * List of active particles
     */
@@ -52,6 +49,10 @@ public class OutputHandlerTASCC extends OutputHandlerSingleThread {
     * File with particle velocities
     */
    private String velocityFile;
+   /**
+    * Resource names
+    */
+   private ArrayList<String> resourceNames;
    
    @Override
    public void openLocation() throws Exception 
@@ -62,16 +63,12 @@ public class OutputHandlerTASCC extends OutputHandlerSingleThread {
    @Override
    protected void bufferOutput() throws Exception 
    {
-      for (Entry<String, ArrayList<ParticleConcTrackerTASCC>> resource: finishedParticles.entrySet())
+      for(ParticleConcTrackerTASCC particle: finishedParticles)
       {
-         ArrayList<ParticleConcTrackerTASCC> particleList = resource.getValue();
-         for(ParticleConcTrackerTASCC particle: particleList)
-         {
-            particle.close();
-            particles.remove(particle);
-         }
-         particleList.clear();
+         particle.close();
+         particles.remove(particle);
       }
+      finishedParticles.clear();
       for (ParticleConcTrackerTASCC particle: particles)
       {
          particle.buffer();
@@ -109,15 +106,12 @@ public class OutputHandlerTASCC extends OutputHandlerSingleThread {
          while(reader.ready())
          {
             double velocity = Double.valueOf(reader.readLine());
-            for (Entry<String, ArrayList<ParticleConcTrackerTASCC>> resource: finishedParticles.entrySet())
-            {
-               ParticleConcTrackerTASCC particle = new ParticleConcTrackerTASCC(this, resource.getKey(), velocity);
-               particle.initializeTime(tick, time, timeStep, interval);
-               particle.initializeLocation(releaseCell, endCell);
-               particle.initializeOutput(particleCount, outputDir);
-               particles.add(particle);
-               particleCount++;
-            }
+            ParticleConcTrackerTASCC particle = new ParticleConcTrackerTASCC(this, resourceNames, velocity);
+            particle.initializeTime(tick, time, timeStep, interval);
+            particle.initializeLocation(releaseCell, endCell);
+            particle.initializeOutput(particleCount, outputDir);
+            particles.add(particle);
+            particleCount++;
          }
          reader.close();
       }
@@ -128,24 +122,11 @@ public class OutputHandlerTASCC extends OutputHandlerSingleThread {
       }      
    }
 
-   /**
-    * Add the resources based on a comma-delimited list of resource names
-    * 
-    * @param resourceList
-    */
-   public void addResources(String resourceList) 
-   {
-      String[] resourceNames = resourceList.split(",");
-      for (String resourceName: resourceNames)
-      {
-         finishedParticles.put(resourceName, new ArrayList<ParticleConcTrackerTASCC>());
-      }
-   }
-
    public void initializeOutputHandlerTASCC() 
    {
-      finishedParticles = new LinkedHashMap<String, ArrayList<ParticleConcTrackerTASCC>>();
+      finishedParticles = new ArrayList<ParticleConcTrackerTASCC>();
       particles = new ArrayList<ParticleConcTrackerTASCC>();
+      resourceNames = new ArrayList<String>();
       tick = (ValueLong)source.getState(
             BehaviorTime.DEFAULT_ITERATION_NAME
             ).getValue();
@@ -155,6 +136,20 @@ public class OutputHandlerTASCC extends OutputHandlerSingleThread {
       timeStep = (ValueDouble)source.getState(
             BehaviorTime.ITERATION_INTERVAL
             ).getValue();
+   }
+
+   /**
+    * Add the resources based on a comma-delimited list of resource names
+    * 
+    * @param resourceList
+    */
+   public void addResources(String resourceList) 
+   {
+      String[] resourceNameArray = resourceList.split(",");
+      for (String resourceName: resourceNameArray)
+      {
+         resourceNames.add(resourceName);
+      }
    }
 
    public void setReleaseCell(String cellName) 
@@ -179,7 +174,7 @@ public class OutputHandlerTASCC extends OutputHandlerSingleThread {
 
    public void reportFinishedParticle(ParticleConcTrackerTASCC particle) 
    {
-      finishedParticles.get(particle.getResourceName()).add(particle);
+      finishedParticles.add(particle);
    }
 
 }

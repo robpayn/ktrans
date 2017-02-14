@@ -1158,102 +1158,52 @@ TasccAnalysisLagrange <- function(..., particlePath, window)
 loadStreamData.TasccAnalysisLagrange <- function(analysis)
 {
    loadStreamData.Analysis(analysis);
-   con <- file(
-      description = paste(
-         analysis$rootDir, 
-         analysis$particlePath,
-         sep = ""
-         ),
-      open = "r"
-      );
-   count = 0;
-   while (length(readLines(con=con, n=1)) > 0)
-   {
-      count = count + 1;
-   }
-   close(con);
-   
-   length = count - 1;
-   analysis$particle <- data.frame(
-      time = numeric(length = length),
-      mean = numeric(length = length)
-      );
-   
-   con <- file(
-      description = paste(
-         analysis$rootDir, 
-         analysis$particlePath,
-         sep = ""
-         ),
-      open = "r"
-      );
-   count = 1;
-   readLines(con=con, n=1);
-   while (length(line <- strsplit(readLines(con=con, n=1), split=" ")) > 0)
-   {
-      analysis$particle$time[count] <- as.numeric(line[[1]][2]);
-      analysis$particle$mean[count] <- as.numeric(line[[1]][4]);
-      count = count + 1;
-   }
-   close(con);
-
-   con <- file(
-      description = paste(
-         analysis$rootDir, 
-         analysis$particlePath,
-         sep = ""
-         ),
-      open = "r"
-      );
-   
-   readLines(con = con, n = 1);
-   line <- strsplit(readLines(con = con, n = 1), split = " ");
    
    times <- seq(from = analysis$startTime, to = analysis$stopTime, by = analysis$timeStep);
-   
    analysis$paths <- vector("list", length(times));
-   for (i in 1:length(times))
-   {
-      while (as.numeric(line[[1]][2]) <= times[i])
-      {
-         line <- strsplit(x = readLines(con = con, n = 1), split = " ");
+
+   fileName <- paste(
+      analysis$rootDir, 
+      analysis$particlePath,
+      sprintf("/particle_%06d.txt", 0),
+      sep = ""
+      );
+   particleTable <- read.table(file=fileName, header=TRUE, sep=" ");
+   arrivalTime <- particleTable[length(particleTable[,1]),]$time;
+   analysis$paths[[1]] <- particleTable;
+   
+   for (metricsCount in 1:length(times)) {
+      
+      metricTime <- times[metricsCount];
+      count <- 1;
+      continue <- TRUE;
+      while(continue) {
+         
+         fileName <- paste(
+            analysis$rootDir, 
+            analysis$particlePath,
+            sprintf("/particle_%06d.txt", count),
+            sep = ""
+            );
+         nextParticleTable <- read.table(file=fileName, header=TRUE, sep=" ");
+         nextArrivalTime <- nextParticleTable[length(nextParticleTable[,1]),]$time;
+         if (nextArrivalTime > metricTime) {
+            continue <- FALSE;
+            if (nextArrivalTime - metricTime < metricTime - arrivalTime) {
+               analysis$paths[[metricsCount]] <- nextParticleTable;
+               count <- count - 1;
+            }
+         } else {
+            particleTable <- nextParticleTable;
+            arrivalTime <- nextArrivalTime;
+            analysis$paths[[metricsCount]] <- particleTable;
+         }
+
+         count = count + 1;
+         
       }
       
-      timeSeriesSplit <- strsplit(x = line[[1]][5], split = ":")[[1]];
-      timeSeriesSplit2 <- strsplit(x = timeSeriesSplit, split = ",");
-      analysis$paths[[i]] <- data.frame(
-         time = numeric(length=length(timeSeriesSplit2)),
-         active = numeric(length=length(timeSeriesSplit2)),
-         cons = numeric(length=length(timeSeriesSplit2))
-         );
-      analysis$paths[[i]]$time <- as.numeric(sapply(
-         timeSeriesSplit2,
-         function(x, index = 1) { return(x[index]) }
-      ));
-      analysis$paths[[i]]$active <- as.numeric(sapply(
-         timeSeriesSplit2,
-         function(x, index = 2) { return(x[index]) }
-      ));
-   
-      timeSeriesSplit <- strsplit(x = line[[1]][7], split = ":")[[1]];
-      timeSeriesSplit2 <- strsplit(x = timeSeriesSplit, split = ",");
-      analysis$paths[[i]]$cons <- as.numeric(sapply(
-         timeSeriesSplit2,
-         function(x, index = 2) { return(x[index]) }
-      ));
-      finalTime <- analysis$paths[[i]]$time[
-         length(analysis$paths[[i]]$time)
-         ];
-      analysis$paths[[i]] <- analysis$paths[[i]][
-         which(analysis$paths[[i]]$time - analysis$releaseTime >= analysis$window / 
-                  (analysis$reachLength / (finalTime - analysis$releaseTime)))
-            ,];
-#       analysis$paths[[i]] <- analysis$paths[[i]][
-#          which(analysis$paths[[i]]$time >= finalTime - analysis$window),
-#          ];
    }
-
-   close(con);
 
 }
 
