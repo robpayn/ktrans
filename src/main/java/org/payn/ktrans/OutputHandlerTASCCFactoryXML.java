@@ -1,4 +1,4 @@
-package ktrans;
+package org.payn.ktrans;
 
 import org.payn.chsm.io.OutputHandlerFactoryXML;
 import org.payn.chsm.io.file.OutputHandlerIntervalFactoryXML;

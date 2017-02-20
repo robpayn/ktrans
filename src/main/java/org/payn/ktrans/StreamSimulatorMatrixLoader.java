@@ -1,4 +1,7 @@
-package ktrans;
+package org.payn.ktrans;
+
+import java.io.File;
+import java.util.HashMap;
 
 import org.payn.chsm.Resource;
 import org.payn.chsm.io.OutputHandlerFactoryXML;
@@ -7,12 +10,13 @@ import org.payn.chsm.io.logger.LoggerSystemOut;
 import org.payn.chsm.io.xml.ElementOutput;
 import org.payn.chsm.io.xml.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
+import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixBuilder;
+import org.payn.neoch.MatrixLoader;
 import org.payn.neoch.io.MatrixBuilderXML;
 import org.payn.neoch.io.MatrixLoaderXML;
 import org.payn.neoch.io.OutputHandlerXMLSerialFactoryXML;
 import org.payn.neoch.processors.ControllerNEORKTwo;
-import org.payn.resources.particle.ResourceParticle;
 import org.payn.resources.solute.ResourceSolute;
 
 /**
@@ -37,6 +41,26 @@ public class StreamSimulatorMatrixLoader extends MatrixLoaderXML {
     * Behavior output handler name
     */
    private static final String OUTPUT_HANDLER_TASCC = "tascc";
+
+   /**
+    * Load and build the matrix
+    * 
+    * @param argMap
+    * @param workingDir
+    * @return
+    *       matrix object
+    * @throws Exception
+    */
+   public static HolonMatrix loadStreamSimulatorModel(HashMap<String, String> argMap,
+         File workingDir) throws Exception 
+   {
+      MatrixBuilder builder = MatrixLoader.loadBuilder(
+            argMap, 
+            workingDir,
+            new StreamSimulatorMatrixLoader()
+            );
+      return builder.createModel();
+   }
 
    @Override
    protected void initializeLoggers() throws Exception {
@@ -72,14 +96,7 @@ public class StreamSimulatorMatrixLoader extends MatrixLoaderXML {
       Resource resource = super.getResource(resourceElem);
       if (resource == null)
       {
-         if (resourceElem.getName().equals("particle"))
-         {
-            resource = new ResourceParticle();
-         }
-         else
-         {
-            resource = new ResourceSolute();
-         }
+         resource = new ResourceSolute();
       }
       return resource;
    }

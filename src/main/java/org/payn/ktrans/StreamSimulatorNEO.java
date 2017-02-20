@@ -1,13 +1,14 @@
-package ktrans;
+package org.payn.ktrans;
 
 import java.io.File;
 import java.util.HashMap;
 
 import org.payn.neoch.HolonMatrix;
-import org.payn.neoch.MatrixBuilder;
-import org.payn.simulation.Simulator;
-import org.payn.simulation.interfaces.IInputProcessorFactory;
-import org.payn.simulation.interfaces.IOutputProcessorFactory;
+import org.payn.neoch.MatrixLoader;
+import org.payn.simulation.InputProcessorFactory;
+import org.payn.simulation.OutputProcessorFactory;
+import org.payn.simulation.OutputProcessorFactoryAbstract;
+import org.payn.simulation.SimulatorAbstract;
 
 /**
  * A solute transport stream simulator using the NEO framework
@@ -15,7 +16,7 @@ import org.payn.simulation.interfaces.IOutputProcessorFactory;
  * @author v78h241
  *
  */
-public class StreamSimulatorNEO extends Simulator {
+public class StreamSimulatorNEO extends SimulatorAbstract {
    
    /**
     * Entry point
@@ -27,7 +28,7 @@ public class StreamSimulatorNEO extends Simulator {
    {
       try 
       {
-         HashMap<String,String>argMap = MatrixBuilder.createArgMap(args);
+         HashMap<String,String>argMap = MatrixLoader.createArgMap(args);
          File workingDir = new File(System.getProperty("user.dir"));
          
          StreamSimulatorNEO simulator = new StreamSimulatorNEO(argMap, workingDir);
@@ -40,16 +41,8 @@ public class StreamSimulatorNEO extends Simulator {
                         "(e.g. 'config=./config/config.xml')"
                   );
          }
-         File configFile = new File(workingDir.getAbsolutePath() + argMap.get("config"));
-         if (!configFile.exists() || configFile.isDirectory()) 
-         {
-            throw new Exception(String.format(
-                  "%s is an invalid configuration file.", 
-                  configFile.getAbsolutePath()
-                  ));
-         }
 
-         simulator.getInputProcessorFactory().addBuilderInputProcessor(configFile, workingDir);
+         simulator.getInputProcessorFactory().addBuilderInputProcessor(workingDir, argMap.get("config"));
          simulator.execute();
       } 
       catch (Exception e) 
@@ -95,10 +88,9 @@ public class StreamSimulatorNEO extends Simulator {
     */
    public void loadMatrix() throws Exception 
    {
-      matrix = MatrixBuilder.createMatrix(
+      matrix = StreamSimulatorMatrixLoader.loadStreamSimulatorModel(
             argMap, 
-            workingDir,
-            new StreamSimulatorMatrixLoader()
+            workingDir
             );
       matrix.getController().initializeController();
    }
@@ -110,33 +102,33 @@ public class StreamSimulatorNEO extends Simulator {
    }
 
    @Override
-   protected IInputProcessorFactory createInputProcessorFactory() 
+   protected InputProcessorFactory createInputProcessorFactory() 
    {
-      return new StreamSimulatorNEOInputProcessorFactory();
+      return new InputProcessorFactoryStreamSimulator(this) {
+         
+         @Override
+         public void addBuilderInputProcessor(File workingDir, String configPath) throws Exception 
+         {
+            new StreamBuilderNEOInputProcessorXML(
+                  new StreamBuilderMetaInputXML(workingDir, configPath, "streambuilder"), 
+                  getSimulator()
+                  );
+         }
+         
+      };
    }
 
    @Override
-   protected IOutputProcessorFactory createOutputProcessorFactory() 
+   protected OutputProcessorFactory createOutputProcessorFactory() 
    {
-      return new StreamSimulatorNEOOutputProcessorFactory();
+      return new OutputProcessorFactoryAbstract(this) {
+      };
    }
 
-   /**
-    * Overrides implementation in Simulator to provide specific type
-    */
    @Override
-   public StreamSimulatorNEOInputProcessorFactory getInputProcessorFactory()
+   public InputProcessorFactoryStreamSimulator getInputProcessorFactory()
    {
-      return (StreamSimulatorNEOInputProcessorFactory)inputProcessorFactory;
-   }
-
-   /**
-    * Overrides implementation in Simulator to provide specific type
-    */
-   @Override
-   public StreamSimulatorNEOOutputProcessorFactory getOutputProcessorFactory()
-   {
-      return (StreamSimulatorNEOOutputProcessorFactory)outputProcessorFactory;
+       return (InputProcessorFactoryStreamSimulator)inputProcessorFactory;
    }
 
 }

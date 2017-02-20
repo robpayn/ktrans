@@ -1,81 +1,46 @@
-package ktrans;
+package org.payn.ktrans;
 
 import java.io.File;
 
 import org.payn.chsm.io.xml.ElementHelper;
 import org.payn.neoch.io.xmltools.ElementXMLInput;
 import org.payn.neoch.io.xmltools.XMLDocumentConfig;
-import org.payn.resources.particle.cell.BehaviorConcTrackerVel;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.boundary.BehaviorSoluteActiveMM;
 import org.payn.resources.solute.boundary.BehaviorSoluteBoundInject;
-import org.payn.simulation.interfaces.IMetaInput;
+import org.payn.simulation.metainputs.MetaInputXML;
 import org.w3c.dom.Element;
 
 /**
- * Characterizes XML metainput for the stream solute simulator
+ * Characterizes XML meta-input for the stream simulator
  * 
  * @author v78h241
  *
  */
-public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInput {
-
-   /**
-    * XML document with configuration information
-    */
-   private XMLDocumentConfig document;
-   
-   /**
-    * Getter
-    * 
-    * @return
-    *       XML document
-    */
-   public XMLDocumentConfig getXMLDocument()
-   {
-      return document;
-   }
-   
-   /**
-    * Working directory for the model
-    */
-   private File workingDir;
-
-   /**
-    * Getter
-    * 
-    * @return
-    *       File for working directory
-    */
-   public File getWorkingDir()
-   {
-      return workingDir;
-   }
+public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
 
    /**
     * XML input element from the NEO settings
     */
    private ElementXMLInput xmlInputElement;
-   private ElementHelper particleElement;
 
-   
    /**
     * Constructor based on XML input
     * 
-    * @param element
-    *       element with information about the metainput
-    * @param document
-    *       document containing the element
     * @param workingDir
-    *       working directory for the model
+    *       working directory for the configuration
+    * @param configPath
+    *       path to the configuration file from the working directory
+    * @param elementName
+    *       name of the xml element with the configuration
     * @throws Exception 
     */
-   public StreamBuilderMetaInputXML(Element element, XMLDocumentConfig document, File workingDir) throws Exception 
+   public StreamBuilderMetaInputXML(File workingDir, String configPath, String elementName) 
+         throws Exception 
    {
-      super(element);
-      this.document = document;
-      this.workingDir = workingDir;
-      this.xmlInputElement = document.getBuilderElement().getXMLInputElement(workingDir);
+      super(workingDir, configPath, elementName);
+      this.xmlInputElement = 
+            ((XMLDocumentConfig)document).getBuilderElement().getXMLInputElement(workingDir);
    }
 
    /**
@@ -86,7 +51,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Long getNumCells() 
    {
-      return Long.valueOf(getElement().getAttribute("numCells"));
+      return Long.valueOf(helper.getAttribute("numCells"));
    }
 
    /**
@@ -97,7 +62,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Double getLength() 
    {
-      return Double.valueOf(getElement().getAttribute("length"));
+      return Double.valueOf(helper.getAttribute("length"));
    }
 
    /**
@@ -108,7 +73,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Double getWidth() 
    {
-      return Double.valueOf(getElement().getAttribute("width"));
+      return Double.valueOf(helper.getAttribute("width"));
    }
 
    /**
@@ -119,7 +84,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Double getDepth() 
    {
-      return Double.valueOf(getElement().getAttribute("depth"));
+      return Double.valueOf(helper.getAttribute("depth"));
    }
 
    /**
@@ -130,7 +95,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Double getFlow() 
    {
-      Element element = getFirstChildElement("flow");
+      Element element = helper.getFirstChildElement("flow");
       return Double.valueOf(element.getAttribute("flow"));
    }
 
@@ -142,7 +107,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Double getDispersion() 
    {
-      Element element = getFirstChildElement("flow");
+      Element element = helper.getFirstChildElement("flow");
       return Double.valueOf(element.getAttribute("dispersion"));
    }
 
@@ -158,7 +123,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public String getInjectAttribute(String tracerTag, String attribute)
    {
-      ElementHelper element = getFirstChildElementHelper("inject");
+      ElementHelper element = helper.getFirstChildElementHelper("inject");
       Element elementCons = element.getFirstChildElement(tracerTag);
       return elementCons.getAttribute(attribute);
    }
@@ -255,7 +220,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Double getUMax() 
    {
-      Element element = getFirstChildElement("active");
+      Element element = helper.getFirstChildElement("active");
       return Double.valueOf(element.getAttribute(BehaviorSoluteActiveMM.REQ_STATE_UMAX));
    }
 
@@ -267,7 +232,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Double getHalfSat() 
    {
-      Element element = getFirstChildElement("active");
+      Element element = helper.getFirstChildElement("active");
       return Double.valueOf(element.getAttribute(BehaviorSoluteActiveMM.REQ_STATE_HALFSAT));
    }
 
@@ -279,7 +244,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Double getActiveBkgConc() 
    {
-      Element element = getFirstChildElement("active");
+      Element element = helper.getFirstChildElement("active");
       return Double.valueOf(element.getAttribute("bkg" + ResourceSolute.NAME_SOLUTE_CONC));
    }
 
@@ -291,7 +256,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public boolean isInject() 
    {
-      return hasElement("inject");
+      return helper.hasElement("inject");
    }
 
    /**
@@ -302,7 +267,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public String getConcBoundFile() 
    {
-      Element element = getFirstChildElement("concbound");
+      Element element = helper.getFirstChildElement("concbound");
       return element.getAttribute("path");
    }
 
@@ -314,7 +279,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public String getInterpolationType() 
    {
-      Element element = getFirstChildElement("concbound");
+      Element element = helper.getFirstChildElement("concbound");
       return element.getAttribute("type");
    }
 
@@ -326,7 +291,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public String getDelimiter() 
    {
-      Element element = getFirstChildElement("concbound");
+      Element element = helper.getFirstChildElement("concbound");
       return element.getAttribute("delimiter");
    }
 
@@ -337,7 +302,7 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public Double getConsBkgConc() 
    {
-      Element element = getFirstChildElement("conservative");
+      Element element = helper.getFirstChildElement("conservative");
       return Double.valueOf(element.getAttribute("bkg" + ResourceSolute.NAME_SOLUTE_CONC));
    }
 
@@ -384,60 +349,13 @@ public class StreamBuilderMetaInputXML extends ElementHelper implements IMetaInp
     */
    public boolean isParticle() 
    {
-      return hasElement("particle");
+      return helper.hasElement("particle");
    }
 
-   public long getParticleReleaseCell() 
+   @Override
+   protected XMLDocumentConfig createDocument(File metaInputFile) throws Exception 
    {
-      return Long.valueOf(getParticleElement().getAttribute("releaseCell"));
-   }
-
-   public long getParticleEndCell() 
-   {
-      return Long.valueOf(getParticleElement().getAttribute("endCell"));
-   }
-
-   public ElementHelper getParticleElement() 
-   {
-      if (particleElement == null)
-      {
-         particleElement = new ElementHelper(this.getFirstChildElement("particle"));
-         return particleElement;
-      }
-      else
-      {
-         return particleElement;
-      }
-   }
-
-   public String getParticleReleaseInterval() 
-   {
-      return getParticleElement().getAttribute(BehaviorConcTrackerVel.REQ_STATE_INTERVAL_RELEASE);
-   }
-
-   public String getParticleRecordInterval() 
-   {
-      return getParticleElement().getAttribute(BehaviorConcTrackerVel.REQ_STATE_INTERVAL_RECORD);
-   }
-
-   public String getParticleResource() 
-   {
-      return getParticleElement().getAttribute(BehaviorConcTrackerVel.REQ_STATE_RESOURCE);
-   }
-
-   public String getParticleBehaviorName() 
-   {
-      return getParticleElement().getAttribute("behavior");
-   }
-
-   public String getParticleVelocityFile() 
-   {
-      return getParticleElement().getAttribute(BehaviorConcTrackerVel.REQ_STATE_VEL_FILE);
-   }
-
-   public String getParticleOutputLocation() 
-   {
-      return getParticleElement().getAttribute(BehaviorConcTrackerVel.REQ_STATE_OUTPUT_LOC);
+      return new XMLDocumentConfig(metaInputFile);
    }
 
 }
