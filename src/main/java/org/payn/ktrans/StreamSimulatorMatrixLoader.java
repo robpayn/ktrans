@@ -51,15 +51,17 @@ public class StreamSimulatorMatrixLoader extends MatrixLoaderXML {
     *       matrix object
     * @throws Exception
     */
-   public static HolonMatrix loadStreamSimulatorModel(HashMap<String, String> argMap,
+   public static HolonMatrix initializeStreamSimulator(HashMap<String, String> argMap,
          File workingDir) throws Exception 
    {
       MatrixBuilder builder = MatrixLoader.loadBuilder(
-            argMap, 
             workingDir,
-            new StreamSimulatorMatrixLoader()
+            new StreamSimulatorMatrixLoader(),
+            argMap
             );
-      return builder.createModel();
+      HolonMatrix matrix = builder.createModel();
+      matrix.getController().initializeController();
+      return matrix;
    }
 
    @Override

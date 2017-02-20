@@ -86,13 +86,12 @@ public class StreamSimulatorNEO extends SimulatorAbstract {
     * @throws Exception
     *       if error in loading the matrix
     */
-   public void loadMatrix() throws Exception 
+   public void initializeModel() throws Exception 
    {
-      matrix = StreamSimulatorMatrixLoader.loadStreamSimulatorModel(
+      matrix = StreamSimulatorMatrixLoader.initializeStreamSimulator(
             argMap, 
             workingDir
             );
-      matrix.getController().initializeController();
    }
 
    @Override

@@ -436,7 +436,7 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessorAbstract<St
          documentBoundary.write(boundaryFile.getParentFile());
       }
       
-      sim.loadMatrix();
+      sim.initializeModel();
    }
 
 }
