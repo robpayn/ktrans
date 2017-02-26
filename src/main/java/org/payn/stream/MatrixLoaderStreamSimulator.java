@@ -1,4 +1,4 @@
-package org.payn.ktrans;
+package org.payn.stream;
 
 import java.io.File;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import org.payn.chsm.io.logger.LoggerSystemOut;
 import org.payn.chsm.io.xml.ElementOutput;
 import org.payn.chsm.io.xml.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
+import org.payn.ktrans.OutputHandlerTASCCFactoryXML;
 import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixBuilder;
 import org.payn.neoch.MatrixLoader;
@@ -26,7 +27,7 @@ import org.payn.resources.water.ResourceWater;
  * @author robpayn
  *
  */
-public class StreamSimulatorMatrixLoader extends MatrixLoaderXML {
+public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
    
    /**
     * Serial output handler name
@@ -57,7 +58,7 @@ public class StreamSimulatorMatrixLoader extends MatrixLoaderXML {
    {
       MatrixBuilder builder = MatrixLoader.loadBuilder(
             workingDir,
-            new StreamSimulatorMatrixLoader(),
+            new MatrixLoaderStreamSimulator(),
             argMap
             );
       HolonMatrix matrix = builder.createModel();

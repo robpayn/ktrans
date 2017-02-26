@@ -12,7 +12,7 @@ import org.payn.simulation.metainputs.MetaInputXML;
  * @author robpayn
  *
  */
-public abstract class NEOCHMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
+public abstract class MetaInputXMLNEOCH extends MetaInputXML<XMLDocumentConfig> {
 
    /**
     * Input element for the model input
@@ -29,7 +29,7 @@ public abstract class NEOCHMetaInputXML extends MetaInputXML<XMLDocumentConfig> 
     * @param elementName
     * @throws Exception
     */
-   public NEOCHMetaInputXML(File workingDir, String path,
+   public MetaInputXMLNEOCH(File workingDir, String path,
          String elementName) throws Exception 
    {
       super(workingDir, path, elementName);

@@ -14,8 +14,8 @@ import org.payn.resources.water.channel.cell.BehaviorChannelStorage;
  * @author robpayn
  *
  */
-public class MetabolismBuilderInputProcessorXML 
-      extends StreamBuilderInputProcessorXML<MetabolismMetaInputXML> {
+public class InputProcessorXMLMetabolismBuilder 
+      extends InputProcessorXMLStreamBuilder<MetaInputXMLMetabolism> {
 
    /**
     * Water resource
@@ -37,8 +37,8 @@ public class MetabolismBuilderInputProcessorXML
     * @param metaInput
     * @param sim
     */
-   public MetabolismBuilderInputProcessorXML(MetabolismMetaInputXML metaInput,
-         StreamSimulator sim) 
+   public InputProcessorXMLMetabolismBuilder(MetaInputXMLMetabolism metaInput,
+         SimulatorStream sim) 
    {
       super(metaInput, sim);
    }
@@ -110,6 +110,11 @@ public class MetabolismBuilderInputProcessorXML
       ElementBehaviorMatrix elementBehavior = 
             elementBoundary.createBehaviorElement(behaviorDynamicWaveWiele);
       elementBehavior.createInitValueElement(
+            ResourceWater.NAME_WATER_FLOW, 
+            Double.toString(initialFlow), 
+            null
+            );
+      elementBehavior.createInitValueElement(
             BehaviorDynamicWaveWiele.REQ_STATE_WIELEINT, 
             Double.toString(wieleInt), 
             null
@@ -123,6 +128,15 @@ public class MetabolismBuilderInputProcessorXML
             ResourceWater.NAME_ACTIVE_WIDTH_AVG, 
             Double.toString(averageWidth), 
             null
+            );
+   }
+
+   @Override
+   protected void configureDownstreamBoundary(ElementBoundary elementBoundary,
+         long indexLastCell) throws Exception 
+   {
+      elementBoundary.createBehaviorElement(
+            this.resourceWater.getBehavior(ResourceWater.BEHAVIOR_DYNAMIC_WAVE_DOWNSTREAM)
             );
    }
 

@@ -17,7 +17,7 @@ import org.payn.simulation.InputProcessorAbstract;
  * @param <ST> 
  *      simulator type
  */
-public abstract class NEOCHBuilderInputProcessorXML<MIT extends NEOCHMetaInputXML, ST extends NEOCHSimulator> 
+public abstract class InputProcessorXMLNEOCHBuilder<MIT extends MetaInputXMLNEOCH, ST extends SimulatorNEOCH> 
       extends InputProcessorAbstract<MIT, ST> {
 
    /**
@@ -36,7 +36,7 @@ public abstract class NEOCHBuilderInputProcessorXML<MIT extends NEOCHMetaInputXM
     * @param metaInput
     * @param sim
     */
-   public NEOCHBuilderInputProcessorXML(MIT metaInput, ST sim) 
+   public InputProcessorXMLNEOCHBuilder(MIT metaInput, ST sim) 
    {
       super(metaInput, sim);
    }
@@ -65,7 +65,9 @@ public abstract class NEOCHBuilderInputProcessorXML<MIT extends NEOCHMetaInputXM
          configureModel();
          
          // Write the model input files
+         cellFile.getParentFile().mkdirs();
          documentCell.write(cellFile.getParentFile());
+         boundaryFile.getParentFile().mkdirs();
          documentBoundary.write(boundaryFile.getParentFile());
       }
       simulator.initializeModel();

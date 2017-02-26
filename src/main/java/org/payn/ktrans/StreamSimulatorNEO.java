@@ -9,6 +9,7 @@ import org.payn.simulation.InputProcessorFactory;
 import org.payn.simulation.OutputProcessorFactory;
 import org.payn.simulation.OutputProcessorFactoryAbstract;
 import org.payn.simulation.SimulatorAbstract;
+import org.payn.stream.MatrixLoaderStreamSimulator;
 
 /**
  * A solute transport stream simulator using the NEO framework
@@ -88,7 +89,7 @@ public class StreamSimulatorNEO extends SimulatorAbstract {
     */
    public void initializeModel() throws Exception 
    {
-      matrix = StreamSimulatorMatrixLoader.initializeStreamSimulator(
+      matrix = MatrixLoaderStreamSimulator.initializeStreamSimulator(
             argMap, 
             workingDir
             );

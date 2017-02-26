@@ -18,15 +18,15 @@ public abstract class InputProcessorFactoryStreamSimulator extends InputProcesso
     * @param simulator
     *       simulator object
     */
-   public InputProcessorFactoryStreamSimulator(StreamSimulator simulator) 
+   public InputProcessorFactoryStreamSimulator(SimulatorStream simulator) 
    {
       super(simulator);
    }
 
    @Override
-   public StreamSimulator getSimulator() 
+   public SimulatorStream getSimulator() 
    {
-      return (StreamSimulator)simulator;
+      return (SimulatorStream)simulator;
    }
 
    /**

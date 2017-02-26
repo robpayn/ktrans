@@ -10,8 +10,8 @@ import org.payn.neoch.io.xmltools.ElementHolonMatrix;
  *
  * @param <MIT>
  */
-public abstract class StreamBuilderInputProcessorXML<MIT extends StreamMetaInputXML>
-   extends NEOCHBuilderInputProcessorXML<MIT, StreamSimulator> {
+public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStream>
+   extends InputProcessorXMLNEOCHBuilder<MIT, SimulatorStream> {
 
    /**
     * Number of cells
@@ -64,12 +64,17 @@ public abstract class StreamBuilderInputProcessorXML<MIT extends StreamMetaInput
    protected double wieleSlope;
 
    /**
+    * Initial stream flow
+    */
+   protected double initialFlow;
+
+   /**
     * Construct a new instance with the given meta input and simulator
     * 
     * @param metaInput
     * @param sim
     */
-   public StreamBuilderInputProcessorXML(MIT metaInput, StreamSimulator sim) 
+   public InputProcessorXMLStreamBuilder(MIT metaInput, SimulatorStream sim) 
    {
       super(metaInput, sim);
    }
@@ -99,6 +104,7 @@ public abstract class StreamBuilderInputProcessorXML<MIT extends StreamMetaInput
       initialDepth = metaInput.getInitialDepth();
       averageWidth = metaInput.getAverageWidth();
       
+      initialFlow = metaInput.getInitialFlow();
       wieleInt = metaInput.getWieleInt();
       wieleSlope = metaInput.getWieleSlope();
       
@@ -149,6 +155,21 @@ public abstract class StreamBuilderInputProcessorXML<MIT extends StreamMetaInput
          elementBoundaryAdj = elementBoundary.createAdjacentElement(boundaryName, cellName);
          configureStreamBoundary(elementBoundary, elementBoundaryAdj, i);
       }
+      
+      // Create adjacent boundary
+      cellName = String.format(
+            "%s%0" + numCellsDigits.toString() + "d", 
+            cellNameRoot,
+            numCells
+            );
+      boundaryName = String.format(
+            "%s%0" + numCellsDigits.toString() + "d_ext", 
+            boundaryNameRoot,
+            numCells
+            );
+      elementBoundary = documentBoundary.createBoundaryElement(
+            boundaryName, cellName);
+      configureDownstreamBoundary(elementBoundary, numCells);
    }
 
    /**
@@ -179,5 +200,17 @@ public abstract class StreamBuilderInputProcessorXML<MIT extends StreamMetaInput
     */
    protected abstract void configureStreamBoundary(ElementBoundary elementBoundary, 
          ElementBoundary elementBoundaryAdj, int index);
+
+   /**
+    * Configure the downstream boundary
+    * 
+    * @param elementBoundary
+    *       XML element for the boundary
+    * @param indexLastCell
+    *       index of the last cell
+    * @throws Exception 
+    */
+   protected abstract void configureDownstreamBoundary(ElementBoundary elementBoundary,
+         long indexLastCell) throws Exception;
 
 }

@@ -3,7 +3,6 @@ package org.payn.stream;
 import java.io.File;
 import java.util.HashMap;
 
-import org.payn.ktrans.StreamSimulatorMatrixLoader;
 import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixLoader;
 import org.payn.simulation.OutputProcessorFactory;
@@ -15,7 +14,7 @@ import org.payn.simulation.OutputProcessorFactoryAbstract;
  * @author robpayn
  *
  */
-public class StreamSimulator extends NEOCHSimulator {
+public class SimulatorStream extends SimulatorNEOCH {
    
    /**
     * Entry point for stream simulations
@@ -30,7 +29,7 @@ public class StreamSimulator extends NEOCHSimulator {
          HashMap<String,String>argMap = MatrixLoader.createArgMap(args);
          File workingDir = new File(System.getProperty("user.dir"));
          
-         StreamSimulator simulator = new StreamSimulator(argMap, workingDir);
+         SimulatorStream simulator = new SimulatorStream(argMap, workingDir);
          
          // Check for configuration file in file system
          if (!argMap.containsKey("config"))
@@ -68,7 +67,7 @@ public class StreamSimulator extends NEOCHSimulator {
     * @param argMap
     * @param workingDir
     */
-   public StreamSimulator(HashMap<String, String> argMap, File workingDir) 
+   public SimulatorStream(HashMap<String, String> argMap, File workingDir) 
    {
       this.argMap = argMap;
       this.workingDir = workingDir;
@@ -83,8 +82,8 @@ public class StreamSimulator extends NEOCHSimulator {
          public void addMetabolismBuilderInputProcessor(File workingDir, String configPath)
                throws Exception 
          {
-            new MetabolismBuilderInputProcessorXML(
-                  new MetabolismMetaInputXML(workingDir, configPath, "streambuilder"), 
+            new InputProcessorXMLMetabolismBuilder(
+                  new MetaInputXMLMetabolism(workingDir, configPath, "streambuilder"), 
                   getSimulator()
                   );
          }
@@ -108,7 +107,7 @@ public class StreamSimulator extends NEOCHSimulator {
    @Override
    public HolonMatrix createMatrix() throws Exception 
    {
-      return StreamSimulatorMatrixLoader.initializeStreamSimulator(
+      return MatrixLoaderStreamSimulator.initializeStreamSimulator(
             argMap, 
             workingDir
             );

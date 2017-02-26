@@ -9,7 +9,7 @@ import org.payn.simulation.SimulatorAbstract;
  * @author robpayn
  *
  */
-public abstract class NEOCHSimulator extends SimulatorAbstract {
+public abstract class SimulatorNEOCH extends SimulatorAbstract {
    
    /**
     * NEOCH model matrix

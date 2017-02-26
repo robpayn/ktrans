@@ -10,7 +10,7 @@ import org.payn.chsm.io.xml.ElementHelper;
  * @author robpayn
  *
  */
-public abstract class StreamMetaInputXML extends NEOCHMetaInputXML {
+public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
 
    /**
     * Element for channel geometry configuration
@@ -32,7 +32,7 @@ public abstract class StreamMetaInputXML extends NEOCHMetaInputXML {
     * @param elementName
     * @throws Exception
     */
-   public StreamMetaInputXML(File workingDir, String path,
+   public MetaInputXMLStream(File workingDir, String path,
          String elementName) throws Exception 
    {
       super(workingDir, path, elementName);
@@ -165,6 +165,17 @@ public abstract class StreamMetaInputXML extends NEOCHMetaInputXML {
    public Double getWieleSlope()
    {
       return Double.valueOf(getFlowElement().getAttribute("wieleSlope"));
+   }
+
+   /**
+    * Get the slope of the Wiele friction vs. depth relationship
+    * 
+    * @return
+    *       initial channel depth
+    */
+   public Double getInitialFlow()
+   {
+      return Double.valueOf(getFlowElement().getAttribute("initialFlow"));
    }
 
 }

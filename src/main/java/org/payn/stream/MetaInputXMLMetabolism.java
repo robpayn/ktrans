@@ -8,7 +8,7 @@ import java.io.File;
  * @author robpayn
  *
  */
-public class MetabolismMetaInputXML extends StreamMetaInputXML {
+public class MetaInputXMLMetabolism extends MetaInputXMLStream {
 
    /**
     * Construct a new instance that uses the provided working directory,
@@ -20,7 +20,7 @@ public class MetabolismMetaInputXML extends StreamMetaInputXML {
     * @param elementName
     * @throws Exception
     */
-   public MetabolismMetaInputXML(File workingDir, String path,
+   public MetaInputXMLMetabolism(File workingDir, String path,
          String elementName) throws Exception 
    {
       super(workingDir, path, elementName);
