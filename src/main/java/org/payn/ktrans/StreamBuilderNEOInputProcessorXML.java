@@ -23,7 +23,8 @@ import org.payn.simulation.InputProcessorAbstract;
  * @author v78h241
  *
  */
-public class StreamBuilderNEOInputProcessorXML extends InputProcessorAbstract<StreamBuilderMetaInputXML,StreamSimulatorNEO> {
+public class StreamBuilderNEOInputProcessorXML 
+      extends InputProcessorAbstract<StreamBuilderMetaInputXML,StreamSimulatorNEO> {
 
    /**
     * Constructor 
@@ -436,7 +437,7 @@ public class StreamBuilderNEOInputProcessorXML extends InputProcessorAbstract<St
          documentBoundary.write(boundaryFile.getParentFile());
       }
       
-      sim.initializeModel();
+      simulator.initializeModel();
    }
 
 }

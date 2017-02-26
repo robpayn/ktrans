@@ -18,6 +18,7 @@ import org.payn.neoch.io.MatrixLoaderXML;
 import org.payn.neoch.io.OutputHandlerXMLSerialFactoryXML;
 import org.payn.neoch.processors.ControllerNEORKTwo;
 import org.payn.resources.solute.ResourceSolute;
+import org.payn.resources.water.ResourceWater;
 
 /**
  * Matrix loader implementing some default configuration
@@ -98,7 +99,16 @@ public class StreamSimulatorMatrixLoader extends MatrixLoaderXML {
       Resource resource = super.getResource(resourceElem);
       if (resource == null)
       {
-         resource = new ResourceSolute();
+         switch(resourceElem.getName())
+         {
+            case "water":
+               resource = new ResourceWater();
+               break;
+            case "cons":
+            case "active":
+               resource = new ResourceSolute();
+               break;
+         }
       }
       return resource;
    }
