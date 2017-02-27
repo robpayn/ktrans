@@ -1,6 +1,7 @@
 package org.payn.stream;
 
 import org.payn.chsm.Behavior;
+import org.payn.chsm.io.file.interpolate.ProcessorInterpolateSnapshotTable;
 import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.neoch.io.xmltools.ElementHolonMatrix;
@@ -127,6 +128,31 @@ public class InputProcessorXMLMetabolismBuilder
       elementBehavior.createInitValueElement(
             ResourceWater.NAME_ACTIVE_WIDTH_AVG, 
             Double.toString(averageWidth), 
+            null
+            );
+   }
+
+   @Override
+   protected void configureUpstreamBoundary(ElementBoundary elementBoundary,
+         int indexFirstCell) throws Exception 
+   {
+      ElementBehaviorMatrix elementBehavior =
+            elementBoundary.createBehaviorElement(
+                  this.resourceWater.getBehavior(ResourceWater.BEHAVIOR_FLOW_INTERPOLATE)
+                  );
+      elementBehavior.createInitValueElement(
+            ProcessorInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
+            metaInput.getUpstreamFlowDelimiter(), 
+            null
+            );
+      elementBehavior.createInitValueElement(
+            ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
+            metaInput.getUpstreamFlowPath(), 
+            null
+            );
+      elementBehavior.createInitValueElement(
+            ProcessorInterpolateSnapshotTable.REQ_STATE_TYPE, 
+            metaInput.getUpstreamInterpType(), 
             null
             );
    }

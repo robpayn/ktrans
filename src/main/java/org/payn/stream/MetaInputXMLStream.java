@@ -177,5 +177,38 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
    {
       return Double.valueOf(getFlowElement().getAttribute("initialFlow"));
    }
+  
+   /**
+    * Get the delimiter for the upstream flow file
+    * 
+    * @return
+    *       delimiter character
+    */
+   public String getUpstreamFlowDelimiter()
+   {
+      return getFlowElement().getAttribute("upstreamDelimiter");
+   }
+   
+   /**
+    * Get the path to the interpolation file for upstream boundary
+    * 
+    * @return
+    *       relative path to working directory
+    */
+   public String getUpstreamFlowPath()
+   {
+      return getFlowElement().getAttribute("upstreamPath");
+   }
+   
+   /**
+    * Get the interpolation type for upstream boundary
+    * 
+    * @return
+    *       interpolation type
+    */
+   public String getUpstreamInterpType()
+   {
+      return getFlowElement().getAttribute("upstreamInterpType");
+   }
 
 }

@@ -119,6 +119,16 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
       elementCell = documentCell.createCellElement(cellName);
       configureStreamCell(elementCell, 1);
 
+      // Create upstream boundary
+      boundaryName = String.format(
+            "ext_%s%0" + numCellsDigits.toString() + "d", 
+            boundaryNameRoot,
+            1
+            );
+      elementBoundary = documentBoundary.createBoundaryElement(
+            boundaryName, cellName);
+      configureUpstreamBoundary(elementBoundary, 1);
+
       // Cycle through cells
       for (int i = 2; i <= numCells; i++)
       {
@@ -156,7 +166,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
          configureStreamBoundary(elementBoundary, elementBoundaryAdj, i);
       }
       
-      // Create adjacent boundary
+      // Create downstream boundary
       cellName = String.format(
             "%s%0" + numCellsDigits.toString() + "d", 
             cellNameRoot,
@@ -200,6 +210,19 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
     */
    protected abstract void configureStreamBoundary(ElementBoundary elementBoundary, 
          ElementBoundary elementBoundaryAdj, int index);
+
+   /**
+    * Configure the upstream boundary
+    * 
+    * @param elementBoundary
+    *       XML element for the boundary
+    * @param indexFirstCell
+    *       index of first cell
+    * @throws Exception
+    *       if error in configuring boundary       
+    */
+   protected abstract void configureUpstreamBoundary(ElementBoundary elementBoundary,
+         int indexFirstCell) throws Exception;
 
    /**
     * Configure the downstream boundary
