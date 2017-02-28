@@ -143,17 +143,17 @@ public class InputProcessorXMLMetabolismBuilder
                   );
       elementBehavior.createInitValueElement(
             ProcessorInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
-            metaInput.getUpstreamFlowDelimiter(), 
+            metaInput.getAttributeUpstreamFlowDelimiter(), 
             null
             );
       elementBehavior.createInitValueElement(
             ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
-            metaInput.getUpstreamFlowPath(), 
+            metaInput.getAttributeUpstreamFlowPath(), 
             null
             );
       elementBehavior.createInitValueElement(
             ProcessorInterpolateSnapshotTable.REQ_STATE_TYPE, 
-            metaInput.getUpstreamInterpType(), 
+            metaInput.getAttributeUpstreamInterpType(), 
             null
             );
    }

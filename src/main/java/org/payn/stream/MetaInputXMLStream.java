@@ -3,6 +3,7 @@ package org.payn.stream;
 import java.io.File;
 
 import org.payn.chsm.io.xml.ElementHelper;
+import org.w3c.dom.Element;
 
 /**
  * Abstract meta input for a NEOCH stream model
@@ -11,16 +12,202 @@ import org.payn.chsm.io.xml.ElementHelper;
  *
  */
 public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
+   
+   /**
+    * An element helper for the geometry element
+    * 
+    * @author v78h241
+    *
+    */
+   private class ElementGeometry extends ElementHelper {
+
+      /**
+       * Elevation element
+       */
+      private ElementHelper elementElevation;
+      
+      /**
+       * Active channel element
+       */
+      private ElementHelper elementActiveChannel;
+
+      /**
+       * Construct a new instance associated with the provided element
+       * 
+       * @param helper 
+       *        the element helper containing the geometry element
+       */
+      public ElementGeometry(ElementHelper helper) 
+      {
+         super(helper.getFirstChildElement("channelgeometry"));
+      }
+
+      /**
+       * Get the length attribute value
+       * 
+       * @return
+       *        length value
+       */
+      public String getAttributeStreamLength() 
+      {
+         return getAttribute("length");
+      }
+      
+      /**
+       * Get the elevation element
+       * 
+       * @return
+       *       Elevation element reference
+       */
+      private ElementHelper getElementElevation() 
+      {
+         if (elementElevation == null)
+         {
+            elementElevation = helper.getFirstChildElementHelper("elevation");
+         }
+         return elementElevation;
+      }
+
+      /**
+       * Get the element for active channel configuration
+       * 
+       * @return
+       *        active channel element
+       */
+      private ElementHelper getElementActiveChannel() 
+      {
+         if (elementActiveChannel == null)
+         {
+            elementActiveChannel = helper.getFirstChildElementHelper("activechannel");
+         }
+         return elementActiveChannel;
+      }
+
+      /**
+       * Get the datum attribute value
+       * 
+       * @return
+       *        datum value
+       */
+      public String getAttributeElevationDatum() 
+      {
+         return getElementElevation().getAttribute("datum");
+      }
+
+      /**
+       * Get the bed slope attribute value
+       * 
+       * @return
+       *        bed slope attribute value
+       */
+      public String getAttributeBedSlope() 
+      {
+         return getElementElevation().getAttribute("bedSlope");
+      }
+
+      /**
+       * Get the value for the depth attribute
+       * 
+       * @return
+       *        value for the depth attribute
+       */
+      public String getAttributeActiveDepth() 
+      {
+         return getElementActiveChannel().getAttribute("depth");
+      }
+
+      /**
+       * Get the value for the average width attribute
+       * 
+       * @return
+       *        average width value
+       */
+      public String getAttributeAverageWidth() 
+      {
+         return getElementActiveChannel().getAttribute("averageWidth");
+      }
+
+   }
+
+   private class ElementFlow extends ElementHelper {
+
+      private ElementHelper elementFricton;
+      private ElementHelper elementUpstreamBound;
+
+      public ElementFlow(ElementHelper helper) 
+      {
+         super(helper.getFirstChildElement("flow"));
+      }
+
+      public String getAttributeInitialDepth() 
+      {
+         return getAttribute("initialDepth");
+      }
+      
+      public String getAttributeInitialFlow() 
+      {
+         return getAttribute("initialFlow");
+      }
+
+      private ElementHelper getElementFriction() 
+      {
+         if (elementFricton == null)
+         {
+            elementFricton = helper.getFirstChildElementHelper("friction");
+         }
+         return elementFricton;
+      }
+
+      private ElementHelper getElementUpstreamBound() 
+      {
+         if (elementUpstreamBound == null)
+         {
+            elementUpstreamBound = helper.getFirstChildElementHelper("upstreambound");
+         }
+         return elementUpstreamBound;
+      }
+
+      public String getAttributeWieleInt() 
+      {
+         return getElementFriction().getAttribute("wieleInt");
+      }
+
+      public String getAttributeWieleSlope() 
+      {
+         return getElementFriction().getAttribute("wieleSlope");
+      }
+
+      public String getAttributeUpstreamFlowPath() 
+      {
+         return getElementUpstreamBound().getAttribute("upstreamPath");
+      }
+
+      public String getAttributeUpstreamFlowDelimeter() 
+      {
+         return getElementUpstreamBound().getAttribute("upstreamDelimiter");
+      }
+
+      public String getAttributeUpstreamInterpType() 
+      {
+         return getElementUpstreamBound().getAttribute("upstreamInterpType");
+      }
+
+   }
+   
+   /**
+    * Element helper for the model structure
+    */
+   private ElementHelper elementStructure;
 
    /**
     * Element for channel geometry configuration
     */
-   protected ElementHelper geometryElement;
+   private ElementGeometry elementGeometry;
    
    /**
     * Element for the flow configuration
     */
-   private ElementHelper flowElement;
+   private ElementFlow elementFlow;
 
    /**
     * Construct a new instance that uses the provided working directory,
@@ -39,18 +226,31 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
    }
    
    /**
+    * Get the model structure element
+    * 
+    * @return
+    */
+   private ElementHelper getElementModelStructure() 
+   {
+      if (elementStructure == null)
+      {
+         elementStructure = helper.getFirstChildElementHelper("modelstructure");
+      }
+      return elementStructure;
+   }
+   /**
     * Get the geometry element
     * 
     * @return
     *       geometry element helper object
     */
-   public ElementHelper getGeometryElement()
+   public ElementGeometry getElementGeometry()
    {
-      if (geometryElement == null)
+      if (elementGeometry == null)
       {
-         geometryElement = helper.getFirstChildElementHelper("channelgeometry");
+         elementGeometry = new ElementGeometry(helper);
       }
-      return geometryElement;
+      return elementGeometry;
    }
 
    /**
@@ -59,13 +259,13 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       flow element helper object
     */
-   private ElementHelper getFlowElement() 
+   private ElementFlow getElementFlow() 
    {
-      if (flowElement == null)
+      if (elementFlow == null)
       {
-         flowElement = helper.getFirstChildElementHelper("flow");
+         elementFlow = new ElementFlow(helper);
       }
-      return flowElement;
+      return elementFlow;
    }
 
   /**
@@ -74,9 +274,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       number of cells
     */
-   public Long getNumCells() 
+   public Long getAttributeNumCells() 
    {
-      return Long.valueOf(helper.getAttribute("numCells"));
+      return Long.valueOf(getElementModelStructure().getAttribute("numCells"));
    }
    
    /**
@@ -85,9 +285,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       stream length
     */
-   public Double getStreamLength()
+   public Double getAttributeStreamLength()
    {
-      return Double.valueOf(getGeometryElement().getAttribute("length"));
+      return Double.valueOf(getElementGeometry().getAttributeStreamLength());
    }
 
    /**
@@ -96,9 +296,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       stream length
     */
-   public Double getBedSlope()
+   public Double getAttributeBedSlope()
    {
-      return Double.valueOf(getGeometryElement().getAttribute("bedSlope"));
+      return Double.valueOf(getElementGeometry().getAttributeBedSlope());
    }
 
    /**
@@ -107,9 +307,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       stream length
     */
-   public Double getElevationDatum()
+   public Double getAttributeElevationDatum()
    {
-      return Double.valueOf(getGeometryElement().getAttribute("elevationDatum"));
+      return Double.valueOf(getElementGeometry().getAttributeElevationDatum());
    }
 
    /**
@@ -118,9 +318,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       active channel depth
     */
-   public Double getActiveDepth()
+   public Double getAttributeActiveDepth()
    {
-      return Double.valueOf(getGeometryElement().getAttribute("activeDepth"));
+      return Double.valueOf(getElementGeometry().getAttributeActiveDepth());
    }
 
    /**
@@ -129,9 +329,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       initial channel depth
     */
-   public Double getInitialDepth()
+   public Double getAttributeInitialDepth()
    {
-      return Double.valueOf(getGeometryElement().getAttribute("initialDepth"));
+      return Double.valueOf(getElementFlow().getAttributeInitialDepth());
    }
 
    /**
@@ -140,9 +340,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       initial channel depth
     */
-   public Double getAverageWidth()
+   public Double getAttributeAverageWidth()
    {
-      return Double.valueOf(getGeometryElement().getAttribute("averageWidth"));
+      return Double.valueOf(getElementGeometry().getAttributeAverageWidth());
    }
 
    /**
@@ -151,9 +351,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       initial channel depth
     */
-   public Double getWieleInt()
+   public Double getAttributeWieleInt()
    {
-      return Double.valueOf(getFlowElement().getAttribute("wieleInt"));
+      return Double.valueOf(getElementFlow().getAttributeWieleInt());
    }
 
    /**
@@ -162,9 +362,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       initial channel depth
     */
-   public Double getWieleSlope()
+   public Double getAttributeWieleSlope()
    {
-      return Double.valueOf(getFlowElement().getAttribute("wieleSlope"));
+      return Double.valueOf(getElementFlow().getAttributeWieleSlope());
    }
 
    /**
@@ -173,9 +373,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       initial channel depth
     */
-   public Double getInitialFlow()
+   public Double getAttributeInitialFlow()
    {
-      return Double.valueOf(getFlowElement().getAttribute("initialFlow"));
+      return Double.valueOf(getElementFlow().getAttributeInitialFlow());
    }
   
    /**
@@ -184,9 +384,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       delimiter character
     */
-   public String getUpstreamFlowDelimiter()
+   public String getAttributeUpstreamFlowDelimiter()
    {
-      return getFlowElement().getAttribute("upstreamDelimiter");
+      return getElementFlow().getAttributeUpstreamFlowDelimeter();
    }
    
    /**
@@ -195,9 +395,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       relative path to working directory
     */
-   public String getUpstreamFlowPath()
+   public String getAttributeUpstreamFlowPath()
    {
-      return getFlowElement().getAttribute("upstreamPath");
+      return getElementFlow().getAttributeUpstreamFlowPath();
    }
    
    /**
@@ -206,9 +406,31 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       interpolation type
     */
-   public String getUpstreamInterpType()
+   public String getAttributeUpstreamInterpType()
    {
-      return getFlowElement().getAttribute("upstreamInterpType");
+      return getElementFlow().getAttributeUpstreamInterpType();
    }
 
+   /**
+    * Get the name for cells
+    * 
+    * @return
+    *       cell name as a string
+    */
+   public String getAttributeCellName()
+   {
+      return getElementModelStructure().getAttribute("cellName");
+   }
+   
+   /**
+    * Get the name for cells
+    * 
+    * @return
+    *       cell name as a string
+    */
+   public String getAttributeBoundaryName()
+   {
+      return getElementModelStructure().getAttribute("boundaryName");
+   }
+   
 }

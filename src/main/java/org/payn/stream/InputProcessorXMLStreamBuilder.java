@@ -99,32 +99,34 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
    {
       System.out.println("Building the stream matrix...");
 
-      // Geometry
-      numCells = metaInput.getNumCells();
+      // Stream structure
+      numCells = metaInput.getAttributeNumCells();
       numCellsDigits = new Integer(1 + (int)Math.log10(numCells));
-      cellNameRoot = metaInput.getCellName();
-      boundaryNameRoot = metaInput.getBoundaryName();
+      cellNameRoot = metaInput.getAttributeCellName();
+      boundaryNameRoot = metaInput.getAttributeBoundaryName();
+
+      // Geometry
+      streamLength = metaInput.getAttributeStreamLength();
+      cellLength = streamLength / numCells;
+      elevationDatum = metaInput.getAttributeElevationDatum();
+      bedSlope = metaInput.getAttributeBedSlope();
+      activeDepth = metaInput.getAttributeActiveDepth();
+      averageWidth = metaInput.getAttributeAverageWidth();
+      
+      // Flow
+      initialDepth = metaInput.getAttributeInitialDepth();
+      initialFlow = metaInput.getAttributeInitialFlow();
+      wieleInt = metaInput.getAttributeWieleInt();
+      wieleSlope = metaInput.getAttributeWieleSlope();
+      
+      configureStreamLoop();
       
       String cellName;
       String boundaryName;
       ElementHolonMatrix elementCell;
       ElementBoundary elementBoundary;
       ElementBoundary elementBoundaryAdj;
-      
-      streamLength = metaInput.getStreamLength();
-      cellLength = streamLength / numCells;
-      bedSlope = metaInput.getBedSlope();
-      elevationDatum = metaInput.getElevationDatum();
-      activeDepth = metaInput.getActiveDepth();
-      initialDepth = metaInput.getInitialDepth();
-      averageWidth = metaInput.getAverageWidth();
-      
-      initialFlow = metaInput.getInitialFlow();
-      wieleInt = metaInput.getWieleInt();
-      wieleSlope = metaInput.getWieleSlope();
-      
-      configureStreamLoop();
-      
+
       // Create the first cell
       cellName = String.format(
             "%s%0" + numCellsDigits.toString() + "d", 

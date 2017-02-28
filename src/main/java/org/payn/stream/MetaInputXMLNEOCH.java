@@ -68,26 +68,4 @@ public abstract class MetaInputXMLNEOCH extends MetaInputXML<XMLDocumentConfig> 
       return xmlInputElement.getBoundaryFile();
    }
 
-   /**
-    * Get the name for cells
-    * 
-    * @return
-    *       cell name as a string
-    */
-   public String getCellName()
-   {
-      return helper.getAttribute("cellName");
-   }
-   
-   /**
-    * Get the name for cells
-    * 
-    * @return
-    *       cell name as a string
-    */
-   public String getBoundaryName()
-   {
-      return helper.getAttribute("boundaryName");
-   }
-   
 }
