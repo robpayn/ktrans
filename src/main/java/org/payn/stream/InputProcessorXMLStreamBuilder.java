@@ -69,6 +69,21 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
    protected double initialFlow;
 
    /**
+    * Number of digits in cell count
+    */
+   protected Integer numCellsDigits;
+
+   /**
+    * Root string for cell names
+    */
+   protected String cellNameRoot;
+
+   /**
+    * Root string for boundary names
+    */
+   protected String boundaryNameRoot;
+
+   /**
     * Construct a new instance with the given meta input and simulator
     * 
     * @param metaInput
@@ -86,9 +101,9 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
 
       // Geometry
       numCells = metaInput.getNumCells();
-      Integer numCellsDigits = new Integer(1 + (int)Math.log10(numCells));
-      String cellNameRoot = metaInput.getCellName();
-      String boundaryNameRoot = metaInput.getBoundaryName();
+      numCellsDigits = new Integer(1 + (int)Math.log10(numCells));
+      cellNameRoot = metaInput.getCellName();
+      boundaryNameRoot = metaInput.getBoundaryName();
       
       String cellName;
       String boundaryName;

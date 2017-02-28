@@ -7,6 +7,7 @@ import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 import org.payn.resources.water.ResourceWater;
 import org.payn.resources.water.channel.boundary.dynamicwave.BehaviorDynamicWaveWiele;
+import org.payn.resources.water.channel.boundary.dynamicwave.downstream.BehaviorDynamicWaveDownstream;
 import org.payn.resources.water.channel.cell.BehaviorChannelStorage;
 
 /**
@@ -161,8 +162,20 @@ public class InputProcessorXMLMetabolismBuilder
    protected void configureDownstreamBoundary(ElementBoundary elementBoundary,
          long indexLastCell) throws Exception 
    {
-      elementBoundary.createBehaviorElement(
-            this.resourceWater.getBehavior(ResourceWater.BEHAVIOR_DYNAMIC_WAVE_DOWNSTREAM)
+      ElementBehaviorMatrix elementBehavior =
+            elementBoundary.createBehaviorElement(
+                  this.resourceWater.getBehavior(ResourceWater.BEHAVIOR_DYNAMIC_WAVE_DOWNSTREAM)
+                  );
+      String boundaryName = String.format(
+            "%s%0" + numCellsDigits.toString() + "d_%0" + numCellsDigits.toString() + "d", 
+            boundaryNameRoot,
+            indexLastCell,
+            indexLastCell - 1
+            );
+      elementBehavior.createInitValueElement(
+            BehaviorDynamicWaveDownstream.NAME_UPSTREAM_BOUNDARY, 
+            boundaryName, 
+            null
             );
    }
 
