@@ -6,6 +6,7 @@ import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 import org.payn.resources.water.ResourceWater;
+import org.payn.resources.water.channel.boundary.dynamicwave.BehaviorDynamicWave;
 import org.payn.resources.water.channel.boundary.dynamicwave.BehaviorDynamicWaveWiele;
 import org.payn.resources.water.channel.boundary.dynamicwave.downstream.BehaviorDynamicWaveDownstream;
 import org.payn.resources.water.channel.cell.BehaviorChannelStorage;
@@ -59,6 +60,7 @@ public class InputProcessorXMLMetabolismBuilder
             resourceWater.getBehavior(ResourceWater.BEHAVIOR_CHANNEL_STORAGE);
       behaviorDynamicWaveWiele =
             resourceWater.getBehavior(ResourceWater.BEHAVIOR_DYNAMIC_WAVE_WIELE);
+      
    }
 
    @Override
@@ -93,11 +95,24 @@ public class InputProcessorXMLMetabolismBuilder
             Double.toString(bedElevation + activeDepth), 
             null
             );
-      elementBehavior.createInitValueElement(
-            ResourceWater.NAME_WATER_HEAD, 
-            Double.toString(bedElevation + initialDepth), 
-            null
-            );
+      if (isInitialConditions)
+      {
+         elementBehavior.createInitValueElement(
+               ResourceWater.NAME_WATER_HEAD, 
+               initialConditionsCellMap.get(
+                     elementBehavior.getName()+ "." + ResourceWater.NAME_WATER_HEAD).get(
+                           elementCell.getName()).toString(),
+               null
+               );
+      }
+      else
+      {
+         elementBehavior.createInitValueElement(
+               ResourceWater.NAME_WATER_HEAD, 
+               Double.toString(bedElevation + initialDepth), 
+               null
+               );
+      }
       elementBehavior.createInitValueElement(
             ResourceWater.NAME_ACTIVE_WIDTH_AVG, 
             Double.toString(averageWidth), 
@@ -111,11 +126,31 @@ public class InputProcessorXMLMetabolismBuilder
    {
       ElementBehaviorMatrix elementBehavior = 
             elementBoundary.createBehaviorElement(behaviorDynamicWaveWiele);
-      elementBehavior.createInitValueElement(
-            ResourceWater.NAME_WATER_FLOW, 
-            Double.toString(initialFlow), 
-            null
-            );
+      if (isInitialConditions)
+      {
+         elementBehavior.createInitValueElement(
+               ResourceWater.NAME_WATER_FLOW, 
+               initialConditionsBoundMap.get(
+                     elementBehavior.getName()+ "." + ResourceWater.NAME_WATER_FLOW).get(
+                           elementBoundary.getName()).toString(),
+               null
+               );
+         elementBehavior.createInitValueElement(
+               BehaviorDynamicWave.NAME_VELOCITY, 
+               initialConditionsBoundMap.get(
+                     elementBehavior.getName()+ "." + BehaviorDynamicWave.NAME_VELOCITY).get(
+                           elementBoundary.getName()).toString(),
+               null
+               );
+      }
+      else
+      {
+         elementBehavior.createInitValueElement(
+               ResourceWater.NAME_WATER_FLOW, 
+               Double.toString(initialFlow), 
+               null
+               );
+      }
       elementBehavior.createInitValueElement(
             BehaviorDynamicWaveWiele.REQ_STATE_WIELEINT, 
             Double.toString(wieleInt), 

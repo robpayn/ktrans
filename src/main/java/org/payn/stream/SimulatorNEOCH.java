@@ -1,5 +1,7 @@
 package org.payn.stream;
 
+import java.io.File;
+
 import org.payn.neoch.HolonMatrix;
 import org.payn.simulation.SimulatorAbstract;
 
@@ -15,6 +17,18 @@ public abstract class SimulatorNEOCH extends SimulatorAbstract {
     * NEOCH model matrix
     */
    protected HolonMatrix matrix;
+
+   /**
+    * Constructor 
+    * 
+    * @param args
+    * @param workingDir
+    * @throws Exception
+    */
+   public SimulatorNEOCH(String[] args, File workingDir) throws Exception 
+   {
+      super(args, workingDir);
+   }
 
    /**
     * Initialize the model

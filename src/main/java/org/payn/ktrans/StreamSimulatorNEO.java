@@ -1,10 +1,7 @@
 package org.payn.ktrans;
 
 import java.io.File;
-import java.util.HashMap;
-
 import org.payn.neoch.HolonMatrix;
-import org.payn.neoch.MatrixLoader;
 import org.payn.simulation.InputProcessorFactory;
 import org.payn.simulation.OutputProcessorFactory;
 import org.payn.simulation.OutputProcessorFactoryAbstract;
@@ -29,13 +26,11 @@ public class StreamSimulatorNEO extends SimulatorAbstract {
    {
       try 
       {
-         HashMap<String,String>argMap = MatrixLoader.createArgMap(args);
          File workingDir = new File(System.getProperty("user.dir"));
-         
-         StreamSimulatorNEO simulator = new StreamSimulatorNEO(argMap, workingDir);
+         StreamSimulatorNEO simulator = new StreamSimulatorNEO(args, workingDir);
          
          // Check for configuration file in file system
-         if (!argMap.containsKey("config"))
+         if (!simulator.argMap.containsKey("config"))
          {
             throw new Exception(
                   "Must provide an argument for configuration file relative to working directory " +
@@ -43,7 +38,7 @@ public class StreamSimulatorNEO extends SimulatorAbstract {
                   );
          }
 
-         simulator.getInputProcessorFactory().addBuilderInputProcessor(workingDir, argMap.get("config"));
+         simulator.getInputProcessorFactory().addBuilderInputProcessor(workingDir, simulator.argMap.get("config"));
          simulator.execute();
       } 
       catch (Exception e) 
@@ -53,16 +48,6 @@ public class StreamSimulatorNEO extends SimulatorAbstract {
    }
 
    /**
-    * Command line arguments (java) for simulator
-    */
-   private HashMap<String,String> argMap;
-   
-   /**
-    * Working directory for the simulator
-    */
-   private File workingDir;
-
-   /**
     * NEO matrix
     */
    private HolonMatrix matrix;
@@ -70,15 +55,15 @@ public class StreamSimulatorNEO extends SimulatorAbstract {
    /**
     * Constructor based on an argument map and working directory
     * 
-    * @param argMap
-    *       map of command line arguments ("=" delimiter expected for key/value pairs
+    * @param args
+    *       array of command line arguments
     * @param workingDir
     *       working directory
+    * @throws Exception 
     */
-   public StreamSimulatorNEO(HashMap<String,String> argMap, File workingDir)
+   public StreamSimulatorNEO(String[] args, File workingDir) throws Exception
    {
-      this.argMap = argMap;
-      this.workingDir = workingDir;
+      super(args, workingDir);
    }
 
    /**

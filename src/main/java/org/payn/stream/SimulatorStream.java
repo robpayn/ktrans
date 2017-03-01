@@ -1,10 +1,7 @@
 package org.payn.stream;
 
 import java.io.File;
-import java.util.HashMap;
-
 import org.payn.neoch.HolonMatrix;
-import org.payn.neoch.MatrixLoader;
 import org.payn.simulation.OutputProcessorFactory;
 import org.payn.simulation.OutputProcessorFactoryAbstract;
 
@@ -26,13 +23,11 @@ public class SimulatorStream extends SimulatorNEOCH {
    {
       try 
       {
-         HashMap<String,String>argMap = MatrixLoader.createArgMap(args);
          File workingDir = new File(System.getProperty("user.dir"));
-         
-         SimulatorStream simulator = new SimulatorStream(argMap, workingDir);
+         SimulatorStream simulator = new SimulatorStream(args, workingDir);
          
          // Check for configuration file in file system
-         if (!argMap.containsKey("config"))
+         if (!simulator.argMap.containsKey("config"))
          {
             throw new Exception(
                   "Must provide an argument for configuration file relative to working directory " +
@@ -41,7 +36,7 @@ public class SimulatorStream extends SimulatorNEOCH {
          }
 
          simulator.getInputProcessorFactory().addMetabolismBuilderInputProcessor(
-               workingDir, argMap.get("config")
+               workingDir, simulator.argMap.get("config")
                );
          simulator.execute();
       } 
@@ -52,25 +47,15 @@ public class SimulatorStream extends SimulatorNEOCH {
    }
 
    /**
-    * Map of command line arguments
-    * (assumes "&ltkey&gt=&ltvalue&gt" form for each argument)
-    */
-   private HashMap<String, String> argMap;
-   
-   /**
-    * Working directory for simulation
-    */
-   private File workingDir;
-
-   /**
-    * Construct a new instance based on the provided argument map and working directory
-    * @param argMap
+    * Construct a new instance based on the provided command line arguments and working directory
+    * 
+    * @param args
     * @param workingDir
+    * @throws Exception 
     */
-   public SimulatorStream(HashMap<String, String> argMap, File workingDir) 
+   public SimulatorStream(String[] args, File workingDir) throws Exception
    {
-      this.argMap = argMap;
-      this.workingDir = workingDir;
+      super(args, workingDir);
    }
 
    @Override

@@ -1,9 +1,12 @@
 package org.payn.stream;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import org.payn.chsm.io.xml.ElementHelper;
-import org.w3c.dom.Element;
 
 /**
  * Abstract meta input for a NEOCH stream model
@@ -129,26 +132,63 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
 
    }
 
+   /**
+    * Element for flow configuration data
+    * 
+    * @author v78h241
+    *
+    */
    private class ElementFlow extends ElementHelper {
 
+      /**
+       * Element for friction
+       */
       private ElementHelper elementFricton;
+      
+      /**
+       * Element for upstream boundary conditions
+       */
       private ElementHelper elementUpstreamBound;
 
+      /**
+       * Construct a flow element based on the flow element
+       * in the provided helper
+       * 
+       * @param helper
+       */
       public ElementFlow(ElementHelper helper) 
       {
          super(helper.getFirstChildElement("flow"));
       }
 
+      /**
+       * Get the initial depth attribute
+       * 
+       * @return
+       *    value of initial depth
+       */
       public String getAttributeInitialDepth() 
       {
          return getAttribute("initialDepth");
       }
       
+      /**
+       * Get the initial flow attribute
+       * 
+       * @return
+       *        value of initial flow
+       */
       public String getAttributeInitialFlow() 
       {
          return getAttribute("initialFlow");
       }
 
+      /**
+       * Get the friction element
+       * 
+       * @return
+       *        friction element
+       */
       private ElementHelper getElementFriction() 
       {
          if (elementFricton == null)
@@ -158,6 +198,12 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
          return elementFricton;
       }
 
+      /**
+       * Get the upstream boundary element
+       * 
+       * @return
+       *        upstream boundary element
+       */
       private ElementHelper getElementUpstreamBound() 
       {
          if (elementUpstreamBound == null)
@@ -167,26 +213,56 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
          return elementUpstreamBound;
       }
 
+      /**
+       * Get the Wiele model intercept attribute
+       * 
+       * @return
+       *        value of Wiele model intercept
+       */
       public String getAttributeWieleInt() 
       {
          return getElementFriction().getAttribute("wieleInt");
       }
 
+      /**
+       * Get the Wiele model slope attribute
+       * 
+       * @return
+       *        value of the Wiele model slope
+       */
       public String getAttributeWieleSlope() 
       {
          return getElementFriction().getAttribute("wieleSlope");
       }
 
+      /**
+       * Get the flow path attribute
+       * 
+       * @return
+       *        value of the flow path
+       */
       public String getAttributeUpstreamFlowPath() 
       {
          return getElementUpstreamBound().getAttribute("upstreamPath");
       }
 
+      /**
+       * Get the delimiter attribute
+       * 
+       * @return
+       *        value of the delimiter
+       */
       public String getAttributeUpstreamFlowDelimeter() 
       {
          return getElementUpstreamBound().getAttribute("upstreamDelimiter");
       }
 
+      /**
+       * Get the interpolation type attribute
+       * 
+       * @return
+       *        value of the interpolation type
+       */
       public String getAttributeUpstreamInterpType() 
       {
          return getElementUpstreamBound().getAttribute("upstreamInterpType");
@@ -433,4 +509,106 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       return getElementModelStructure().getAttribute("boundaryName");
    }
    
+   /**
+    * Is the initial conditions flag set?
+    * 
+    * @return
+    *       true if initial conditions flag is set, false otherwise
+    */
+   public boolean isInitialConditions()
+   {
+      return Boolean.valueOf(helper.getAttribute("initialConditions"));
+   }
+   
+   /**
+    * Get the initial conditions cell map
+    * 
+    * @param workingDir 
+    * @param cellNameRoot 
+    * @param numCellsDigits 
+    * 
+    * @return
+    *       map of initial values for cells
+    * @throws Exception 
+    */
+   public LinkedHashMap<String, HashMap<String, Double>> getInitialConditionsCellMap(
+         File workingDir, String cellNameRoot, Integer numCellsDigits) 
+               throws Exception
+   {
+      File file = new File(workingDir.getAbsolutePath() + File.separator + helper.getAttribute("cellPath"));
+      BufferedReader reader = new BufferedReader(new FileReader(file));
+      String[] line = reader.readLine().split(" ");
+      LinkedHashMap<String, HashMap<String, Double>> hashMap = new LinkedHashMap<String, HashMap<String, Double>>();
+      for (String header: line)
+      {
+         hashMap.put(header, new LinkedHashMap<String, Double>());
+      }
+      String[] headers = hashMap.keySet().toArray(new String[0]);
+      int cellCount = 1;
+      while(reader.ready())
+      {
+         line = reader.readLine().split(" ");
+         int column = 0;
+         for (String value: line)
+         {
+            String cellName = String.format(
+                  "%s%0" + numCellsDigits.toString() + "d", 
+                  cellNameRoot,
+                  cellCount
+                  );
+            hashMap.get(headers[column]).put(cellName, Double.valueOf(value));
+            column++;
+         }
+         cellCount++;
+      }
+      reader.close();
+      return hashMap;
+   }
+   
+   /**
+    * Get the initial conditions bound map
+    * 
+    * @param workingDir 
+    * @param boundNameRoot 
+    * @param numCellsDigits 
+    * 
+    * @return
+    *       map of intial values for bounds
+    * @throws Exception 
+    */
+   public LinkedHashMap<String, HashMap<String, Double>> getInitialConditionsBoundMap(
+         File workingDir, String boundNameRoot, Integer numCellsDigits) 
+               throws Exception
+   {
+      File file = new File(workingDir.getAbsolutePath() + File.separator + helper.getAttribute("boundPath"));
+      BufferedReader reader = new BufferedReader(new FileReader(file));
+      String[] line = reader.readLine().split(" ");
+      LinkedHashMap<String, HashMap<String, Double>> hashMap = new LinkedHashMap<String, HashMap<String, Double>>();
+      for (String header: line)
+      {
+         hashMap.put(header, new LinkedHashMap<String, Double>());
+      }
+      String[] headers = hashMap.keySet().toArray(new String[0]);
+      int boundCount = 1;
+      while(reader.ready())
+      {
+         line = reader.readLine().split(" ");
+         int column = 0;
+         for (String value: line)
+         {
+            String boundName = String.format(
+                  "%s%0" + numCellsDigits.toString() + "d_%0" + numCellsDigits.toString() + "d", 
+                  boundNameRoot,
+                  boundCount + 1,
+                  boundCount
+                  );
+            hashMap.get(headers[column]).put(boundName, Double.valueOf(value));
+            column++;
+         }
+         boundCount++;
+      }
+      reader.close();
+      return hashMap;
+   }
+
 }

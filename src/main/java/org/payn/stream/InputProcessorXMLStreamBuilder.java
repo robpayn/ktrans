@@ -1,5 +1,8 @@
 package org.payn.stream;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 
@@ -84,6 +87,21 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
    protected String boundaryNameRoot;
 
    /**
+    * Initial conditions flag
+    */
+   protected boolean isInitialConditions;
+
+   /**
+    * Map of initial conditions for cells
+    */
+   protected LinkedHashMap<String, HashMap<String, Double>> initialConditionsCellMap;
+
+   /**
+    * Map of initial conditions for boundaries
+    */
+   protected LinkedHashMap<String, HashMap<String, Double>> initialConditionsBoundMap;
+
+   /**
     * Construct a new instance with the given meta input and simulator
     * 
     * @param metaInput
@@ -98,12 +116,22 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
    public void configureModel() throws Exception 
    {
       System.out.println("Building the stream matrix...");
+      
 
       // Stream structure
       numCells = metaInput.getAttributeNumCells();
       numCellsDigits = new Integer(1 + (int)Math.log10(numCells));
       cellNameRoot = metaInput.getAttributeCellName();
       boundaryNameRoot = metaInput.getAttributeBoundaryName();
+
+      isInitialConditions = metaInput.isInitialConditions();
+      if (isInitialConditions)
+      {
+         initialConditionsCellMap = metaInput.getInitialConditionsCellMap(
+               simulator.getWorkingDir(), cellNameRoot, numCellsDigits);
+         initialConditionsBoundMap = metaInput.getInitialConditionsBoundMap(
+               simulator.getWorkingDir(), boundaryNameRoot, numCellsDigits);
+      }
 
       // Geometry
       streamLength = metaInput.getAttributeStreamLength();
@@ -138,7 +166,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
 
       // Create upstream boundary
       boundaryName = String.format(
-            "ext_%s%0" + numCellsDigits.toString() + "d", 
+            "%sext_%0" + numCellsDigits.toString() + "d", 
             boundaryNameRoot,
             1
             );
