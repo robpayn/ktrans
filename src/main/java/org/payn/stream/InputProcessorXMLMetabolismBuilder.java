@@ -6,10 +6,6 @@ import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 import org.payn.resources.water.ResourceWater;
-import org.payn.resources.water.channel.boundary.dynamicwave.BehaviorDynamicWave;
-import org.payn.resources.water.channel.boundary.dynamicwave.BehaviorDynamicWaveWiele;
-import org.payn.resources.water.channel.boundary.dynamicwave.downstream.BehaviorDynamicWaveDownstream;
-import org.payn.resources.water.channel.cell.BehaviorChannelStorage;
 
 /**
  * An input processor for building stream metabolism models
@@ -69,18 +65,18 @@ public class InputProcessorXMLMetabolismBuilder
       ElementBehaviorMatrix elementBehavior = 
             elementCell.createBehaviorElement(behaviorChannelStorage);
       elementBehavior.createInitValueElement(
-            BehaviorChannelStorage.NAME_LENGTH, 
+            ResourceWater.NAME_LENGTH, 
             Double.toString(cellLength), 
             null
             );
       double distance = (cellLength * index) - (cellLength / 2);
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_X, 
+            ResourceWater.NAME_COORDINATE_X, 
             Double.toString(distance), 
             null
             );
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_Y, 
+            ResourceWater.NAME_COORDINATE_Y, 
             Double.toString(0), 
             null
             );
@@ -91,7 +87,7 @@ public class InputProcessorXMLMetabolismBuilder
             null
             );
       elementBehavior.createInitValueElement(
-            BehaviorChannelStorage.NAME_BANK_ELEVATION, 
+            ResourceWater.NAME_BANK_ELEVATION, 
             Double.toString(bedElevation + activeDepth), 
             null
             );
@@ -114,7 +110,7 @@ public class InputProcessorXMLMetabolismBuilder
                );
       }
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_ACTIVE_WIDTH_AVG, 
+            ResourceWater.NAME_ACTIVE_CHANNEL_WIDTH_AVERAGE, 
             Double.toString(averageWidth), 
             null
             );
@@ -136,9 +132,9 @@ public class InputProcessorXMLMetabolismBuilder
                null
                );
          elementBehavior.createInitValueElement(
-               BehaviorDynamicWave.NAME_VELOCITY, 
+               ResourceWater.NAME_WATER_VELOCITY, 
                initialConditionsBoundMap.get(
-                     elementBehavior.getName()+ "." + BehaviorDynamicWave.NAME_VELOCITY).get(
+                     elementBehavior.getName()+ "." + ResourceWater.NAME_WATER_VELOCITY).get(
                            elementBoundary.getName()).toString(),
                null
                );
@@ -152,17 +148,17 @@ public class InputProcessorXMLMetabolismBuilder
                );
       }
       elementBehavior.createInitValueElement(
-            BehaviorDynamicWaveWiele.REQ_STATE_WIELEINT, 
+            ResourceWater.NAME_WIELE_MODEL_INTERCEPT, 
             Double.toString(wieleInt), 
             null
             );
       elementBehavior.createInitValueElement(
-            BehaviorDynamicWaveWiele.REQ_STATE_WIELESLOPE, 
+            ResourceWater.NAME_WIELE_MODEL_SLOPE, 
             Double.toString(wieleSlope), 
             null
             );
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_ACTIVE_WIDTH_AVG, 
+            ResourceWater.NAME_ACTIVE_CHANNEL_WIDTH_AVERAGE, 
             Double.toString(averageWidth), 
             null
             );
@@ -208,7 +204,7 @@ public class InputProcessorXMLMetabolismBuilder
             indexLastCell - 1
             );
       elementBehavior.createInitValueElement(
-            BehaviorDynamicWaveDownstream.NAME_UPSTREAM_BOUNDARY, 
+            ResourceWater.NAME_UPSTREAM_BOUNDARY_NAME, 
             boundaryName, 
             null
             );
