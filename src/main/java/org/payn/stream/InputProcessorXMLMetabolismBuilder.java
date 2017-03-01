@@ -138,20 +138,6 @@ public class InputProcessorXMLMetabolismBuilder
                metaInput.getAttributeInitialConditionDelimiterBound(),
                null
                );
-//         elementBehavior.createInitValueElement(
-//               ResourceWater.NAME_WATER_FLOW, 
-//               initialConditionsBoundMap.get(
-//                     elementBehavior.getName()+ "." + ResourceWater.NAME_WATER_FLOW).get(
-//                           elementBoundary.getName()).toString(),
-//               null
-//               );
-//         elementBehavior.createInitValueElement(
-//               ResourceWater.NAME_WATER_VELOCITY, 
-//               initialConditionsBoundMap.get(
-//                     elementBehavior.getName()+ "." + ResourceWater.NAME_WATER_VELOCITY).get(
-//                           elementBoundary.getName()).toString(),
-//               null
-//               );
       }
       else
       {

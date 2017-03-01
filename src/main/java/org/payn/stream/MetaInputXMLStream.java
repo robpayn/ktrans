@@ -1,11 +1,6 @@
 package org.payn.stream;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 import org.payn.chsm.io.xml.ElementHelper;
 
 /**
@@ -520,115 +515,48 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       return Boolean.valueOf(helper.getAttribute("initialConditions"));
    }
    
+   /**
+    * Get the path to the initial condition file for cells
+    * 
+    * @return
+    *       path
+    */
    public String getAttributeInitialConditionPathCell()
    {
       return helper.getAttribute("cellPath");
    }
 
+   /**
+    * Get the delimiter for the initial condition file for cells
+    * 
+    * @return
+    *       delimiter
+    */
    public String getAttributeInitialConditionDelimiterCell()
    {
       return helper.getAttribute("cellDelimiter");
    }
 
+   /**
+    * Get the path to the initial condition file for bounds
+    * 
+    * @return
+    *       path
+    */
    public String getAttributeInitialConditionPathBound()
    {
       return helper.getAttribute("boundPath");
    }
 
+   /**
+    * Get the delimiter for the initial condition file for bounds
+    * 
+    * @return
+    *       delimiter
+    */
    public String getAttributeInitialConditionDelimiterBound()
    {
       return helper.getAttribute("boundDelimiter");
-   }
-
-   /**
-    * Get the initial conditions cell map
-    * 
-    * @param workingDir 
-    * @param cellNameRoot 
-    * @param numCellsDigits 
-    * 
-    * @return
-    *       map of initial values for cells
-    * @throws Exception 
-    */
-   public LinkedHashMap<String, HashMap<String, Double>> getInitialConditionsCellMap(
-         File workingDir, String cellNameRoot, Integer numCellsDigits) 
-               throws Exception
-   {
-      File file = new File(workingDir.getAbsolutePath() + File.separator + helper.getAttribute("cellPath"));
-      BufferedReader reader = new BufferedReader(new FileReader(file));
-      String[] line = reader.readLine().split(" ");
-      LinkedHashMap<String, HashMap<String, Double>> hashMap = new LinkedHashMap<String, HashMap<String, Double>>();
-      for (String header: line)
-      {
-         hashMap.put(header, new LinkedHashMap<String, Double>());
-      }
-      String[] headers = hashMap.keySet().toArray(new String[0]);
-      int cellCount = 1;
-      while(reader.ready())
-      {
-         line = reader.readLine().split(" ");
-         int column = 0;
-         for (String value: line)
-         {
-            String cellName = String.format(
-                  "%s%0" + numCellsDigits.toString() + "d", 
-                  cellNameRoot,
-                  cellCount
-                  );
-            hashMap.get(headers[column]).put(cellName, Double.valueOf(value));
-            column++;
-         }
-         cellCount++;
-      }
-      reader.close();
-      return hashMap;
-   }
-   
-   /**
-    * Get the initial conditions bound map
-    * 
-    * @param workingDir 
-    * @param boundNameRoot 
-    * @param numCellsDigits 
-    * 
-    * @return
-    *       map of intial values for bounds
-    * @throws Exception 
-    */
-   public LinkedHashMap<String, HashMap<String, Double>> getInitialConditionsBoundMap(
-         File workingDir, String boundNameRoot, Integer numCellsDigits) 
-               throws Exception
-   {
-      File file = new File(workingDir.getAbsolutePath() + File.separator + helper.getAttribute("boundPath"));
-      BufferedReader reader = new BufferedReader(new FileReader(file));
-      String[] line = reader.readLine().split(" ");
-      LinkedHashMap<String, HashMap<String, Double>> hashMap = new LinkedHashMap<String, HashMap<String, Double>>();
-      for (String header: line)
-      {
-         hashMap.put(header, new LinkedHashMap<String, Double>());
-      }
-      String[] headers = hashMap.keySet().toArray(new String[0]);
-      int boundCount = 1;
-      while(reader.ready())
-      {
-         line = reader.readLine().split(" ");
-         int column = 0;
-         for (String value: line)
-         {
-            String boundName = String.format(
-                  "%s%0" + numCellsDigits.toString() + "d_%0" + numCellsDigits.toString() + "d", 
-                  boundNameRoot,
-                  boundCount + 1,
-                  boundCount
-                  );
-            hashMap.get(headers[column]).put(boundName, Double.valueOf(value));
-            column++;
-         }
-         boundCount++;
-      }
-      reader.close();
-      return hashMap;
    }
 
 }
