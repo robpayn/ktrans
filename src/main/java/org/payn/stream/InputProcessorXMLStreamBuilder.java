@@ -118,20 +118,13 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
       System.out.println("Building the stream matrix...");
       
 
+      isInitialConditions = metaInput.isInitialConditions();
+
       // Stream structure
       numCells = metaInput.getAttributeNumCells();
       numCellsDigits = new Integer(1 + (int)Math.log10(numCells));
       cellNameRoot = metaInput.getAttributeCellName();
       boundaryNameRoot = metaInput.getAttributeBoundaryName();
-
-      isInitialConditions = metaInput.isInitialConditions();
-      if (isInitialConditions)
-      {
-         initialConditionsCellMap = metaInput.getInitialConditionsCellMap(
-               simulator.getWorkingDir(), cellNameRoot, numCellsDigits);
-         initialConditionsBoundMap = metaInput.getInitialConditionsBoundMap(
-               simulator.getWorkingDir(), boundaryNameRoot, numCellsDigits);
-      }
 
       // Geometry
       streamLength = metaInput.getAttributeStreamLength();

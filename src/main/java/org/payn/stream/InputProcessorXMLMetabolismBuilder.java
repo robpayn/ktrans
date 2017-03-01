@@ -1,6 +1,7 @@
 package org.payn.stream;
 
 import org.payn.chsm.Behavior;
+import org.payn.chsm.io.file.initialize.InitialConditionTable;
 import org.payn.chsm.io.file.interpolate.ProcessorInterpolateSnapshotTable;
 import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
 import org.payn.neoch.io.xmltools.ElementBoundary;
@@ -94,10 +95,13 @@ public class InputProcessorXMLMetabolismBuilder
       if (isInitialConditions)
       {
          elementBehavior.createInitValueElement(
-               ResourceWater.NAME_WATER_HEAD, 
-               initialConditionsCellMap.get(
-                     elementBehavior.getName()+ "." + ResourceWater.NAME_WATER_HEAD).get(
-                           elementCell.getName()).toString(),
+               InitialConditionTable.NAME_INITIAL_CONDITION_PATH, 
+               metaInput.getAttributeInitialConditionPathCell(),
+               null
+               );
+         elementBehavior.createInitValueElement(
+               InitialConditionTable.NAME_INITIAL_CONDITION_DELIMITER, 
+               metaInput.getAttributeInitialConditionDelimiterCell(),
                null
                );
       }
@@ -125,19 +129,29 @@ public class InputProcessorXMLMetabolismBuilder
       if (isInitialConditions)
       {
          elementBehavior.createInitValueElement(
-               ResourceWater.NAME_WATER_FLOW, 
-               initialConditionsBoundMap.get(
-                     elementBehavior.getName()+ "." + ResourceWater.NAME_WATER_FLOW).get(
-                           elementBoundary.getName()).toString(),
+               InitialConditionTable.NAME_INITIAL_CONDITION_PATH, 
+               metaInput.getAttributeInitialConditionPathBound(),
                null
                );
          elementBehavior.createInitValueElement(
-               ResourceWater.NAME_WATER_VELOCITY, 
-               initialConditionsBoundMap.get(
-                     elementBehavior.getName()+ "." + ResourceWater.NAME_WATER_VELOCITY).get(
-                           elementBoundary.getName()).toString(),
+               InitialConditionTable.NAME_INITIAL_CONDITION_DELIMITER, 
+               metaInput.getAttributeInitialConditionDelimiterBound(),
                null
                );
+//         elementBehavior.createInitValueElement(
+//               ResourceWater.NAME_WATER_FLOW, 
+//               initialConditionsBoundMap.get(
+//                     elementBehavior.getName()+ "." + ResourceWater.NAME_WATER_FLOW).get(
+//                           elementBoundary.getName()).toString(),
+//               null
+//               );
+//         elementBehavior.createInitValueElement(
+//               ResourceWater.NAME_WATER_VELOCITY, 
+//               initialConditionsBoundMap.get(
+//                     elementBehavior.getName()+ "." + ResourceWater.NAME_WATER_VELOCITY).get(
+//                           elementBoundary.getName()).toString(),
+//               null
+//               );
       }
       else
       {

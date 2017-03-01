@@ -520,6 +520,26 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       return Boolean.valueOf(helper.getAttribute("initialConditions"));
    }
    
+   public String getAttributeInitialConditionPathCell()
+   {
+      return helper.getAttribute("cellPath");
+   }
+
+   public String getAttributeInitialConditionDelimiterCell()
+   {
+      return helper.getAttribute("cellDelimiter");
+   }
+
+   public String getAttributeInitialConditionPathBound()
+   {
+      return helper.getAttribute("boundPath");
+   }
+
+   public String getAttributeInitialConditionDelimiterBound()
+   {
+      return helper.getAttribute("boundDelimiter");
+   }
+
    /**
     * Get the initial conditions cell map
     * 
