@@ -2,7 +2,7 @@ package org.payn.stream;
 
 import org.payn.chsm.Behavior;
 import org.payn.chsm.io.file.initialize.InitialConditionTable;
-import org.payn.chsm.io.file.interpolate.ProcessorInterpolateSnapshotTable;
+import org.payn.chsm.io.file.interpolate.InterpolatorSnapshotTable;
 import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.neoch.io.xmltools.ElementHolonMatrix;
@@ -173,17 +173,17 @@ public class InputProcessorXMLMetabolismBuilder
                   this.resourceWater.getBehavior(ResourceWater.BEHAVIOR_FLOW_INTERPOLATE)
                   );
       elementBehavior.createInitValueElement(
-            ProcessorInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
+            InterpolatorSnapshotTable.REQ_STATE_DELIMITER, 
             metaInput.getAttributeUpstreamFlowDelimiter(), 
             null
             );
       elementBehavior.createInitValueElement(
-            ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
+            InterpolatorSnapshotTable.REQ_STATE_PATH, 
             metaInput.getAttributeUpstreamFlowPath(), 
             null
             );
       elementBehavior.createInitValueElement(
-            ProcessorInterpolateSnapshotTable.REQ_STATE_TYPE, 
+            InterpolatorSnapshotTable.REQ_STATE_TYPE, 
             metaInput.getAttributeUpstreamInterpType(), 
             null
             );

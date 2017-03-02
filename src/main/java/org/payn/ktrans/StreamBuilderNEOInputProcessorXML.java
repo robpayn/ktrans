@@ -3,7 +3,7 @@ package org.payn.ktrans;
 import java.io.File;
 
 import org.payn.chsm.Behavior;
-import org.payn.chsm.io.file.interpolate.ProcessorInterpolateSnapshotTable;
+import org.payn.chsm.io.file.interpolate.ProcessorHelperInterpolateSnapshotTable;
 import org.payn.neoch.io.xmltools.DocumentBoundary;
 import org.payn.neoch.io.xmltools.DocumentCell;
 import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
@@ -237,17 +237,17 @@ public class StreamBuilderNEOInputProcessorXML
                   consResource.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND)
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
+                  consResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_PATH, 
                   metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_TYPE, 
+                  consResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_TYPE, 
                   metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
+                  consResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
                   metaInput.getDelimiter(), 
                   null
                   );
@@ -276,17 +276,17 @@ public class StreamBuilderNEOInputProcessorXML
                   actResource.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND)
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_PATH, 
+                  actResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_PATH, 
                   metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_TYPE, 
+                  actResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_TYPE, 
                   metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + ProcessorInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
+                  actResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
                   metaInput.getDelimiter(), 
                   null
                   );
