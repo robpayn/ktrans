@@ -39,4 +39,14 @@ public abstract class InputProcessorFactoryStreamSimulator extends InputProcesso
    public abstract void addMetabolismBuilderInputProcessor(File workingDir, String configPath)
          throws Exception;
 
+   /**
+    * Add a stream builder input processor
+    * 
+    * @param workingDir
+    * @param configPath
+    * @throws Exception
+    */
+   public abstract void addHyperOTISBuilderInputProcessor(File workingDir, String configPath)
+         throws Exception;
+
 }

@@ -72,6 +72,16 @@ public class SimulatorStream extends SimulatorNEOCH {
                   getSimulator()
                   );
          }
+
+         @Override
+         public void addHyperOTISBuilderInputProcessor(File workingDir,
+               String configPath) throws Exception 
+         {
+            new InputProcessorXMLHyperOTIS(
+                  new MetaInputXMLHyperOTIS(workingDir, configPath, "streambuilder"), 
+                  getSimulator()
+                  );
+         }
          
       };
    }
