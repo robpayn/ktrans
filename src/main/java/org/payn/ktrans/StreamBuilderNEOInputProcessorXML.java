@@ -3,7 +3,7 @@ package org.payn.ktrans;
 import java.io.File;
 
 import org.payn.chsm.Behavior;
-import org.payn.chsm.io.file.interpolate.ProcessorHelperInterpolateSnapshotTable;
+import org.payn.chsm.io.file.interpolate.InterpolatorSnapshotTable;
 import org.payn.neoch.io.xmltools.DocumentBoundary;
 import org.payn.neoch.io.xmltools.DocumentCell;
 import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
@@ -111,17 +111,17 @@ public class StreamBuilderNEOInputProcessorXML
                   (BehaviorSoluteBoundInject)consResource.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND_INJECT);
             elementBehavior = elementBoundary.createBehaviorElement(consInjectBehavior);
             elementBehavior.createInitValueElement(
-                  consInjectBehavior.getInterpolationPathStateName(), 
+                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_PATH, 
                   metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consInjectBehavior.getInterpolationTypeStateName(), 
+                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_TYPE, 
                   metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consInjectBehavior.getInterpolationDelimiterStateName(),  
+                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_DELIMITER,  
                   metaInput.getDelimiter(), 
                   null
                   );
@@ -161,7 +161,7 @@ public class StreamBuilderNEOInputProcessorXML
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consInjectBehavior.getConcStateName(),
+                  consResource.getName() + ResourceSolute.NAME_SOLUTE_CONC,
                   consBkgConc.toString(), 
                   null
                   );
@@ -173,17 +173,17 @@ public class StreamBuilderNEOInputProcessorXML
                   actInjectBehavior
                   );
             elementBehavior.createInitValueElement(
-                  actInjectBehavior.getInterpolationPathStateName(), 
+                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_PATH,
                   metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actInjectBehavior.getInterpolationTypeStateName(),
+                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_TYPE, 
                   metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actInjectBehavior.getInterpolationDelimiterStateName(),
+                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_DELIMITER,  
                   metaInput.getDelimiter(), 
                   null
                   );
@@ -224,7 +224,7 @@ public class StreamBuilderNEOInputProcessorXML
                      );
             }
             elementBehavior.createInitValueElement(
-                  actInjectBehavior.getConcStateName(),
+                  actResource.getName() + ResourceSolute.NAME_SOLUTE_CONC,
                   activeBkgConc.toString(), 
                   null);
          }
@@ -237,17 +237,17 @@ public class StreamBuilderNEOInputProcessorXML
                   consResource.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND)
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_PATH, 
+                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_PATH, 
                   metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_TYPE, 
+                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_TYPE, 
                   metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
+                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_DELIMITER, 
                   metaInput.getDelimiter(), 
                   null
                   );
@@ -276,17 +276,17 @@ public class StreamBuilderNEOInputProcessorXML
                   actResource.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND)
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_PATH, 
+                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_PATH, 
                   metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_TYPE, 
+                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_TYPE, 
                   metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + ProcessorHelperInterpolateSnapshotTable.REQ_STATE_DELIMITER, 
+                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_DELIMITER, 
                   metaInput.getDelimiter(), 
                   null
                   );
