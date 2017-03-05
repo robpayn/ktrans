@@ -10,11 +10,7 @@ import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 import org.payn.resources.solute.ResourceSolute;
-import org.payn.resources.solute.boundary.BehaviorSoluteActiveMM;
 import org.payn.resources.solute.boundary.BehaviorSoluteBoundInject;
-import org.payn.resources.solute.boundary.BehaviorSoluteFlow;
-import org.payn.resources.solute.boundary.BehaviorSoluteFlowBound;
-import org.payn.resources.solute.cell.BehaviorSoluteStorage;
 import org.payn.simulation.InputProcessorAbstract;
 
 /**
@@ -126,37 +122,37 @@ public class StreamBuilderNEOInputProcessorXML
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteFlowBound.REQ_STATE_FLOW, 
+                  ResourceSolute.NAME_WATER_FLOW, 
                   new Double(-flow).toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteFlow.REQ_STATE_DISP, 
+                  ResourceSolute.NAME_DISPERSION_COEFF, 
                   metaInput.getDispersion().toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteFlow.REQ_STATE_LENGTH, 
+                  ResourceSolute.NAME_LENGTH, 
                   length.toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteFlow.REQ_STATE_AREA_XSECT, 
+                  ResourceSolute.NAME_AREA_XSECT, 
                   boundaryArea.toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consInjectBehavior.getInjectMassStateName(), 
+                  consInjectBehavior.getAbstractStateName(ResourceSolute.NAME_INJECT_MASS), 
                   metaInput.getConservativeInjectMass().toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consInjectBehavior.getDurationStateName(), 
+                  consInjectBehavior.getAbstractStateName(ResourceSolute.NAME_INJECT_DURATION), 
                   metaInput.getConservativeInjectDuration().toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consInjectBehavior.getStartIterationStateName(), 
+                  consInjectBehavior.getAbstractStateName(ResourceSolute.NAME_INJECT_START), 
                   metaInput.getConservativeInjectStartInterval().toString(), 
                   null
                   );
@@ -190,17 +186,17 @@ public class StreamBuilderNEOInputProcessorXML
             if (metaInput.isActivInjUnique())
             {
                elementBehavior.createInitValueElement(
-                     actInjectBehavior.getInjectMassStateName(),
+                     actInjectBehavior.getAbstractStateName(ResourceSolute.NAME_INJECT_MASS),
                      metaInput.getActiveInjectMass().toString(), 
                      null
                      );
                elementBehavior.createInitValueElement(
-                     actInjectBehavior.getDurationStateName(),
+                     actInjectBehavior.getAbstractStateName(ResourceSolute.NAME_INJECT_DURATION),
                      metaInput.getActiveInjectDuration().toString(), 
                      null
                      );
                elementBehavior.createInitValueElement(
-                     actInjectBehavior.getStartIterationStateName(),
+                     actInjectBehavior.getAbstractStateName(ResourceSolute.NAME_INJECT_START),
                      metaInput.getActiveInjectStartInterval().toString(), 
                      null
                      );
@@ -208,17 +204,17 @@ public class StreamBuilderNEOInputProcessorXML
             else
             {
                elementBehavior.createInitValueElement(
-                     actInjectBehavior.getInjectMassStateName(),
+                     actInjectBehavior.getAbstractStateName(ResourceSolute.NAME_INJECT_MASS),
                      metaInput.getConservativeInjectMass().toString(), 
                      null
                      );
                elementBehavior.createInitValueElement(
-                     actInjectBehavior.getDurationStateName(),
+                     actInjectBehavior.getAbstractStateName(ResourceSolute.NAME_INJECT_DURATION),
                      metaInput.getConservativeInjectDuration().toString(), 
                      null
                      );
                elementBehavior.createInitValueElement(
-                     actInjectBehavior.getStartIterationStateName(),
+                     actInjectBehavior.getAbstractStateName(ResourceSolute.NAME_INJECT_START),
                      metaInput.getConservativeInjectStartInterval().toString(), 
                      null
                      );
@@ -252,22 +248,22 @@ public class StreamBuilderNEOInputProcessorXML
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteFlowBound.REQ_STATE_FLOW, 
+                  ResourceSolute.NAME_WATER_FLOW, 
                   new Double(-flow).toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteFlow.REQ_STATE_DISP, 
+                  ResourceSolute.NAME_DISPERSION_COEFF, 
                   metaInput.getDispersion().toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteFlow.REQ_STATE_LENGTH, 
+                  ResourceSolute.NAME_LENGTH, 
                   length.toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteFlow.REQ_STATE_AREA_XSECT, 
+                  ResourceSolute.NAME_AREA_XSECT, 
                   boundaryArea.toString(), 
                   null
                   );
@@ -302,7 +298,7 @@ public class StreamBuilderNEOInputProcessorXML
             // Cell conservative tracer
             elementBehavior = elementCell.createBehaviorElement(consBehaviorStorage);
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteStorage.REQ_STATE_VOLUME, 
+                  ResourceSolute.NAME_WATER_VOLUME, 
                   storageVolume.toString(), 
                   null
                   );
@@ -326,10 +322,10 @@ public class StreamBuilderNEOInputProcessorXML
             
             // Downstream boundary conservative tracer
             elementBehavior = elementBoundary.createBehaviorElement(consBehaviorFlow);
-            elementBehavior.createInitValueElement(BehaviorSoluteFlow.REQ_STATE_LENGTH, length.toString(), null);
-            elementBehavior.createInitValueElement(BehaviorSoluteFlow.REQ_STATE_AREA_XSECT, boundaryArea.toString(), null);
-            elementBehavior.createInitValueElement(BehaviorSoluteFlow.REQ_STATE_FLOW, flow.toString(), null);
-            elementBehavior.createInitValueElement(BehaviorSoluteFlow.REQ_STATE_DISP, disp.toString(), null);
+            elementBehavior.createInitValueElement(ResourceSolute.NAME_LENGTH, length.toString(), null);
+            elementBehavior.createInitValueElement(ResourceSolute.NAME_AREA_XSECT, boundaryArea.toString(), null);
+            elementBehavior.createInitValueElement(ResourceSolute.NAME_WATER_FLOW, flow.toString(), null);
+            elementBehavior.createInitValueElement(ResourceSolute.NAME_DISPERSION_COEFF, disp.toString(), null);
             
             // Downstream boundary active tracer
             elementBehavior = elementBoundary.createBehaviorElement(actBehaviorFlow);
@@ -345,22 +341,22 @@ public class StreamBuilderNEOInputProcessorXML
             elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
             elementBehavior = elementBoundary.createBehaviorElement(actBehaviorUptake);
             elementBehavior.createInitValueElement(
-                  actResource.getName() + BehaviorSoluteActiveMM.REQ_STATE_UMAX, 
+                  actResource.getName() + ResourceSolute.NAME_UPTAKE_MAX, 
                   uMax.toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + BehaviorSoluteActiveMM.REQ_STATE_HALFSAT, 
+                  actResource.getName() + ResourceSolute.NAME_CONC_HALF_SAT, 
                   halfSat.toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + BehaviorSoluteActiveMM.REQ_STATE_BKG_CONC, 
+                  actResource.getName() + ResourceSolute.NAME_BKG_CONC, 
                   activeBkgConc.toString(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  BehaviorSoluteActiveMM.REQ_STATE_PLANAREA, 
+                  ResourceSolute.NAME_PLANAREA, 
                   planarea.toString(), 
                   null
                   );
@@ -371,7 +367,7 @@ public class StreamBuilderNEOInputProcessorXML
          
          // Last cell conservative tracer
          elementBehavior = elementCell.createBehaviorElement(consBehaviorStorage);
-         elementBehavior.createInitValueElement(BehaviorSoluteStorage.REQ_STATE_VOLUME, storageVolume.toString(), null);
+         elementBehavior.createInitValueElement(ResourceSolute.NAME_WATER_VOLUME, storageVolume.toString(), null);
          elementBehavior.createInitValueElement(
                consResource.getName() + ResourceSolute.NAME_SOLUTE_CONC, 
                consBkgConc.toString(),
@@ -387,22 +383,22 @@ public class StreamBuilderNEOInputProcessorXML
          elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
          elementBehavior = elementBoundary.createBehaviorElement(actBehaviorUptake);
          elementBehavior.createInitValueElement(
-               actResource.getName() + BehaviorSoluteActiveMM.REQ_STATE_UMAX, 
+               actResource.getName() + ResourceSolute.NAME_UPTAKE_MAX, 
                uMax.toString(), 
                null
                );
          elementBehavior.createInitValueElement(
-               actResource.getName() + BehaviorSoluteActiveMM.REQ_STATE_HALFSAT, 
+               actResource.getName() + ResourceSolute.NAME_CONC_HALF_SAT, 
                halfSat.toString(), 
                null
                );
          elementBehavior.createInitValueElement(
-               actResource.getName() + BehaviorSoluteActiveMM.REQ_STATE_BKG_CONC, 
+               actResource.getName() + ResourceSolute.NAME_BKG_CONC, 
                activeBkgConc.toString(), 
                null
                );
          elementBehavior.createInitValueElement(
-               BehaviorSoluteActiveMM.REQ_STATE_PLANAREA, 
+               ResourceSolute.NAME_PLANAREA, 
                planarea.toString(), 
                null
                );
@@ -415,7 +411,11 @@ public class StreamBuilderNEOInputProcessorXML
          elementBehavior = elementBoundary.createBehaviorElement(
                consResource.getBehavior(ResourceSolute.BEHAVIOR_FLOWBOUND)
                );
-         elementBehavior.createInitValueElement(BehaviorSoluteFlowBound.REQ_STATE_FLOW, flow.toString(), null);
+         elementBehavior.createInitValueElement(
+               ResourceSolute.NAME_WATER_FLOW, 
+               flow.toString(), 
+               null
+               );
          elementBehavior.createInitValueElement(
                consResource.getName() + ResourceSolute.NAME_SOLUTE_CONC, 
                consBkgConc.toString(), 

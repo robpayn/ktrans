@@ -6,8 +6,6 @@ import org.payn.chsm.io.xml.ElementHelper;
 import org.payn.neoch.io.xmltools.ElementXMLInput;
 import org.payn.neoch.io.xmltools.XMLDocumentConfig;
 import org.payn.resources.solute.ResourceSolute;
-import org.payn.resources.solute.boundary.BehaviorSoluteActiveMM;
-import org.payn.resources.solute.boundary.BehaviorSoluteBoundInject;
 import org.payn.simulation.metainputs.MetaInputXML;
 import org.w3c.dom.Element;
 
@@ -138,7 +136,7 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
    {
       return Double.valueOf(getInjectAttribute(
             "conservativeinj", 
-            BehaviorSoluteBoundInject.REQ_STATE_MASS
+            ResourceSolute.NAME_INJECT_MASS
             ));
    }
    
@@ -152,7 +150,7 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
    {
       return Long.valueOf(getInjectAttribute(
             "conservativeinj", 
-            BehaviorSoluteBoundInject.REQ_STATE_DURATION
+            ResourceSolute.NAME_INJECT_DURATION
             ));
    }
 
@@ -166,7 +164,7 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
    {
       return Long.valueOf(getInjectAttribute(
             "conservativeinj", 
-            BehaviorSoluteBoundInject.REQ_STATE_START
+            ResourceSolute.NAME_INJECT_START
             ));
    }
 
@@ -180,7 +178,7 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
    {
       return Double.valueOf(getInjectAttribute(
             "activeinj", 
-            BehaviorSoluteBoundInject.REQ_STATE_MASS
+            ResourceSolute.NAME_INJECT_MASS
             ));
    }
    
@@ -194,7 +192,7 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
    {
       return Long.valueOf(getInjectAttribute(
             "activeinj", 
-            BehaviorSoluteBoundInject.REQ_STATE_DURATION
+            ResourceSolute.NAME_INJECT_DURATION
             ));
    }
 
@@ -208,7 +206,7 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
    {
       return Long.valueOf(getInjectAttribute(
             "activeinj", 
-            BehaviorSoluteBoundInject.REQ_STATE_START
+            ResourceSolute.NAME_INJECT_START
             ));
    }
 
@@ -221,7 +219,7 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
    public Double getUMax() 
    {
       Element element = helper.getFirstChildElement("active");
-      return Double.valueOf(element.getAttribute(BehaviorSoluteActiveMM.REQ_STATE_UMAX));
+      return Double.valueOf(element.getAttribute(ResourceSolute.NAME_UPTAKE_MAX));
    }
 
    /**
@@ -233,7 +231,7 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
    public Double getHalfSat() 
    {
       Element element = helper.getFirstChildElement("active");
-      return Double.valueOf(element.getAttribute(BehaviorSoluteActiveMM.REQ_STATE_HALFSAT));
+      return Double.valueOf(element.getAttribute(ResourceSolute.NAME_CONC_HALF_SAT));
    }
 
    /**

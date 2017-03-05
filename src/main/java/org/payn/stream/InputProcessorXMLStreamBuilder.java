@@ -29,47 +29,47 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
    /**
     * Length of a cell
     */
-   protected double cellLength;
+   protected Double cellLength;
 
    /**
     * Bed slope
     */
-   protected double bedSlope;
+   protected Double bedSlope;
 
    /**
     * Elevation datum
     */
-   protected double elevationDatum;
+   protected Double elevationDatum;
 
    /**
     * Active channel depth
     */
-   protected double activeDepth;
+   protected Double activeDepth;
 
    /**
     * Initial water depth
     */
-   protected double initialDepth;
+   protected Double initialDepth;
 
    /**
     * Average width of the active channel
     */
-   protected double averageWidth;
+   protected Double averageWidth;
 
    /**
     * Intercept of the Wiele friction vs. depth relationship
     */
-   protected double wieleInt;
+   protected Double wieleInt;
 
    /**
     * Slope of the Wiele friction vs. depth relationship
     */
-   protected double wieleSlope;
+   protected Double wieleSlope;
 
    /**
     * Initial stream flow
     */
-   protected double initialFlow;
+   protected Double initialFlow;
 
    /**
     * Number of digits in cell count
@@ -102,6 +102,11 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
    protected LinkedHashMap<String, HashMap<String, Double>> initialConditionsBoundMap;
 
    /**
+    * Dispersion coefficient
+    */
+   protected Double dispersionCoeff;
+
+   /**
     * Construct a new instance with the given meta input and simulator
     * 
     * @param metaInput
@@ -122,13 +127,19 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
 
       // Stream structure
       numCells = metaInput.getAttributeNumCells();
-      numCellsDigits = new Integer(1 + (int)Math.log10(numCells));
+      if (numCells != null)
+      {
+         numCellsDigits = new Integer(1 + (int)Math.log10(numCells));
+      }
       cellNameRoot = metaInput.getAttributeCellName();
       boundaryNameRoot = metaInput.getAttributeBoundaryName();
 
       // Geometry
       streamLength = metaInput.getAttributeStreamLength();
-      cellLength = streamLength / numCells;
+      if (streamLength != null && numCells != null)
+      {
+         cellLength = streamLength / numCells;
+      }
       elevationDatum = metaInput.getAttributeElevationDatum();
       bedSlope = metaInput.getAttributeBedSlope();
       activeDepth = metaInput.getAttributeActiveDepth();
@@ -137,6 +148,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
       // Flow
       initialDepth = metaInput.getAttributeInitialDepth();
       initialFlow = metaInput.getAttributeInitialFlow();
+      dispersionCoeff = metaInput.getAttributeDispersionCoefficient();
       wieleInt = metaInput.getAttributeWieleInt();
       wieleSlope = metaInput.getAttributeWieleSlope();
       

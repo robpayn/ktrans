@@ -4,6 +4,8 @@ import java.io.File;
 import org.payn.neoch.HolonMatrix;
 import org.payn.simulation.OutputProcessorFactory;
 import org.payn.simulation.OutputProcessorFactoryAbstract;
+import org.payn.stream.otis.InputProcessorXMLHyperOTIS;
+import org.payn.stream.otis.MetaInputXMLHyperOTIS;
 
 /**
  * Implementation of a simulator for stream simulations

@@ -19,6 +19,7 @@ import org.payn.neoch.io.MatrixLoaderXML;
 import org.payn.neoch.io.OutputHandlerXMLSerialFactoryXML;
 import org.payn.neoch.processors.ControllerNEORKTwo;
 import org.payn.resources.solute.ResourceSolute;
+import org.payn.resources.solute.ResourceSoluteOTIS;
 import org.payn.resources.water.ResourceWater;
 
 /**
@@ -108,6 +109,9 @@ public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
             case "cons":
             case "active":
                resource = new ResourceSolute();
+               break;
+            case "conserveOTIS":
+               resource = new ResourceSoluteOTIS();
                break;
          }
       }

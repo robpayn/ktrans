@@ -46,9 +46,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * @return
        *        length value
        */
-      public String getAttributeStreamLength() 
+      public Double getAttributeStreamLength() 
       {
-         return getAttribute("length");
+         return getAttributeDouble("length");
       }
       
       /**
@@ -87,9 +87,17 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * @return
        *        datum value
        */
-      public String getAttributeElevationDatum() 
+      public Double getAttributeElevationDatum() 
       {
-         return getElementElevation().getAttribute("datum");
+         ElementHelper helper = getElementElevation();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("datum");
+         }
       }
 
       /**
@@ -98,9 +106,17 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * @return
        *        bed slope attribute value
        */
-      public String getAttributeBedSlope() 
+      public Double getAttributeBedSlope() 
       {
-         return getElementElevation().getAttribute("bedSlope");
+         ElementHelper helper = getElementElevation();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("bedSlope");
+         }
       }
 
       /**
@@ -109,9 +125,17 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * @return
        *        value for the depth attribute
        */
-      public String getAttributeActiveDepth() 
+      public Double getAttributeActiveDepth() 
       {
-         return getElementActiveChannel().getAttribute("depth");
+         ElementHelper helper = getElementActiveChannel();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("depth");
+         }
       }
 
       /**
@@ -120,9 +144,17 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * @return
        *        average width value
        */
-      public String getAttributeAverageWidth() 
+      public Double getAttributeAverageWidth() 
       {
-         return getElementActiveChannel().getAttribute("averageWidth");
+         ElementHelper helper = getElementActiveChannel();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("averageWidth");
+         }
       }
 
    }
@@ -146,6 +178,11 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       private ElementHelper elementUpstreamBound;
 
       /**
+       * Element with information about dispersion
+       */
+      private ElementHelper elementDispersion;
+
+      /**
        * Construct a flow element based on the flow element
        * in the provided helper
        * 
@@ -162,9 +199,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * @return
        *    value of initial depth
        */
-      public String getAttributeInitialDepth() 
+      public Double getAttributeInitialDepth() 
       {
-         return getAttribute("initialDepth");
+         return getAttributeDouble("initialDepth");
       }
       
       /**
@@ -173,9 +210,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * @return
        *        value of initial flow
        */
-      public String getAttributeInitialFlow() 
+      public Double getAttributeInitialFlow() 
       {
-         return getAttribute("initialFlow");
+         return getAttributeDouble("initialFlow");
       }
 
       /**
@@ -209,14 +246,36 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       }
 
       /**
+       * Get the element with information about dipsersion
+       * 
+       * @return
+       */
+      private ElementHelper getElementDispersion() 
+      {
+         if (elementDispersion == null)
+         {
+            elementDispersion = helper.getFirstChildElementHelper("dispersion");
+         }
+         return elementDispersion;
+      }
+
+      /**
        * Get the Wiele model intercept attribute
        * 
        * @return
        *        value of Wiele model intercept
        */
-      public String getAttributeWieleInt() 
+      public Double getAttributeWieleInt() 
       {
-         return getElementFriction().getAttribute("wieleInt");
+         ElementHelper helper = getElementFriction();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("wieleInt");
+         }
       }
 
       /**
@@ -225,9 +284,17 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * @return
        *        value of the Wiele model slope
        */
-      public String getAttributeWieleSlope() 
+      public Double getAttributeWieleSlope() 
       {
-         return getElementFriction().getAttribute("wieleSlope");
+         ElementHelper helper = getElementFriction();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("wieleSlope");
+         }
       }
 
       /**
@@ -261,6 +328,25 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       public String getAttributeUpstreamInterpType() 
       {
          return getElementUpstreamBound().getAttribute("upstreamInterpType");
+      }
+
+      /**
+       * Get the dispersion coefficient attribute
+       * 
+       * @return
+       *        Double object
+       */
+      public Double getAttributeDispersionCoefficient() 
+      {
+         ElementHelper helper = getElementDispersion();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("coefficient");
+         }
       }
 
    }
@@ -309,6 +395,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       }
       return elementStructure;
    }
+
    /**
     * Get the geometry element
     * 
@@ -347,7 +434,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public Long getAttributeNumCells() 
    {
-      return Long.valueOf(getElementModelStructure().getAttribute("numCells"));
+      return getElementModelStructure().getAttributeLong("numCells");
    }
    
    /**
@@ -358,7 +445,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public Double getAttributeStreamLength()
    {
-      return Double.valueOf(getElementGeometry().getAttributeStreamLength());
+      return getElementGeometry().getAttributeStreamLength();
    }
 
    /**
@@ -369,7 +456,15 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public Double getAttributeBedSlope()
    {
-      return Double.valueOf(getElementGeometry().getAttributeBedSlope());
+      ElementGeometry helper = getElementGeometry();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeBedSlope();
+      }
    }
 
    /**
@@ -380,7 +475,15 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public Double getAttributeElevationDatum()
    {
-      return Double.valueOf(getElementGeometry().getAttributeElevationDatum());
+      ElementGeometry helper = getElementGeometry();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeElevationDatum();
+      }
    }
 
    /**
@@ -391,7 +494,15 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public Double getAttributeActiveDepth()
    {
-      return Double.valueOf(getElementGeometry().getAttributeActiveDepth());
+      ElementGeometry helper = getElementGeometry();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeActiveDepth();
+      }
    }
 
    /**
@@ -402,7 +513,15 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public Double getAttributeInitialDepth()
    {
-      return Double.valueOf(getElementFlow().getAttributeInitialDepth());
+      ElementFlow helper = getElementFlow();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeInitialDepth();
+      }
    }
 
    /**
@@ -413,7 +532,34 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public Double getAttributeAverageWidth()
    {
-      return Double.valueOf(getElementGeometry().getAttributeAverageWidth());
+      ElementGeometry helper = getElementGeometry();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeAverageWidth();
+      }
+   }
+
+   /**
+    * Get the dispersion coefficient attribute
+    * 
+    * @return
+    *       Double object
+    */
+   public Double getAttributeDispersionCoefficient()
+   {
+      ElementFlow helper = getElementFlow();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeDispersionCoefficient();
+      }
    }
 
    /**
@@ -424,7 +570,15 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public Double getAttributeWieleInt()
    {
-      return Double.valueOf(getElementFlow().getAttributeWieleInt());
+      ElementFlow helper = getElementFlow();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeWieleInt();
+      }
    }
 
    /**
@@ -435,7 +589,15 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public Double getAttributeWieleSlope()
    {
-      return Double.valueOf(getElementFlow().getAttributeWieleSlope());
+      ElementFlow helper = getElementFlow();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeWieleSlope();
+      }
    }
 
    /**
@@ -446,7 +608,15 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public Double getAttributeInitialFlow()
    {
-      return Double.valueOf(getElementFlow().getAttributeInitialFlow());
+      ElementFlow helper = getElementFlow();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeInitialFlow();
+      }
    }
   
    /**
@@ -490,7 +660,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public String getAttributeCellName()
    {
-      return getElementModelStructure().getAttribute("cellName");
+      return getElementModelStructure().getAttributeString("cellName");
    }
    
    /**
@@ -501,7 +671,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public String getAttributeBoundaryName()
    {
-      return getElementModelStructure().getAttribute("boundaryName");
+      return getElementModelStructure().getAttributeString("boundaryName");
    }
    
    /**
@@ -512,7 +682,15 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public boolean isInitialConditions()
    {
-      return Boolean.valueOf(helper.getAttribute("initialConditions"));
+      String value = helper.getAttribute("initialConditions");
+      if (value.equals(""))
+      {
+         return false;
+      }
+      else
+      {
+         return Boolean.valueOf(helper.getAttribute("initialConditions"));
+      }
    }
    
    /**
@@ -558,5 +736,5 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
    {
       return helper.getAttribute("boundDelimiter");
    }
-
+   
 }

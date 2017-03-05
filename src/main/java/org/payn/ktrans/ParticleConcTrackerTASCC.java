@@ -116,11 +116,11 @@ public class ParticleConcTrackerTASCC {
 
    protected boolean isFlowPositive() 
    {
-      State state = currentBound.getState(BehaviorSoluteFlow.REQ_STATE_FLOW);
+      State state = currentBound.getState(ResourceSolute.NAME_WATER_FLOW);
       if (state == null)
       {
          state = currentBound.getAdjacentBoundary().getState(
-               BehaviorSoluteFlow.REQ_STATE_FLOW
+               ResourceSolute.NAME_WATER_FLOW
                );
          return -((ValueDouble)state.getValue()).n > 0;
       }
@@ -160,7 +160,7 @@ public class ParticleConcTrackerTASCC {
             }
          }
       }
-      endDistance = ((ValueDouble)currentBound.getState(BehaviorSoluteFlow.REQ_STATE_LENGTH).getValue()).n / 2;
+      endDistance = ((ValueDouble)currentBound.getState(ResourceSolute.NAME_LENGTH).getValue()).n / 2;
       currentDistance = 0;
       
    }
@@ -190,7 +190,7 @@ public class ParticleConcTrackerTASCC {
                      break;
                   }
                }
-               endDistance = ((ValueDouble)currentBound.getState(BehaviorSoluteFlow.REQ_STATE_LENGTH).getValue()).n / 2;
+               endDistance = ((ValueDouble)currentBound.getState(ResourceSolute.NAME_LENGTH).getValue()).n / 2;
                currentDistance = extraDistance;
             }
          } 
