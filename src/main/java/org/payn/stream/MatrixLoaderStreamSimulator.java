@@ -111,6 +111,7 @@ public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
                resource = new ResourceSolute();
                break;
             case "conserveOTIS":
+            case "activeOTIS":
                resource = new ResourceSoluteOTIS();
                break;
          }

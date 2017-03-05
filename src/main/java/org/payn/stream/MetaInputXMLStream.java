@@ -61,7 +61,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       {
          if (elementElevation == null)
          {
-            elementElevation = helper.getFirstChildElementHelper("elevation");
+            elementElevation = getFirstChildElementHelper("elevation");
          }
          return elementElevation;
       }
@@ -76,7 +76,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       {
          if (elementActiveChannel == null)
          {
-            elementActiveChannel = helper.getFirstChildElementHelper("activechannel");
+            elementActiveChannel = getFirstChildElementHelper("activechannel");
          }
          return elementActiveChannel;
       }
@@ -225,7 +225,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       {
          if (elementFricton == null)
          {
-            elementFricton = helper.getFirstChildElementHelper("friction");
+            elementFricton = getFirstChildElementHelper("friction");
          }
          return elementFricton;
       }
@@ -240,7 +240,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       {
          if (elementUpstreamBound == null)
          {
-            elementUpstreamBound = helper.getFirstChildElementHelper("upstreambound");
+            elementUpstreamBound = getFirstChildElementHelper("upstreambound");
          }
          return elementUpstreamBound;
       }
@@ -254,7 +254,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       {
          if (elementDispersion == null)
          {
-            elementDispersion = helper.getFirstChildElementHelper("dispersion");
+            elementDispersion = getFirstChildElementHelper("dispersion");
          }
          return elementDispersion;
       }

@@ -80,6 +80,37 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    private Double xSectionalArea;
 
    /**
+    * Flag indicating if the active tracer is configured
+    * and active
+    */
+   private boolean isActiveConfigured;
+
+   /**
+    * The resource for the active tracer
+    */
+   private ResourceSoluteOTIS activeResourceOTIS;
+
+   /**
+    * The storage behavior for the active tracer
+    */
+   private Behavior activeBehaviorStorage;
+
+   /**
+    * The background concentration of the active tracer
+    */
+   private Double activeBkgConc;
+
+   /**
+    * Maximum uptake of the active tracer (hyperbolic function)
+    */
+   private Double uptakeMax;
+
+   /**
+    * Concentration at half the maximum uptake (hyperbolic function)
+    */
+   private Double halfSat;
+
+   /**
     * Construct a new instance based on the provided meta input
     * 
     * @param metaInput
@@ -94,14 +125,25 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    @Override
    protected void configureStreamLoop() throws Exception 
    {
-      conserveBehaviorStorage = conserveResourceOTIS.getBehavior(
-            ResourceSolute.BEHAVIOR_STORAGE);
-      conserveBkgConc = metaInput.getAttributeBkgConc("conservative");
-
-      conserveBehaviorFlow = conserveResourceOTIS.getBehavior(
-            ResourceSolute.BEHAVIOR_FLOW);
-      
       xSectionalArea = averageWidth * initialDepth;
+      
+      conserveBehaviorStorage = conserveResourceOTIS.getBehavior(
+            ResourceSolute.BEHAVIOR_STORAGE
+            );
+      conserveBehaviorFlow = conserveResourceOTIS.getBehavior(
+            ResourceSolute.BEHAVIOR_FLOW
+            );
+      conserveBkgConc = metaInput.getAttributeBkgConc("conservative");
+      
+      if (isActiveConfigured)
+      {
+         activeBehaviorStorage = activeResourceOTIS.getBehavior(
+               ResourceSolute.BEHAVIOR_STORAGE_HYPER
+               );
+         activeBkgConc = metaInput.getAttributeBkgConc("active");
+         uptakeMax = metaInput.getAttributeUptakeMax("active");
+         halfSat = metaInput.getAttributeConcHalfSat("active");
+      }
    }
 
    @Override
@@ -135,6 +177,38 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
             dispersionCoeff.toString(), 
             null
             );
+      
+      if (isActiveConfigured)
+      {
+         elementBehavior = 
+               elementCell.createBehaviorElement(activeBehaviorStorage);         
+         elementBehavior.createInitValueElement(
+               activeBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC), 
+               activeBkgConc.toString(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               activeBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_BKG_CONC), 
+               activeBkgConc.toString(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               activeBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_UPTAKE_MAX), 
+               uptakeMax.toString(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               activeBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_CONC_HALF_SAT), 
+               halfSat.toString(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               ResourceSolute.NAME_DEPTH, 
+               initialDepth.toString(), 
+               null
+               );
+      }
+      
    }
 
    @Override
@@ -205,6 +279,49 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
             conserveBkgConc.toString(), 
             null
             );
+      
+      if (isActiveConfigured)
+      {
+         behavior = activeResourceOTIS.getBehavior(
+               ResourceSolute.BEHAVIOR_CONCBOUND_INJECT);
+         elementBehavior = 
+               elementBoundary.createBehaviorElement(behavior);
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(InterpolatorSnapshotTable.REQ_STATE_PATH), 
+               metaInput.getAttributeConcBoundFile("active"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(InterpolatorSnapshotTable.REQ_STATE_TYPE), 
+               metaInput.getAttributeInterpolationType("active"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(InterpolatorSnapshotTable.REQ_STATE_DELIMITER),  
+               metaInput.getAttributeDelimiter("active"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_MASS), 
+               metaInput.getAttributeInjectMass("active").toString(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_DURATION), 
+               metaInput.getAttributeInjectDuration("active").toString(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_START), 
+               metaInput.getAttributeInjectStartInterval("active").toString(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC),
+               activeBkgConc.toString(), 
+               null
+               );
+      }
    }
 
    @Override
@@ -225,6 +342,19 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
             conserveBkgConc.toString(), 
             null
             );
+      
+      if (isActiveConfigured)
+      {
+         behavior = activeResourceOTIS.getBehavior(
+               ResourceSolute.BEHAVIOR_FLOWBOUND);
+         elementBehavior = 
+               elementBoundary.createBehaviorElement(behavior);
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC), 
+               activeBkgConc.toString(), 
+               null
+               );
+      }
    }
 
    @Override
@@ -232,6 +362,13 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    {
       conserveResourceOTIS = new ResourceSoluteOTIS();
       conserveResourceOTIS.initialize("conserveOTIS");
+      
+      isActiveConfigured = metaInput.isActiveConfigured("active");
+      if (isActiveConfigured)
+      {
+        activeResourceOTIS = new ResourceSoluteOTIS();
+        activeResourceOTIS.initialize("activeOTIS");
+      }
    }
 
 }

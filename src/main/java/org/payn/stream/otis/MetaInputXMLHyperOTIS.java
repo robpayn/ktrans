@@ -35,6 +35,11 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
       private ElementHelper elementInject;
 
       /**
+       * Element with information about a hyperbolic function
+       */
+      private ElementHelper elementHyperbolic;
+
+      /**
        * Construct a new instance for the provided solute name
        * based on information in the provided
        * element helper
@@ -56,7 +61,7 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
       {
          if (elementInterp == null)
          {
-            elementInterp = helper.getFirstChildElementHelper("interpolate");
+            elementInterp = getFirstChildElementHelper("interpolate");
          }
          return elementInterp;
       }
@@ -70,9 +75,23 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
       {
          if (elementInject == null)
          {
-            elementInject = helper.getFirstChildElementHelper("inject");
+            elementInject = getFirstChildElementHelper("inject");
          }
          return elementInject;
+      }
+
+      /**
+       * Get the element with information about a hyperbolic function
+       * 
+       * @return
+       */
+      private ElementHelper getHyperbolicElement() 
+      {
+         if (elementHyperbolic == null)
+         {
+            elementHyperbolic = getFirstChildElementHelper("hyperbolic");
+         }
+         return elementHyperbolic;
       }
 
       /**
@@ -200,6 +219,45 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
          }
       }
 
+      /**
+       * Get the maximum uptake parameter of a hyperbolic function
+       * 
+       * @return
+       *        Double object
+       */
+      public Double getAttributeUptakeMax() 
+      {
+         ElementHelper helper = getHyperbolicElement();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("uptakeMax");
+         }
+      }
+
+      /**
+       * Get the attribute for the half saturation concentration
+       * in the hyperbolic function
+       * 
+       * @return
+       *        Double object
+       */
+      public Double getAttributeConcHalfSat() 
+      {
+         ElementHelper helper = getHyperbolicElement();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("concHalfSat");
+         }
+      }
+
    }
    
    /**
@@ -233,8 +291,16 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
       ElementSolute elementSolute = elementSoluteMap.get(soluteName);
       if (elementSolute == null)
       {
-         elementSolute = new ElementSolute(helper, soluteName);
-         elementSoluteMap.put(soluteName, elementSolute);
+         if (helper.hasElement(soluteName))
+         {
+            elementSolute = new ElementSolute(helper, soluteName);
+            elementSoluteMap.put(soluteName, elementSolute);
+         }
+         else
+         {
+            return null;
+         }
+         
       }
       return elementSolute;
    }
@@ -383,6 +449,69 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
       else
       {
          return helper.getAttributeInjectStartInterval();
+      }
+   }
+
+   /**
+    * Determine if the provided solute is configured
+    * 
+    * @param soluteName
+    * @return
+    *       true if configured, false otherwise
+    */
+   public boolean isActiveConfigured(String soluteName) 
+   {
+      ElementSolute helper = getElementSolute(soluteName);
+      if (helper == null)
+      {
+         return false;
+      }
+      else
+      {
+         return helper.isActive();
+      }
+   }
+
+   /**
+    * Get the maximum uptake parameter of a hyperbolic function
+    * 
+    * @param soluteName 
+    * 
+    * @return
+    *        Double object
+    */
+   public Double getAttributeUptakeMax(String soluteName) 
+   {
+      ElementSolute helper = getElementSolute(soluteName);
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeUptakeMax();
+      }
+   }
+
+   /**
+    * Get the attribute for the half saturation concentration
+    * in the hyperbolic function
+    * 
+    * @param soluteName 
+    * 
+    * @return
+    *        Double object
+    */
+   public Double getAttributeConcHalfSat(String soluteName) 
+   {
+      ElementSolute helper = getElementSolute(soluteName);
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeConcHalfSat();
       }
    }
 
