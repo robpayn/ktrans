@@ -160,7 +160,14 @@ public class ParticleConcTrackerTASCC {
             }
          }
       }
-      endDistance = ((ValueDouble)currentBound.getState(ResourceSolute.NAME_LENGTH).getValue()).n / 2;
+      try
+      {
+         endDistance = ((ValueDouble)currentBound.getState(ResourceSolute.NAME_LENGTH).getValue()).n / 2;
+      }
+      catch (Exception e)
+      {
+         endDistance = ((ValueDouble)currentCell.getState(ResourceSolute.NAME_LENGTH).getValue()).n / 2;
+      }
       currentDistance = 0;
       
    }
@@ -181,7 +188,9 @@ public class ParticleConcTrackerTASCC {
             else
             {
                String resourceName = firstResourceName;
-               ArrayList<HolonBoundary> bounds = currentCell.getBoundaries(resourceName + "." + ResourceSolute.BEHAVIOR_FLOW);
+               ArrayList<HolonBoundary> bounds = currentCell.getBoundaries(
+                     resourceName + "." + ResourceSolute.BEHAVIOR_FLOW
+                     );
                for (HolonBoundary bound: bounds)
                {
                   currentBound = bound;
@@ -190,7 +199,14 @@ public class ParticleConcTrackerTASCC {
                      break;
                   }
                }
-               endDistance = ((ValueDouble)currentBound.getState(ResourceSolute.NAME_LENGTH).getValue()).n / 2;
+               try
+               {
+                  endDistance = ((ValueDouble)currentBound.getState(ResourceSolute.NAME_LENGTH).getValue()).n / 2;
+               }
+               catch (Exception e)
+               {
+                  endDistance = ((ValueDouble)currentCell.getState(ResourceSolute.NAME_LENGTH).getValue()).n / 2;
+               }
                currentDistance = extraDistance;
             }
          } 

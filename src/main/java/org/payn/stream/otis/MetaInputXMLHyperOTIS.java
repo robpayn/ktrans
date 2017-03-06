@@ -5,6 +5,8 @@ import java.util.HashMap;
 
 import org.payn.chsm.io.xml.ElementHelper;
 import org.payn.stream.MetaInputXMLStream;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Meta input for building a stream solute transport model based 
@@ -44,12 +46,11 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
        * based on information in the provided
        * element helper
        * 
-       * @param helper
-       * @param soluteName
+       * @param element
        */
-      public ElementSolute(ElementHelper helper, String soluteName) 
+      public ElementSolute(Element element) 
       {
-         super(helper.getFirstChildElement(soluteName));
+         super(element);
       }
 
       /**
@@ -277,7 +278,6 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
          String elementName) throws Exception 
    {
       super(workingDir, path, elementName);
-      elementSoluteMap = new HashMap<String, ElementSolute>();
    }
 
    /**
@@ -288,19 +288,21 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
     */
    private ElementSolute getElementSolute(String soluteName) 
    {
+      if (elementSoluteMap == null)
+      {
+         elementSoluteMap = new HashMap<String, ElementSolute>();
+         NodeList nodes = helper.getElement().getElementsByTagName("solute");
+         for (int nodeCount = 0; nodeCount < nodes.getLength(); nodeCount++)
+         {
+            ElementSolute elementSolute = 
+                  new ElementSolute((Element)nodes.item(nodeCount));
+            elementSoluteMap.put(elementSolute.getName(), elementSolute);
+         }
+      }
       ElementSolute elementSolute = elementSoluteMap.get(soluteName);
       if (elementSolute == null)
       {
-         if (helper.hasElement(soluteName))
-         {
-            elementSolute = new ElementSolute(helper, soluteName);
-            elementSoluteMap.put(soluteName, elementSolute);
-         }
-         else
-         {
-            return null;
-         }
-         
+         return null;
       }
       return elementSolute;
    }
@@ -459,16 +461,16 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
     * @return
     *       true if configured, false otherwise
     */
-   public boolean isActiveConfigured(String soluteName) 
+   public boolean isSoluteConfigured(String soluteName) 
    {
-      ElementSolute helper = getElementSolute(soluteName);
-      if (helper == null)
+      ElementSolute elementSolute = getElementSolute(soluteName);
+      if (elementSolute == null)
       {
          return false;
       }
       else
       {
-         return helper.isActive();
+         return elementSolute.isActive();
       }
    }
 

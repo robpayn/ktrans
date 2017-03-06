@@ -363,7 +363,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
       conserveResourceOTIS = new ResourceSoluteOTIS();
       conserveResourceOTIS.initialize("conserveOTIS");
       
-      isActiveConfigured = metaInput.isActiveConfigured("active");
+      isActiveConfigured = metaInput.isSoluteConfigured("active");
       if (isActiveConfigured)
       {
         activeResourceOTIS = new ResourceSoluteOTIS();
