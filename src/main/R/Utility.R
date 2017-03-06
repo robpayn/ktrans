@@ -17,7 +17,7 @@ createDevice <- function(deviceName, width, height)
       );
 }
 
-createBlankPlot <- function(xlim, ylim, xlab, ylab)
+createBlankPlot <- function(xlim, ylim, xlab, ylab, ...)
 {
    plot(
       x = 0,
@@ -26,6 +26,7 @@ createBlankPlot <- function(xlim, ylim, xlab, ylab)
       ylim = ylim,
       type = "n",
       xlab = xlab,
-      ylab = ylab
+      ylab = ylab,
+      ...
       );
 }

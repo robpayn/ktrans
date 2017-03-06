@@ -1,40 +1,33 @@
-HyperbolicAnalysis <- function(length)
-{
-   analysis <- new.env();
-   class(analysis) <- c("HyperbolicAnalysis", class(analysis));
-
-   analysis$metrics <- data.frame(
-      time = numeric(length = length),
-      conserve = numeric(length = length),
-      active = numeric(length = length),
-      conservebc = numeric(length = length),
-      activebc = numeric(length = length),
-      ceffinject = numeric(length = length),
-      cefftot = numeric(length = length),
-      activenr = numeric(length = length),
-      k = numeric(length = length),
-      sw = numeric(length = length),
-      vf = numeric(length = length),
-      u = numeric(length = length),
-      stringsAsFactors = FALSE
-      );
-   return(analysis);   
-}
-
-HyperbolicAnalysisTASCC <- function(
-   simulation,
+HyperbolicAnalysis <- function(
+   simulation, 
    analysisWindow,
-   releaseTime,
    conserveColumn = length(simulation$conserveSolute),
    activeColumn = length(simulation$activeSolute)
    )
 {
-   startIndex = trunc(analysisWindow[1] / simulation$outputTimeStep) + 1;
-   endIndex = trunc(analysisWindow[2] / simulation$outputTimeStep);
-   length <- (endIndex - startIndex) + 1;
-   
-   analysis <- HyperbolicAnalysis(length);
-   
+   analysis <- new.env();
+   class(analysis) <- c("HyperbolicAnalysis", class(analysis));
+
+   analysis$startIndex = trunc(analysisWindow[1] / simulation$outputTimeStep) + 1;
+   analysis$endIndex = trunc(analysisWindow[2] / simulation$outputTimeStep);
+   metricsLength <- (analysis$endIndex - analysis$startIndex) + 1;
+
+   analysis$metrics <- data.frame(
+      time = numeric(length = metricsLength),
+      conserve = numeric(length = metricsLength),
+      active = numeric(length = metricsLength),
+      conservebc = numeric(length = metricsLength),
+      activebc = numeric(length = metricsLength),
+      ceffinject = numeric(length = metricsLength),
+      cefftot = numeric(length = metricsLength),
+      activenr = numeric(length = metricsLength),
+      k = numeric(length = metricsLength),
+      sw = numeric(length = metricsLength),
+      vf = numeric(length = metricsLength),
+      u = numeric(length = metricsLength),
+      stringsAsFactors = FALSE
+      );
+
    analysis$simulation <- simulation;
    
    analysis$umaxactual <- simulation$umax;
@@ -52,32 +45,76 @@ HyperbolicAnalysisTASCC <- function(
       (simulation$discharge * simulation$activebkg) /
       (simulation$streamwidth * analysis$uambactual);
 
-   analysis$releaseTime <- releaseTime;
-   analysis$metricsOriginal <- data.frame(
-      swo = numeric(length = length),
-      vfo = numeric(length = length),
-      uo = numeric(length = length),
-      stringsAsFactors = FALSE
-      );
-   
+   analysis$releaseTime <- simulation$releaseTime;
+
    analysis$metrics$time <- 
-      simulation$conserveSolute$Time[startIndex:endIndex];
+      simulation$conserveSolute$Time[analysis$startIndex:analysis$endIndex];
+
    analysis$metrics$conserve <- simulation$conserveSolute[
-      startIndex:endIndex,
+      analysis$startIndex:analysis$endIndex,
       conserveColumn
       ];
    analysis$metrics$active <- simulation$activeSolute[
-      startIndex:endIndex,
+      analysis$startIndex:analysis$endIndex,
       activeColumn
       ];
    analysis$metrics$conservebc <- 
       analysis$metrics$conserve - simulation$conservebkg;
    analysis$metrics$activebc <- 
       analysis$metrics$active - simulation$activebkg;
+   analysis$metrics$activenr <- 
+      analysis$metrics$conservebc * simulation$injectRatio;
+
+   return(analysis);   
+}
+
+HyperbolicAnalysisTASCC <- function(
+   simulation,
+   analysisWindow,
+   ...
+   )
+{
+   analysis <- HyperbolicAnalysis(simulation, analysisWindow, ...);
+   
+   analysis$metricsOriginal <- data.frame(
+      swo = numeric(length = length(analysis$metrics[[1]])),
+      vfo = numeric(length = length(analysis$metrics[[1]])),
+      uo = numeric(length = length(analysis$metrics[[1]])),
+      stringsAsFactors = FALSE
+      );
+   
+   analysis$metrics$ceffinject <- 
+      sqrt(analysis$metrics$activebc * analysis$metrics$activenr);
    analysis$metrics$k <- 
       ( log(simulation$injectRatio) 
          - log(analysis$metrics$activebc / analysis$metrics$conservebc) ) /
          (analysis$metrics$time - analysis$releaseTime);
+   
+   calcMetrics(analysis);
+  
+   return(analysis);
+}
+
+HyperbolicAnalysisLagrangeTASCC <- function(
+   simulation,
+   analysisWindow,
+   ...
+   )
+{
+   analysis <- HyperbolicAnalysis(simulation, analysisWindow, ...);
+   
+   for (i in 1:length(analysis$metrics$time))
+   {
+      activebc <- 
+         simulation$paths[[i]]$activeOTIS - simulation$activebkg;
+      conservebc <- 
+         simulation$paths[[i]]$conserveOTIS - simulation$conservebkg;
+      logy <- log(activebc / conservebc);
+      x <- simulation$paths[[i]]$time;
+      lmresults <- lm(logy ~ x);
+      analysis$metrics$k[i] <- -lmresults$coefficients["x"];
+      analysis$metrics$ceffinject[i] <- exp(mean(log(activebc)));
+   }
    
    calcMetrics(analysis);
   
@@ -91,10 +128,6 @@ calcMetrics <- function(analysis)
 
 calcMetrics.HyperbolicAnalysis <- function(analysis)
 {
-   analysis$metrics$activenr <- 
-      analysis$metrics$conservebc * simulation$injectRatio;
-   analysis$metrics$ceffinject <- 
-      sqrt(analysis$metrics$activebc * analysis$metrics$activenr);
    analysis$metrics$cefftot <- simulation$activebkg + analysis$metrics$ceffinject;
    analysis$metrics$sw <- simulation$streamvel / analysis$metrics$k;
    analysis$metrics$vf <- analysis$metrics$k * simulation$streamdepth;

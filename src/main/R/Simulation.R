@@ -3,10 +3,13 @@ require(XML);
 # CLASS Simulation ####
 
 Simulation <- function(
-   configFile, conserveFile, activeFile
-) {
+   configFile, conserveFile, activeFile, releaseTime
+   ) 
+{
    simulation <- new.env();
    class(simulation) <- c("Simulation", class(simulation));
+   
+   simulation$releaseTime <- releaseTime;
    
    config <- xmlInternalTreeParse(configFile);
    
@@ -62,12 +65,19 @@ Simulation <- function(
    simulation$activebkg <- as.numeric(
       xmlGetAttr(activeSoluteNode,  "bkgConc")
       );
-      
 
    simulation$discharge <- as.numeric(
       xmlGetAttr(
          getNodeSet(config, "/document/streambuilder/flow")[[1]], 
          "initialFlow")
+      );
+   simulation$streamlength <- as.numeric(
+      xmlGetAttr(
+         getNodeSet(
+            config, 
+            "/document/streambuilder/channelgeometry"
+            )[[1]], 
+         "length")
       );
    simulation$streamwidth <- as.numeric(
       xmlGetAttr(
@@ -144,15 +154,15 @@ plotConservative.Simulation <- function(
    ) 
 {
    createDevice(device, width, height);
-   createBlankPlot(xlim, ylim, xlab, ylab);
+   createBlankPlot(xlim, ylim, xlab, ylab, ...);
    for (column in columns)
    {
       lines(
          x = simulation$conserveSolute$Time,
-         y = simulation$conserveSolute[[column]],
-         ...
+         y = simulation$conserveSolute[[column]]
       )
    }
+   abline(v = simulation$releaseTime, lty = "dashed");
 }
 
 plotActive <- function(
@@ -166,7 +176,7 @@ plotActive <- function(
    ylim,
    xlab,
    ylab,
-   col,
+   activeColor,
    window,
    ...
    )
@@ -191,20 +201,19 @@ plotActive.Simulation <- function(
       ),
    xlab = "Time",
    ylab = "Concentration",
-   col = "red",
-   window = c(-1, -1),
+   activeColor = "red",
+   window = NULL,
    ...
    ) 
 {
    createDevice(device, width, height);
-   createBlankPlot(xlim, ylim, xlab, ylab);
+   createBlankPlot(xlim, ylim, xlab, ylab, ...);
    for (column in columns)
    {
       lines(
          x = simulation$conserveSolute$Time,
          y = (simulation$conserveSolute[[column]] - simulation$conservebkg) 
-            * ratio,
-         ...
+            * ratio
       )
    }
    for (column in columns)
@@ -212,11 +221,15 @@ plotActive.Simulation <- function(
       lines(
          x = simulation$activeSolute$Time,
          y = simulation$activeSolute[[column]] - simulation$activebkg,
-         col = col,
+         col = activeColor,
          ...
       )
    }
-   abline(v = window, lty = "dashed");
+   abline(v = simulation$releaseTime, lty = "dashed");
+   if (!is.null(window))
+   {
+      abline(v = window, lty = "dashed", col = "red");
+   }
 }
 
 # CLASS SimulationLagrange ####
@@ -226,10 +239,12 @@ SimulationLagrange <- function(
    conserveFile, 
    activeFile, 
    particleDir,
-   analysisWindow
+   analysisWindow,
+   releaseTime, 
+   pathTimeWindow = 0
    ) 
 {
-   simulation <- Simulation(configFile, conserveFile, activeFile);
+   simulation <- Simulation(configFile, conserveFile, activeFile, releaseTime);
    class(simulation) <- c("SimulationLagrange", class(simulation));
    
    times <- seq(
@@ -245,7 +260,9 @@ SimulationLagrange <- function(
       sep = ""
       );
    particleTable <- read.table(file=fileName, header=TRUE);
-   arrivalTime <- particleTable[length(particleTable[,1]),]$time;
+   arrivalTime <- particleTable$time[length(particleTable$time)];
+   pathStartTime <- arrivalTime - pathTimeWindow;
+   particleTable <- particleTable[(particleTable$time > pathStartTime),];
    simulation$paths[[1]] <- particleTable;
    
    for (metricsCount in 1:length(times)) 
@@ -264,6 +281,11 @@ SimulationLagrange <- function(
             read.table(file=fileName, header=TRUE, sep=" ");
          nextArrivalTime <- 
             nextParticleTable[length(nextParticleTable[,1]),]$time;
+         nextPathStartTime <- 
+            nextArrivalTime - pathTimeWindow;
+         nextParticleTable <- 
+            nextParticleTable[(nextParticleTable$time > nextPathStartTime),];
+
          if (nextArrivalTime > metricTime) {
             continue <- FALSE;
             if (nextArrivalTime - metricTime < metricTime - arrivalTime) {
@@ -283,7 +305,7 @@ SimulationLagrange <- function(
    return(simulation);
 }
 
-plotPaths <- function(
+plotPathsConservative <- function(
    simulation,
    device,
    width,
@@ -293,13 +315,18 @@ plotPaths <- function(
    ylim,
    xlab,
    ylab,
+   pathPlotWindow,
+   pathPlotInterval,
+   pathPlotSequence,
+   backgroundCorrect,
+   activeNR,
    ...
    )
 {
-   UseMethod("plotPaths", simulation);
+   UseMethod("plotPathsConservative", simulation);
 }
 
-plotPaths.SimulationLagrange <- function(
+plotPathsConservative.SimulationLagrange <- function(
    simulation,
    device = "default",
    width = 8,
@@ -315,56 +342,118 @@ plotPaths.SimulationLagrange <- function(
       ),
    xlab = "Time",
    ylab = "Concentration",
+   pathPlotWindow = c(
+      1,
+      length(simulation$paths)
+      ),
+   pathPlotInterval = 1,
+   pathPlotSequence = seq(
+      from = pathPlotWindow[1], 
+      to = pathPlotWindow[2], 
+      by = pathPlotInterval
+      ),
+   backgroundCorrect = FALSE,
+   activeNR = FALSE,
    ...
    )
 {
    createDevice(device, width, height);
-   createBlankPlot(xlim, ylim, xlab, ylab);
+   createBlankPlot(xlim, ylim, xlab, ylab, ...);
    for (column in columns)
    {
+      conc = simulation$conserveSolute[[column]];
+      if (backgroundCorrect || activeNR)
+      {
+         conc = conc - simulation$conservebkg;
+      }
+      if (activeNR)
+      {
+         conc = conc * simulation$injectRatio;
+      }
       lines(
          x = simulation$conserveSolute$Time,
-         y = simulation$conserveSolute[[column]],
-         ...
+         y = conc
       )
    }
-   lastConc <- 0;
-   lastCount <- 0;
-   for (i in 1:length(simulation$paths))
+   for (i in pathPlotSequence)
    {
-      conc <- simulation$paths[[i]]$conserveOTIS[length(
-         simulation$paths[[i]]$conserveOTIS
-         )];
-      if (conc > lastConc)
+      conc = simulation$paths[[i]]$conserveOTIS;
+      if (backgroundCorrect || activeNR)
       {
-         lines(
-            x = simulation$paths[[i]]$time,
-            y = simulation$paths[[i]]$conserveOTIS
-         );
-         lastConc <- conc;
+         conc = conc - simulation$conservebkg;
       }
-      else
+      if (activeNR)
       {
-         lastCount <- i;
-         break;
+         conc = conc * simulation$injectRatio;
       }
+      lines(
+         x = simulation$paths[[i]]$time,
+         y = conc
+      );
    }
+   abline(v = simulation$releaseTime, lty = "dashed");
+}
 
-   createDevice(device, width, height);
-   createBlankPlot(xlim, ylim, xlab, ylab);
+plotPathsActive <- function(
+   simulation,
+   columns,
+   ylim,
+   pathPlotWindow,
+   pathPlotInterval,
+   pathPlotSequence,
+   activeColor,
+   ...
+   )
+{
+   UseMethod("plotPathsActive", simulation);
+}
+
+plotPathsActive.SimulationLagrange <- function(
+   simulation,
+   columns = 3:length(simulation$conserveSolute),
+   ylim = c(
+      0,
+      max((simulation$conserveSolute[,columns] - simulation$conservebkg) *
+         simulation$injectRatio)
+      ), 
+   pathPlotWindow = c(
+      1,
+      length(simulation$paths)
+      ),
+   pathPlotInterval = 1,
+   pathPlotSequence = seq(
+      from = pathPlotWindow[1], 
+      to = pathPlotWindow[2], 
+      by = pathPlotInterval
+      ),
+   activeColor = "red",
+   ...
+   )
+{
+   plotPathsConservative(
+      simulation, 
+      columns = columns,
+      ylim = ylim,
+      pathPlotWindow = pathPlotWindow,
+      pathPlotInterval= pathPlotInterval,
+      pathPlotSequence = pathPlotSequence,
+      activeNR = TRUE,
+      ...
+      );
    for (column in columns)
    {
       lines(
-         x = simulation$conserveSolute$Time,
-         y = simulation$conserveSolute[[column]],
-         ...
+         x = simulation$activeSolute$Time,
+         y = simulation$activeSolute[[column]] - simulation$activebkg,
+         col = activeColor
       )
    }
-   for (i in lastCount:length(simulation$paths))
+   for (i in pathPlotSequence)
    {
       lines(
          x = simulation$paths[[i]]$time,
-         y = simulation$paths[[i]]$conserveOTIS
+         y = simulation$paths[[i]]$activeOTIS - simulation$activebkg,
+         col = activeColor
       );
    }
 }
