@@ -3,7 +3,10 @@ require(XML);
 # CLASS Simulation ####
 
 Simulation <- function(
-   configFile, conserveFile, activeFile, releaseTime
+   configFile, 
+   conserveFile, 
+   activeFile, 
+   releaseTime
    ) 
 {
    simulation <- new.env();
@@ -241,7 +244,7 @@ SimulationLagrange <- function(
    particleDir,
    analysisWindow,
    releaseTime, 
-   pathTimeWindow = 0
+   pathTimeWindow = analysisWindow[2]
    ) 
 {
    simulation <- Simulation(configFile, conserveFile, activeFile, releaseTime);

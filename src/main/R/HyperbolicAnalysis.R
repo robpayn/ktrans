@@ -287,22 +287,19 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
       );
    lines(
       x = xvals,
-      y = hyperbolicnet(
+      y = hyperbolic(
          analysis$uEstimates$umax, 
          analysis$uEstimates$halfsat, 
-         xvals, 
-         analysis$simulation$activebkg
-         ) + analysis$uEstimates$uamb,
+         xvals),
       ...
       );
    lines(
       x = xvals,
-      y = hyperbolicnet(
+      y = hyperbolic(
          analysis$umaxactual, 
          analysis$halfsatactual, 
-         xvals, 
-         analysis$simulation$activebkg
-         ) + analysis$uambactual,
+         xvals
+         ),
       lty = "dashed",
       ...
       );
