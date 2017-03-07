@@ -127,6 +127,8 @@ plotConservative <- function(
    width,
    height,
    columns,
+   xfactor,
+   yfactor,
    xlim,
    ylim,
    xlab,
@@ -143,6 +145,8 @@ plotConservative.Simulation <- function(
    width = 8,
    height = 6,
    columns = 3:length(simulation$conserveSolute),
+   xfactor = 1,
+   yfactor = 1,
    xlim = c(
       min(simulation$conserveSolute$Time),
       max(simulation$conserveSolute$Time)
@@ -157,15 +161,21 @@ plotConservative.Simulation <- function(
    ) 
 {
    createDevice(device, width, height);
-   createBlankPlot(xlim, ylim, xlab, ylab, ...);
+   par(...);
+   createBlankPlot(
+      xlim = xlim * xfactor, 
+      ylim = ylim * yfactor, 
+      xlab = xlab, 
+      ylab = ylab
+      );
    for (column in columns)
    {
       lines(
-         x = simulation$conserveSolute$Time,
-         y = simulation$conserveSolute[[column]]
+         x = simulation$conserveSolute$Time * xfactor,
+         y = simulation$conserveSolute[[column]] * yfactor
       )
    }
-   abline(v = simulation$releaseTime, lty = "dashed");
+   abline(v = simulation$releaseTime * xfactor, lty = "dashed", col = "green");
 }
 
 plotActive <- function(
@@ -175,6 +185,8 @@ plotActive <- function(
    height,
    ratio,
    columns,
+   xfactor,
+   yfactor,
    xlim,
    ylim,
    xlab,
@@ -194,6 +206,8 @@ plotActive.Simulation <- function(
    height = 6,
    ratio = simulation$injectRatio,
    columns = 3:length(simulation$conserveSolute),
+   xfactor = 1,
+   yfactor = 1,
    xlim = c(
       min(simulation$conserveSolute$Time),
       max(simulation$conserveSolute$Time)
@@ -210,28 +224,35 @@ plotActive.Simulation <- function(
    ) 
 {
    createDevice(device, width, height);
-   createBlankPlot(xlim, ylim, xlab, ylab, ...);
+   par(...);
+   createBlankPlot(
+      xlim = xlim * xfactor, 
+      ylim = ylim * yfactor,
+      xlab = xlab, 
+      ylab = ylab
+      );
    for (column in columns)
    {
       lines(
-         x = simulation$conserveSolute$Time,
+         x = simulation$conserveSolute$Time * xfactor,
          y = (simulation$conserveSolute[[column]] - simulation$conservebkg) 
-            * ratio
+            * ratio * yfactor
       )
    }
    for (column in columns)
    {
       lines(
-         x = simulation$activeSolute$Time,
-         y = simulation$activeSolute[[column]] - simulation$activebkg,
+         x = simulation$activeSolute$Time * xfactor,
+         y = (simulation$activeSolute[[column]] - simulation$activebkg) 
+            * yfactor,
          col = activeColor,
          ...
       )
    }
-   abline(v = simulation$releaseTime, lty = "dashed");
+   abline(v = simulation$releaseTime * xfactor, lty = "dashed", col = "green");
    if (!is.null(window))
    {
-      abline(v = window, lty = "dashed", col = "red");
+      abline(v = window * xfactor, lty = "dashed", col = "red");
    }
 }
 
@@ -314,6 +335,8 @@ plotPathsConservative <- function(
    width,
    height,
    columns,
+   xfactor,
+   yfactor,
    xlim,
    ylim,
    xlab,
@@ -321,6 +344,7 @@ plotPathsConservative <- function(
    pathPlotWindow,
    pathPlotInterval,
    pathPlotSequence,
+   logy,
    backgroundCorrect,
    activeNR,
    ...
@@ -335,6 +359,8 @@ plotPathsConservative.SimulationLagrange <- function(
    width = 8,
    height = 6,
    columns = 3:length(simulation$conserveSolute),
+   xfactor = 1,
+   yfactor = 1,
    xlim = c(
       min(simulation$conserveSolute$Time),
       max(simulation$conserveSolute$Time)
@@ -355,15 +381,37 @@ plotPathsConservative.SimulationLagrange <- function(
       to = pathPlotWindow[2], 
       by = pathPlotInterval
       ),
+   logy = FALSE,
    backgroundCorrect = FALSE,
    activeNR = FALSE,
    ...
    )
 {
    createDevice(device, width, height);
-   createBlankPlot(xlim, ylim, xlab, ylab, ...);
+   par(...);
+   if (logy)
+   {
+      log = "y";
+      if (ylim[1] <= 0)
+      {
+         ylim[1] <- ylim[2] / 100;
+      }
+   }
+   else
+   {
+      log = "";
+   }
+   createBlankPlot(
+      xlim = xlim * xfactor, 
+      ylim = ylim * yfactor, 
+      xlab = xlab, 
+      ylab = ylab,
+      log = log
+      );
+   abline(v = simulation$releaseTime * xfactor, lty = "dashed", col = "green");
    for (column in columns)
    {
+      time = simulation$conserveSolute$Time;
       conc = simulation$conserveSolute[[column]];
       if (backgroundCorrect || activeNR)
       {
@@ -373,9 +421,14 @@ plotPathsConservative.SimulationLagrange <- function(
       {
          conc = conc * simulation$injectRatio;
       }
+      if (logy)
+      {
+         time = time[conc > 0];
+         conc = conc[conc > 0];
+      }
       lines(
-         x = simulation$conserveSolute$Time,
-         y = conc
+         x = time * xfactor,
+         y = conc * yfactor
       )
    }
    for (i in pathPlotSequence)
@@ -390,20 +443,22 @@ plotPathsConservative.SimulationLagrange <- function(
          conc = conc * simulation$injectRatio;
       }
       lines(
-         x = simulation$paths[[i]]$time,
-         y = conc
+         x = simulation$paths[[i]]$time * xfactor,
+         y = conc * yfactor
       );
    }
-   abline(v = simulation$releaseTime, lty = "dashed");
 }
 
 plotPathsActive <- function(
    simulation,
    columns,
+   xfactor,
+   yfactor,
    ylim,
    pathPlotWindow,
    pathPlotInterval,
    pathPlotSequence,
+   logy,
    activeColor,
    ...
    )
@@ -414,6 +469,8 @@ plotPathsActive <- function(
 plotPathsActive.SimulationLagrange <- function(
    simulation,
    columns = 3:length(simulation$conserveSolute),
+   xfactor = 1,
+   yfactor = 1,
    ylim = c(
       0,
       max((simulation$conserveSolute[,columns] - simulation$conservebkg) *
@@ -429,6 +486,7 @@ plotPathsActive.SimulationLagrange <- function(
       to = pathPlotWindow[2], 
       by = pathPlotInterval
       ),
+   logy = FALSE,
    activeColor = "red",
    ...
    )
@@ -436,26 +494,37 @@ plotPathsActive.SimulationLagrange <- function(
    plotPathsConservative(
       simulation, 
       columns = columns,
+      xfactor = xfactor,
+      yfactor = yfactor,
       ylim = ylim,
       pathPlotWindow = pathPlotWindow,
       pathPlotInterval= pathPlotInterval,
       pathPlotSequence = pathPlotSequence,
+      logy = logy,
       activeNR = TRUE,
       ...
       );
    for (column in columns)
    {
+      time = simulation$activeSolute$Time;
+      conc = simulation$activeSolute[[column]] - simulation$activebkg;
+      if (logy)
+      {
+         time = time[conc > 0];
+         conc = conc[conc > 0];
+      }
       lines(
-         x = simulation$activeSolute$Time,
-         y = simulation$activeSolute[[column]] - simulation$activebkg,
+         x = time * xfactor,
+         y = conc * yfactor,
          col = activeColor
       )
    }
    for (i in pathPlotSequence)
    {
       lines(
-         x = simulation$paths[[i]]$time,
-         y = simulation$paths[[i]]$activeOTIS - simulation$activebkg,
+         x = simulation$paths[[i]]$time * xfactor,
+         y = (simulation$paths[[i]]$activeOTIS - simulation$activebkg) 
+            * yfactor,
          col = activeColor
       );
    }

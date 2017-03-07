@@ -212,6 +212,8 @@ plot.HyperbolicAnalysis <- function(
    device = "default",
    width = 8,
    height = 6,   
+   xfactor = 1,
+   yfactor = 1,
    xlim = c(
       0,
       max(analysis$metrics$cefftot)
@@ -226,17 +228,24 @@ plot.HyperbolicAnalysis <- function(
    )
 {
    createDevice(device, width, height);
-   createBlankPlot(xlim, ylim, xlab, ylab);
+   par(...);
+   createBlankPlot(
+      xlim = xlim * xfactor, 
+      ylim = ylim * yfactor, 
+      xlab = xlab, 
+      ylab = ylab
+      );
    points(
-      x = analysis$metrics$cefftot, 
-      y = analysis$metrics$u,
-      ...
+      x = analysis$metrics$cefftot * xfactor, 
+      y = analysis$metrics$u * yfactor
       );
 }
 
 plotUptakeEstimate <- function(
    analysis, 
    device,
+   xfactor,
+   yfactor,
    xlim,
    ylim,
    xlab,
@@ -252,6 +261,8 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
    device = "default",
    width = 8,
    height = 6,   
+   xfactor = 1,
+   yfactor = 1,
    xlim = c(
       0,
       max(analysis$metrics$cefftot)
@@ -274,11 +285,17 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
    )
 {
    createDevice(device, width, height);
-   createBlankPlot(xlim, ylim, xlab, ylab);
+   par(...);
+   createBlankPlot(
+      xlim = xlim * xfactor, 
+      ylim = ylim * yfactor, 
+      xlab = xlab, 
+      ylab = ylab
+      );
    points(
-      x = analysis$metrics$cefftot, 
-      y = analysis$metrics$u + analysis$uEstimates$uamb,
-      ...
+      x = analysis$metrics$cefftot * xfactor, 
+      y = (analysis$metrics$u + analysis$uEstimates$uamb)
+         * yfactor
       );
    xvals <- seq(
       from = 0, 
@@ -286,21 +303,19 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
       length.out = 30
       );
    lines(
-      x = xvals,
+      x = xvals * xfactor,
       y = hyperbolic(
          analysis$uEstimates$umax, 
          analysis$uEstimates$halfsat, 
-         xvals),
-      ...
+         xvals) * yfactor
       );
    lines(
-      x = xvals,
+      x = xvals * xfactor,
       y = hyperbolic(
          analysis$umaxactual, 
          analysis$halfsatactual, 
          xvals
-         ),
-      lty = "dashed",
-      ...
+         ) * yfactor,
+      lty = "dashed"
       );
 }
