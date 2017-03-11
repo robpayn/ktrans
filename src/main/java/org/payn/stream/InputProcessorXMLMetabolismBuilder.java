@@ -6,8 +6,8 @@ import org.payn.chsm.Behavior;
 import org.payn.chsm.io.file.initialize.InitialConditionTable;
 import org.payn.chsm.io.file.interpolate.InterpolatorSnapshotTable;
 import org.payn.chsm.io.xml.ElementBehavior;
+import org.payn.chsm.io.xml.ElementHolon;
 import org.payn.neoch.io.xmltools.ElementBoundary;
-import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 import org.payn.resources.water.ResourceWater;
 
 /**
@@ -96,7 +96,7 @@ public class InputProcessorXMLMetabolismBuilder
    }
 
    @Override
-   protected void configureStreamCell(ElementHolonMatrix elementCell, long index) 
+   protected void configureStreamCell(ElementHolon elementCell, long index) 
    {
       ElementBehavior elementBehavior = 
             elementCell.createBehaviorElement(behaviorChannelStorage);

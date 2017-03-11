@@ -3,8 +3,8 @@ package org.payn.stream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
+import org.payn.chsm.io.xml.ElementHolon;
 import org.payn.neoch.io.xmltools.ElementBoundary;
-import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 
 /**
  * Abstract input processor for building NEOCH models from meta input
@@ -156,7 +156,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
       
       String cellName;
       String boundaryName;
-      ElementHolonMatrix elementCell;
+      ElementHolon elementCell;
       ElementBoundary elementBoundary;
       ElementBoundary elementBoundaryAdj;
 
@@ -248,7 +248,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
     * @param index
     *       index number of cell         
     */
-   protected abstract void configureStreamCell(ElementHolonMatrix elementCell, long index);
+   protected abstract void configureStreamCell(ElementHolon elementCell, long index);
 
    /**
     * Set up a stream boundary

@@ -5,8 +5,8 @@ import java.io.File;
 import org.payn.chsm.Behavior;
 import org.payn.chsm.io.file.interpolate.InterpolatorSnapshotTable;
 import org.payn.chsm.io.xml.ElementBehavior;
+import org.payn.chsm.io.xml.ElementHolon;
 import org.payn.neoch.io.xmltools.ElementBoundary;
-import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.ResourceSoluteOTIS;
 import org.payn.stream.InputProcessorXMLStreamBuilder;
@@ -147,7 +147,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    }
 
    @Override
-   protected void configureStreamCell(ElementHolonMatrix elementCell,
+   protected void configureStreamCell(ElementHolon elementCell,
          long index) 
    {
       ElementBehavior elementBehavior = 
