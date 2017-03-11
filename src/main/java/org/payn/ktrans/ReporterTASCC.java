@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import org.payn.chsm.io.file.OutputHandlerSingleThread;
+import org.payn.chsm.io.file.ReporterSingleThread;
 import org.payn.chsm.resources.time.BehaviorTime;
 import org.payn.chsm.resources.time.Iteration;
 import org.payn.chsm.resources.time.Time;
@@ -13,7 +13,7 @@ import org.payn.chsm.values.ValueLong;
 import org.payn.neoch.HolonCell;
 import org.payn.neoch.HolonMatrix;
 
-public class OutputHandlerTASCC extends OutputHandlerSingleThread {
+public class ReporterTASCC extends ReporterSingleThread {
 
    /**
     * Map of resources being tracked by particles

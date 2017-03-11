@@ -4,18 +4,17 @@ import java.io.File;
 import java.util.HashMap;
 
 import org.payn.chsm.Resource;
-import org.payn.chsm.io.OutputHandlerFactoryXML;
-import org.payn.chsm.io.file.OutputHandlerBehaviorFactoryXML;
+import org.payn.chsm.io.ReporterFactoryXML;
+import org.payn.chsm.io.file.ReporterBehaviorFactoryXML;
 import org.payn.chsm.io.logger.LoggerSystemOut;
-import org.payn.chsm.io.xml.ElementOutput;
+import org.payn.chsm.io.xml.ElementReporter;
 import org.payn.chsm.io.xml.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
 import org.payn.ktrans.OutputHandlerTASCCFactoryXML;
 import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixBuilder;
-import org.payn.neoch.MatrixLoader;
-import org.payn.neoch.io.MatrixBuilderXML;
-import org.payn.neoch.io.MatrixLoaderXML;
+import org.payn.neoch.MatrixBuilderXML;
+import org.payn.neoch.MatrixLoaderXML;
 import org.payn.neoch.io.OutputHandlerXMLSerialFactoryXML;
 import org.payn.neoch.processors.ControllerNEORKTwo;
 import org.payn.resources.solute.ResourceSolute;
@@ -57,7 +56,7 @@ public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
    public static HolonMatrix initializeStreamSimulator(HashMap<String, String> argMap,
          File workingDir) throws Exception 
    {
-      MatrixBuilder builder = MatrixLoader.loadBuilder(
+      MatrixBuilder builder = MatrixBuilder.loadBuilder(
             workingDir,
             new MatrixLoaderStreamSimulator(),
             argMap
@@ -68,9 +67,9 @@ public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
    }
 
    @Override
-   protected void initializeLoggers() throws Exception {
+   protected void loadLoggers() throws Exception {
       loggerList.add(LoggerSystemOut.class);
-      super.initializeLoggers();
+      super.loadLoggers();
    }   
 
    @Override
@@ -120,9 +119,9 @@ public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
    }
    
    @Override
-   protected OutputHandlerFactoryXML<?> getOutputHandlerFactory(ElementOutput outputElem) throws Exception 
+   protected ReporterFactoryXML<?> getReporterFactory(ElementReporter outputElem) throws Exception 
    {
-      OutputHandlerFactoryXML<?> factory = super.getOutputHandlerFactory(outputElem);
+      ReporterFactoryXML<?> factory = super.getReporterFactory(outputElem);
       if (factory == null)
       {
          switch(outputElem.getName())
@@ -131,7 +130,7 @@ public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
                factory = new OutputHandlerXMLSerialFactoryXML();
                break;
             case OUTPUT_HANDLER_BEHAVIOR:
-               factory = new OutputHandlerBehaviorFactoryXML();
+               factory = new ReporterBehaviorFactoryXML();
                break;
             case OUTPUT_HANDLER_TASCC:
                factory = new OutputHandlerTASCCFactoryXML();

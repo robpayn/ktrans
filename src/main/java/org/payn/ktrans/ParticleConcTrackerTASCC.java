@@ -19,7 +19,7 @@ import org.payn.resources.solute.boundary.BehaviorSoluteFlow;
 
 public class ParticleConcTrackerTASCC {
 
-   protected OutputHandlerTASCC particleManager;
+   protected ReporterTASCC particleManager;
    private ValueLong tick;
    private ValueDouble time;
    protected ValueDouble timeStep;
@@ -38,7 +38,7 @@ public class ParticleConcTrackerTASCC {
    private String firstResourceName;
    
 
-   public ParticleConcTrackerTASCC(OutputHandlerTASCC particleManager,
+   public ParticleConcTrackerTASCC(ReporterTASCC particleManager,
          ArrayList<String> resourceNames, double velocity) 
    {
       this.particleManager = particleManager;

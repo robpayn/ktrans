@@ -1,29 +1,29 @@
 package org.payn.ktrans;
 
-import org.payn.chsm.io.OutputHandlerFactoryXML;
-import org.payn.chsm.io.file.OutputHandlerIntervalFactoryXML;
+import org.payn.chsm.io.ReporterFactoryXML;
+import org.payn.chsm.io.file.ReporterIntervalFactoryXML;
 import org.payn.chsm.io.xml.ElementHelper;
 
-public class OutputHandlerTASCCFactoryXML extends OutputHandlerFactoryXML<OutputHandlerTASCC> {
+public class OutputHandlerTASCCFactoryXML extends ReporterFactoryXML<ReporterTASCC> {
 
    @Override
    protected void init() 
    {
-      new OutputHandlerIntervalFactoryXML(outputHandler, config).init();
+      new ReporterIntervalFactoryXML(reporter, config).init();
       ElementHelper particleElement = config.getFirstChildElementHelper("particle");
       
-      outputHandler.initializeOutputHandlerTASCC();
-      outputHandler.addResources(particleElement.getAttribute("resource"));
-      outputHandler.setReleaseCell(particleElement.getAttribute("releaseCell"));
-      outputHandler.setEndCell(particleElement.getAttribute("endCell"));
-      outputHandler.setReleaseIteration(Long.valueOf(particleElement.getAttribute("releaseIteration")));
-      outputHandler.setVelocityFile(particleElement.getAttribute("velocityFile"));
+      reporter.initializeOutputHandlerTASCC();
+      reporter.addResources(particleElement.getAttribute("resource"));
+      reporter.setReleaseCell(particleElement.getAttribute("releaseCell"));
+      reporter.setEndCell(particleElement.getAttribute("endCell"));
+      reporter.setReleaseIteration(Long.valueOf(particleElement.getAttribute("releaseIteration")));
+      reporter.setVelocityFile(particleElement.getAttribute("velocityFile"));
    }
 
    @Override
-   protected OutputHandlerTASCC newOutputHandler() throws Exception 
+   protected ReporterTASCC newReporter() throws Exception 
    {
-      return new OutputHandlerTASCC();
+      return new ReporterTASCC();
    }
 
 }

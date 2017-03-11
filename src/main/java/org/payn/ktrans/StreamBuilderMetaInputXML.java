@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.payn.chsm.io.xml.ElementHelper;
 import org.payn.neoch.io.xmltools.ElementXMLInput;
-import org.payn.neoch.io.xmltools.XMLDocumentConfig;
+import org.payn.neoch.io.xmltools.XMLDocumentMatrixConfig;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.simulation.metainputs.MetaInputXML;
 import org.w3c.dom.Element;
@@ -15,7 +15,7 @@ import org.w3c.dom.Element;
  * @author v78h241
  *
  */
-public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
+public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentMatrixConfig> {
 
    /**
     * XML input element from the NEO settings
@@ -38,7 +38,7 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
    {
       super(workingDir, configPath, elementName);
       this.xmlInputElement = 
-            ((XMLDocumentConfig)document).getBuilderElement().getXMLInputElement(workingDir);
+            ((XMLDocumentMatrixConfig)document).getBuilderElement().getXMLInputElement(workingDir);
    }
 
    /**
@@ -351,9 +351,9 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentConfig> {
    }
 
    @Override
-   protected XMLDocumentConfig createDocument(File metaInputFile) throws Exception 
+   protected XMLDocumentMatrixConfig createDocument(File metaInputFile) throws Exception 
    {
-      return new XMLDocumentConfig(metaInputFile);
+      return new XMLDocumentMatrixConfig(metaInputFile);
    }
 
 }

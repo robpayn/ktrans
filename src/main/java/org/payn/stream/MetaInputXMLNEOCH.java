@@ -3,7 +3,7 @@ package org.payn.stream;
 import java.io.File;
 
 import org.payn.neoch.io.xmltools.ElementXMLInput;
-import org.payn.neoch.io.xmltools.XMLDocumentConfig;
+import org.payn.neoch.io.xmltools.XMLDocumentMatrixConfig;
 import org.payn.simulation.metainputs.MetaInputXML;
 
 /**
@@ -12,7 +12,7 @@ import org.payn.simulation.metainputs.MetaInputXML;
  * @author robpayn
  *
  */
-public abstract class MetaInputXMLNEOCH extends MetaInputXML<XMLDocumentConfig> {
+public abstract class MetaInputXMLNEOCH extends MetaInputXML<XMLDocumentMatrixConfig> {
 
    /**
     * Input element for the model input
@@ -34,14 +34,14 @@ public abstract class MetaInputXMLNEOCH extends MetaInputXML<XMLDocumentConfig> 
    {
       super(workingDir, path, elementName);
       this.xmlInputElement = 
-            ((XMLDocumentConfig)document).getBuilderElement().getXMLInputElement(workingDir);
+            ((XMLDocumentMatrixConfig)document).getBuilderElement().getXMLInputElement(workingDir);
    }
 
    @Override
-   protected XMLDocumentConfig createDocument(File metaInputFile)
+   protected XMLDocumentMatrixConfig createDocument(File metaInputFile)
          throws Exception 
    {
-      return new XMLDocumentConfig(metaInputFile);
+      return new XMLDocumentMatrixConfig(metaInputFile);
    }
 
    /**
