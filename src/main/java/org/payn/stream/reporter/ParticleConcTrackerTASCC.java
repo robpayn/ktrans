@@ -1,11 +1,10 @@
-package org.payn.ktrans;
+package org.payn.stream.reporter;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
@@ -15,33 +14,101 @@ import org.payn.chsm.values.ValueLong;
 import org.payn.neoch.HolonBoundary;
 import org.payn.neoch.HolonCell;
 import org.payn.resources.solute.ResourceSolute;
-import org.payn.resources.solute.boundary.BehaviorSoluteFlow;
 
+/**
+ * A particle in one dimensional flow for tracking concentration
+ * 
+ * @author robpayn
+ *
+ */
 public class ParticleConcTrackerTASCC {
 
-   protected ReporterTASCC particleManager;
-   private ValueLong tick;
+   /**
+    * Reporter tracking the particle
+    */
+   protected ReporterTASCC reporter;
+   
+   /**
+    * Model iteration
+    */
+   private ValueLong iteration;
+   
+   /**
+    * Simulation time
+    */
    private ValueDouble time;
+   
+   /**
+    * Duration of an iteration
+    */
    protected ValueDouble timeStep;
-   private long interval;
-   private double startTime;
+   
+   /**
+    * Current cell location
+    */
    protected HolonCell currentCell;
+   
+   /**
+    * End cell
+    */
    protected HolonCell endCell;
+   
+   /**
+    * Current boundary location
+    */
    protected HolonBoundary currentBound;
+   
+   /**
+    * The end distance for current boundary
+    */
    protected double endDistance;
+   
+   /**
+    * The current distance traveled along a boundary
+    */
    protected double currentDistance;
+   
+   /**
+    * A file writer for the particle reporting
+    */
    protected BufferedWriter writer;
+   
+   /**
+    * Velocity of particle movement
+    */
    protected double velocity;
+   
+   /**
+    * Buffered iteration value for asynchronous IO
+    */
    private long bufferedIteration;
+   
+   /**
+    * Buffered time value for asynchronous IO
+    */
    private double bufferedTime;
+   
+   /**
+    * Buffered concentrations for asynchronous IO
+    */
    private LinkedHashMap<String, Double> bufferedConcMap;
+   
+   /**
+    * First resource name in list
+    */
    private String firstResourceName;
    
-
-   public ParticleConcTrackerTASCC(ReporterTASCC particleManager,
+   /**
+    * Construct a new instance with the provided reporter
+    * 
+    * @param reporter
+    * @param resourceNames
+    * @param velocity
+    */
+   public ParticleConcTrackerTASCC(ReporterTASCC reporter,
          ArrayList<String> resourceNames, double velocity) 
    {
-      this.particleManager = particleManager;
+      this.reporter = reporter;
       this.velocity = velocity;
       this.bufferedConcMap = new LinkedHashMap<String, Double>();
       for (String resource: resourceNames)
@@ -51,6 +118,11 @@ public class ParticleConcTrackerTASCC {
       firstResourceName = resourceNames.get(0);
    }
 
+   /**
+    * Buffer the output for asynchronous writing
+    * 
+    * @throws IOException
+    */
    public void buffer() throws IOException 
    {
       for (Entry<String, Double> entry: bufferedConcMap.entrySet())
@@ -80,21 +152,35 @@ public class ParticleConcTrackerTASCC {
          }
          entry.setValue(bufferedConc);
       }
-      bufferedIteration = tick.n;
+      bufferedIteration = iteration.n;
       bufferedTime = time.n;
    }
 
-   public void initializeTime(ValueLong tick, ValueDouble time,
-         ValueDouble timeStep, long interval) 
+   /**
+    * Initialize the time
+    * 
+    * @param iteration
+    *       model iteration
+    * @param time
+    *       simulation time
+    * @param timeStep
+    *       duration of iteration
+    */
+   public void initializeTime(ValueLong iteration, ValueDouble time,
+         ValueDouble timeStep) 
    {
-      this.tick = tick;
+      this.iteration = iteration;
       this.time = time;
       this.timeStep = timeStep;
-      this.interval = interval;
-      startTime = time.n;
    }
 
-
+   /**
+    * Initialize the output
+    * 
+    * @param particleCount
+    * @param output
+    * @throws IOException
+    */
    public void initializeOutput(int particleCount, File output) throws IOException 
    {
       File outputDir = new File(output.getAbsolutePath());
@@ -114,6 +200,11 @@ public class ParticleConcTrackerTASCC {
       writer.newLine();
    }
 
+   /**
+    * Determine if water flow is positive in the current boundary
+    * 
+    * @return
+    */
    protected boolean isFlowPositive() 
    {
       State state = currentBound.getState(ResourceSolute.NAME_WATER_FLOW);
@@ -130,11 +221,22 @@ public class ParticleConcTrackerTASCC {
       }
    }
    
+   /**
+    * Close the file writer for this particle
+    * 
+    * @throws IOException
+    */
    public void close() throws IOException
    {
       writer.close();
    }
 
+   /**
+    * Initialize the location of the particle
+    * 
+    * @param releaseCell
+    * @param endCell
+    */
    public void initializeLocation(HolonCell releaseCell, HolonCell endCell) 
    {
       this.currentCell = releaseCell;
@@ -172,7 +274,12 @@ public class ParticleConcTrackerTASCC {
       
    }
 
-   protected void move() throws IOException 
+   /**
+    * Move the particle
+    * 
+    * @throws IOException
+    */
+   public void move() throws IOException 
    {
       currentDistance += velocity * timeStep.n;
       if (currentDistance > endDistance)
@@ -183,7 +290,7 @@ public class ParticleConcTrackerTASCC {
             if (currentCell.getName().equals(endCell.getName()))
             {
                currentDistance = endDistance;
-               particleManager.reportFinishedParticle(this);
+               reporter.reportFinishedParticle(this);
             }
             else
             {
@@ -219,6 +326,11 @@ public class ParticleConcTrackerTASCC {
       }   
    }
 
+   /**
+    * Write the buffered output to IO
+    * 
+    * @throws IOException
+    */
    public void write() throws IOException 
    {
       writer.write(String.format("%d %f", bufferedIteration, bufferedTime));

@@ -1,6 +1,8 @@
-package org.payn.stream;
+package org.payn.stream.metabolism;
 
 import java.io.File;
+
+import org.payn.stream.MetaInputXMLStream;
 
 /**
  * Meta input for building a stream metabolism model

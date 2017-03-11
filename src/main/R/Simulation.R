@@ -19,7 +19,7 @@ Simulation <- function(
    simulation$timeStep <- as.numeric(xmlValue(
       getNodeSet(config, "/document/holon/behavior/initval")[[1]]
       ));
-   outputNode <- getNodeSet(config, "/document/outputters/output")[[1]];
+   outputNode <- getNodeSet(config, "/document/reporters/reporter")[[1]];
    simulation$outputInterval <- as.numeric(
       xmlGetAttr(
          getNodeSet(outputNode, "interval")[[1]], 

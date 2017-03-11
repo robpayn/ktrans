@@ -1,4 +1,4 @@
-package org.payn.ktrans;
+package org.payn.stream.reporter;
 
 import java.io.File;
 import java.util.HashMap;
@@ -21,7 +21,7 @@ public class ReporterTASCCFactoryXML extends ReporterFactoryXML<ReporterTASCC> {
       new ReporterIntervalFactoryXML(reporter, config).init();
       ElementHelper particleElement = config.getFirstChildElementHelper("particle");
       
-      reporter.initializeOutputHandlerTASCC();
+      reporter.initializeReporterTASCC();
       reporter.addResources(particleElement.getAttribute("resource"));
       reporter.setReleaseCell(particleElement.getAttribute("releaseCell"));
       reporter.setEndCell(particleElement.getAttribute("endCell"));

@@ -4,6 +4,8 @@ import java.io.File;
 import org.payn.neoch.HolonMatrix;
 import org.payn.simulation.OutputProcessorFactory;
 import org.payn.simulation.OutputProcessorFactoryAbstract;
+import org.payn.stream.metabolism.InputProcessorXMLMetabolismBuilder;
+import org.payn.stream.metabolism.MetaInputXMLMetabolism;
 import org.payn.stream.otis.InputProcessorXMLHyperOTIS;
 import org.payn.stream.otis.MetaInputXMLHyperOTIS;
 

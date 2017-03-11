@@ -1,4 +1,4 @@
-package org.payn.stream;
+package org.payn.stream.metabolism;
 
 import java.io.File;
 
@@ -9,6 +9,8 @@ import org.payn.chsm.io.xmltools.ElementBehavior;
 import org.payn.chsm.io.xmltools.ElementHolon;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.resources.water.ResourceWater;
+import org.payn.stream.InputProcessorXMLStreamBuilder;
+import org.payn.stream.SimulatorStream;
 
 /**
  * An input processor for building stream metabolism models

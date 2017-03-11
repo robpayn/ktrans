@@ -11,7 +11,6 @@ import org.payn.chsm.io.reporters.ReporterBehaviorFactoryXML;
 import org.payn.chsm.io.xmltools.ElementReporter;
 import org.payn.chsm.io.xmltools.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
-import org.payn.ktrans.ReporterTASCCFactoryXML;
 import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixBuilder;
 import org.payn.neoch.MatrixBuilderXML;
@@ -20,6 +19,7 @@ import org.payn.neoch.processors.ControllerNEOCHRKTwo;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.ResourceSoluteOTIS;
 import org.payn.resources.water.ResourceWater;
+import org.payn.stream.reporter.ReporterTASCCFactoryXML;
 
 /**
  * Matrix loader implementing some default configuration

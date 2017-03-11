@@ -1,4 +1,4 @@
-package org.payn.ktrans;
+package org.payn.stream.reporter;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -15,6 +15,13 @@ import org.payn.chsm.values.ValueLong;
 import org.payn.neoch.HolonCell;
 import org.payn.neoch.HolonMatrix;
 
+/**
+ * A reporter that tracks particles in a one-dimensional
+ * flow
+ * 
+ * @author robpayn
+ *
+ */
 public class ReporterTASCC extends ReporterSingleThread {
 
    /**
@@ -123,7 +130,7 @@ public class ReporterTASCC extends ReporterSingleThread {
          {
             double velocity = Double.valueOf(reader.readLine());
             ParticleConcTrackerTASCC particle = new ParticleConcTrackerTASCC(this, resourceNames, velocity);
-            particle.initializeTime(tick, time, timeStep, interval);
+            particle.initializeTime(tick, time, timeStep);
             particle.initializeLocation(releaseCell, endCell);
             particle.initializeOutput(particleCount, outputDir);
             particles.add(particle);
@@ -138,7 +145,10 @@ public class ReporterTASCC extends ReporterSingleThread {
       }      
    }
 
-   public void initializeOutputHandlerTASCC() 
+   /**
+    * Initialize the reporter
+    */
+   public void initializeReporterTASCC() 
    {
       finishedParticles = new ArrayList<ParticleConcTrackerTASCC>();
       particles = new ArrayList<ParticleConcTrackerTASCC>();
@@ -168,26 +178,57 @@ public class ReporterTASCC extends ReporterSingleThread {
       }
    }
 
+   /**
+    * Set the cell where particles are released
+    * 
+    * @param cellName
+    *       name of cell
+    */
    public void setReleaseCell(String cellName) 
    {
       releaseCell = ((HolonMatrix)source).getCell(cellName);
    }
 
+   /**
+    * Set the cell where particles are collected
+    * 
+    * @param cellName
+    *       name of cell
+    */
    public void setEndCell(String cellName) 
    {
       endCell = ((HolonMatrix)source).getCell(cellName);
    }
 
+   /**
+    * Set the iteration when particles are released
+    * 
+    * @param releaseIteration
+    *       iteration
+    */
    public void setReleaseIteration(Long releaseIteration) 
    {
       this.releaseIteration = releaseIteration;
    }
 
+   /**
+    * Set the file name with the velocity data for the
+    * particles
+    * 
+    * @param velocityFile
+    *       file with velocity data
+    */
    public void setVelocityFile(String velocityFile) 
    {
       this.velocityFile = workingDir + File.separator + velocityFile;
    }
 
+   /**
+    * Report that a particle has reached the end cell
+    * 
+    * @param particle
+    *       particle that has finished
+    */
    public void reportFinishedParticle(ParticleConcTrackerTASCC particle) 
    {
       finishedParticles.add(particle);
