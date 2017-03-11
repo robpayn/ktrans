@@ -3,6 +3,7 @@ package org.payn.stream;
 import java.io.File;
 import java.util.HashMap;
 
+import org.payn.chsm.ModelLoaderXML;
 import org.payn.chsm.Resource;
 import org.payn.chsm.io.ReporterFactoryXML;
 import org.payn.chsm.io.file.ReporterBehaviorFactoryXML;
@@ -14,7 +15,6 @@ import org.payn.ktrans.OutputHandlerTASCCFactoryXML;
 import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixBuilder;
 import org.payn.neoch.MatrixBuilderXML;
-import org.payn.neoch.MatrixLoaderXML;
 import org.payn.neoch.io.OutputHandlerXMLSerialFactoryXML;
 import org.payn.neoch.processors.ControllerNEORKTwo;
 import org.payn.resources.solute.ResourceSolute;
@@ -27,7 +27,7 @@ import org.payn.resources.water.ResourceWater;
  * @author robpayn
  *
  */
-public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
+public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
    
    /**
     * Serial output handler name
@@ -58,10 +58,10 @@ public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
    {
       MatrixBuilder builder = MatrixBuilder.loadBuilder(
             workingDir,
-            new MatrixLoaderStreamSimulator(),
-            argMap
+            argMap,
+            new MatrixLoaderStreamSimulator()
             );
-      HolonMatrix matrix = builder.createModel();
+      HolonMatrix matrix = builder.buildModel();
       matrix.getController().initializeController();
       return matrix;
    }
@@ -73,9 +73,20 @@ public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
    }   
 
    @Override
-   protected MatrixBuilder createBuilder() throws Exception 
+   protected MatrixBuilder loadBuilder() throws Exception 
    {
-      MatrixBuilder builder = super.createBuilder();
+      MatrixBuilder builder = null;
+      try
+      {
+         builder = (MatrixBuilder)super.loadBuilder();
+      }
+      catch (Exception e)
+      {
+         throw new Exception(String.format(
+               "Designated builder %s is not a matrix builder", 
+               builder.getClass().getCanonicalName()
+               ));
+      }
       if (builder == null)
       {
          builder = new MatrixBuilderXML();
@@ -84,9 +95,9 @@ public class MatrixLoaderStreamSimulator extends MatrixLoaderXML {
    }
    
    @Override
-   protected ControllerHolon getController() throws Exception 
+   protected ControllerHolon loadController() throws Exception 
    {
-      ControllerHolon controller = super.getController();
+      ControllerHolon controller = super.loadController();
       if (controller == null)
       {
          controller = new ControllerNEORKTwo();

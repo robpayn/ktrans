@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.payn.chsm.Behavior;
 import org.payn.chsm.io.file.interpolate.InterpolatorSnapshotTable;
-import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
+import org.payn.chsm.io.xml.ElementBehavior;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 import org.payn.resources.solute.ResourceSolute;
@@ -150,7 +150,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    protected void configureStreamCell(ElementHolonMatrix elementCell,
          long index) 
    {
-      ElementBehaviorMatrix elementBehavior = 
+      ElementBehavior elementBehavior = 
             elementCell.createBehaviorElement(conserveBehaviorStorage);
       elementBehavior.createInitValueElement(
             conserveBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC), 
@@ -215,7 +215,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    protected void configureStreamBoundary(ElementBoundary elementBoundary,
          ElementBoundary elementBoundaryAdj, int index) 
    {
-      ElementBehaviorMatrix elementBehavior = 
+      ElementBehavior elementBehavior = 
             elementBoundary.createBehaviorElement(conserveBehaviorFlow);
       elementBehavior.createInitValueElement(
             ResourceSolute.NAME_WATER_FLOW, 
@@ -237,7 +237,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    {
       Behavior behavior = conserveResourceOTIS.getBehavior(
             ResourceSolute.BEHAVIOR_CONCBOUND_INJECT);
-      ElementBehaviorMatrix elementBehavior = 
+      ElementBehavior elementBehavior = 
             elementBoundary.createBehaviorElement(behavior);
       elementBehavior.createInitValueElement(
             behavior.getAbstractStateName(InterpolatorSnapshotTable.REQ_STATE_PATH), 
@@ -330,7 +330,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    {
       Behavior behavior = conserveResourceOTIS.getBehavior(
             ResourceSolute.BEHAVIOR_FLOWBOUND);
-      ElementBehaviorMatrix elementBehavior = 
+      ElementBehavior elementBehavior = 
             elementBoundary.createBehaviorElement(behavior);
       elementBehavior.createInitValueElement(
             ResourceSolute.NAME_WATER_FLOW, 

@@ -2,8 +2,8 @@ package org.payn.stream;
 
 import java.io.File;
 
-import org.payn.neoch.io.xmltools.ElementXMLInput;
-import org.payn.neoch.io.xmltools.XMLDocumentMatrixConfig;
+import org.payn.chsm.io.xml.XMLDocumentModelConfig;
+import org.payn.neoch.io.xmltools.ElementXMLInputMatrix;
 import org.payn.simulation.metainputs.MetaInputXML;
 
 /**
@@ -12,12 +12,12 @@ import org.payn.simulation.metainputs.MetaInputXML;
  * @author robpayn
  *
  */
-public abstract class MetaInputXMLNEOCH extends MetaInputXML<XMLDocumentMatrixConfig> {
+public abstract class MetaInputXMLNEOCH extends MetaInputXML<XMLDocumentModelConfig> {
 
    /**
     * Input element for the model input
     */
-   private ElementXMLInput xmlInputElement;
+   private ElementXMLInputMatrix xmlInputElement;
 
    /**
     * Construct a new instance that uses the provided working directory,
@@ -34,14 +34,17 @@ public abstract class MetaInputXMLNEOCH extends MetaInputXML<XMLDocumentMatrixCo
    {
       super(workingDir, path, elementName);
       this.xmlInputElement = 
-            ((XMLDocumentMatrixConfig)document).getBuilderElement().getXMLInputElement(workingDir);
+            new ElementXMLInputMatrix(
+                  document.getBuilderElement().getXMLInputElement(),
+                  workingDir
+                  );
    }
 
    @Override
-   protected XMLDocumentMatrixConfig createDocument(File metaInputFile)
+   protected XMLDocumentModelConfig createDocument(File metaInputFile)
          throws Exception 
    {
-      return new XMLDocumentMatrixConfig(metaInputFile);
+      return new XMLDocumentModelConfig(metaInputFile);
    }
 
    /**

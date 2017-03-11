@@ -3,7 +3,7 @@ package org.payn.stream;
 import org.payn.chsm.Behavior;
 import org.payn.chsm.io.file.initialize.InitialConditionTable;
 import org.payn.chsm.io.file.interpolate.InterpolatorSnapshotTable;
-import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;
+import org.payn.chsm.io.xml.ElementBehavior;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.neoch.io.xmltools.ElementHolonMatrix;
 import org.payn.resources.water.ResourceWater;
@@ -63,7 +63,7 @@ public class InputProcessorXMLMetabolismBuilder
    @Override
    protected void configureStreamCell(ElementHolonMatrix elementCell, long index) 
    {
-      ElementBehaviorMatrix elementBehavior = 
+      ElementBehavior elementBehavior = 
             elementCell.createBehaviorElement(behaviorChannelStorage);
       elementBehavior.createInitValueElement(
             ResourceWater.NAME_LENGTH, 
@@ -124,7 +124,7 @@ public class InputProcessorXMLMetabolismBuilder
    protected void configureStreamBoundary(ElementBoundary elementBoundary,
          ElementBoundary elementBoundaryAdj, int index) 
    {
-      ElementBehaviorMatrix elementBehavior = 
+      ElementBehavior elementBehavior = 
             elementBoundary.createBehaviorElement(behaviorDynamicWaveWiele);
       if (isInitialConditions)
       {
@@ -168,7 +168,7 @@ public class InputProcessorXMLMetabolismBuilder
    protected void configureUpstreamBoundary(ElementBoundary elementBoundary,
          int indexFirstCell) throws Exception 
    {
-      ElementBehaviorMatrix elementBehavior =
+      ElementBehavior elementBehavior =
             elementBoundary.createBehaviorElement(
                   this.resourceWater.getBehavior(ResourceWater.BEHAVIOR_FLOW_INTERPOLATE)
                   );
@@ -193,7 +193,7 @@ public class InputProcessorXMLMetabolismBuilder
    protected void configureDownstreamBoundary(ElementBoundary elementBoundary,
          long indexLastCell) throws Exception 
    {
-      ElementBehaviorMatrix elementBehavior =
+      ElementBehavior elementBehavior =
             elementBoundary.createBehaviorElement(
                   this.resourceWater.getBehavior(ResourceWater.BEHAVIOR_DYNAMIC_WAVE_DOWNSTREAM)
                   );

@@ -3,7 +3,7 @@ package org.payn.ktrans;
 import java.io.File;
 
 import org.payn.chsm.io.xml.ElementHelper;
-import org.payn.neoch.io.xmltools.ElementXMLInput;
+import org.payn.neoch.io.xmltools.ElementXMLInputMatrix;
 import org.payn.neoch.io.xmltools.XMLDocumentMatrixConfig;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.simulation.metainputs.MetaInputXML;
@@ -20,7 +20,7 @@ public class StreamBuilderMetaInputXML extends MetaInputXML<XMLDocumentMatrixCon
    /**
     * XML input element from the NEO settings
     */
-   private ElementXMLInput xmlInputElement;
+   private ElementXMLInputMatrix xmlInputElement;
 
    /**
     * Constructor based on XML input
