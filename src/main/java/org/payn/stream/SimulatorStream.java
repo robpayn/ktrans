@@ -16,39 +16,6 @@ import org.payn.stream.otis.MetaInputXMLHyperOTIS;
 public class SimulatorStream extends SimulatorNEOCH {
    
    /**
-    * Entry point for stream simulations
-    * 
-    * @param args
-    *       command line arguments
-    */
-   public static void main(String[] args)
-   {
-      try 
-      {
-         File workingDir = new File(System.getProperty("user.dir"));
-         SimulatorStream simulator = new SimulatorStream(args, workingDir);
-         
-         // Check for configuration file in file system
-         if (!simulator.argMap.containsKey("config"))
-         {
-            throw new Exception(
-                  "Must provide an argument for configuration file relative to working directory " +
-                        "(e.g. 'config=./config/config.xml')"
-                  );
-         }
-
-         simulator.getInputProcessorFactory().addMetabolismBuilderInputProcessor(
-               workingDir, simulator.argMap.get("config")
-               );
-         simulator.execute();
-      } 
-      catch (Exception e) 
-      {
-         e.printStackTrace();
-      }
-   }
-
-   /**
     * Construct a new instance based on the provided command line arguments and working directory
     * 
     * @param args

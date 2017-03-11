@@ -1,5 +1,7 @@
 package org.payn.stream;
 
+import java.io.File;
+
 import org.payn.chsm.Behavior;
 import org.payn.chsm.io.file.initialize.InitialConditionTable;
 import org.payn.chsm.io.file.interpolate.InterpolatorSnapshotTable;
@@ -16,6 +18,39 @@ import org.payn.resources.water.ResourceWater;
  */
 public class InputProcessorXMLMetabolismBuilder 
       extends InputProcessorXMLStreamBuilder<MetaInputXMLMetabolism> {
+
+   /**
+    * Entry point for stream simulations
+    * 
+    * @param args
+    *       command line arguments
+    */
+   public static void main(String[] args)
+   {
+      try 
+      {
+         File workingDir = new File(System.getProperty("user.dir"));
+         SimulatorStream simulator = new SimulatorStream(args, workingDir);
+         
+         // Check for configuration file in file system
+         if (!simulator.getArgMap().containsKey("config"))
+         {
+            throw new Exception(
+                  "Must provide an argument for configuration file relative to working directory " +
+                        "(e.g. 'config=./config/config.xml')"
+                  );
+         }
+
+         simulator.getInputProcessorFactory().addMetabolismBuilderInputProcessor(
+               workingDir, simulator.getArgMap().get("config")
+               );
+         simulator.execute();
+      } 
+      catch (Exception e) 
+      {
+         e.printStackTrace();
+      }
+   }
 
    /**
     * Water resource

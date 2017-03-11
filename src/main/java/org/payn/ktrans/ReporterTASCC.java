@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.payn.chsm.io.file.ReporterSingleThread;
 import org.payn.chsm.resources.time.BehaviorTime;
 import org.payn.chsm.resources.time.Iteration;
@@ -56,6 +58,18 @@ public class ReporterTASCC extends ReporterSingleThread {
     */
    private ArrayList<String> resourceNames;
    
+   /**
+    * Construct a new instance with the provided working directory and
+    * argument map
+    * 
+    * @param workingDir
+    * @param argMap
+    */
+   public ReporterTASCC(File workingDir, HashMap<String, String> argMap) 
+   {
+      super(workingDir, argMap);
+   }
+
    @Override
    public void openLocation() throws Exception 
    {
@@ -171,7 +185,7 @@ public class ReporterTASCC extends ReporterSingleThread {
 
    public void setVelocityFile(String velocityFile) 
    {
-      this.velocityFile = System.getProperty("user.dir") + File.separator + velocityFile;
+      this.velocityFile = workingDir + File.separator + velocityFile;
    }
 
    public void reportFinishedParticle(ParticleConcTrackerTASCC particle) 

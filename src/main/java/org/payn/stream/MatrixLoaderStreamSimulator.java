@@ -11,11 +11,11 @@ import org.payn.chsm.io.logger.LoggerSystemOut;
 import org.payn.chsm.io.xml.ElementReporter;
 import org.payn.chsm.io.xml.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
-import org.payn.ktrans.OutputHandlerTASCCFactoryXML;
+import org.payn.ktrans.ReporterTASCCFactoryXML;
 import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixBuilder;
 import org.payn.neoch.MatrixBuilderXML;
-import org.payn.neoch.io.OutputHandlerXMLSerialFactoryXML;
+import org.payn.neoch.io.ReporterXMLSerialFactoryXML;
 import org.payn.neoch.processors.ControllerNEORKTwo;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.ResourceSoluteOTIS;
@@ -30,19 +30,19 @@ import org.payn.resources.water.ResourceWater;
 public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
    
    /**
-    * Serial output handler name
+    * Serial reporter name
     */
-   private static final String OUTPUT_HANDLER_SERIAL = "serial";
+   private static final String REPORTER_SERIAL = "serial";
    
    /**
-    * Behavior output handler name
+    * Behavior reporter name
     */
-   private static final String OUTPUT_HANDLER_BEHAVIOR = "behavior";
+   private static final String REPORTER_BEHAVIOR = "behavior";
 
    /**
-    * Behavior output handler name
+    * Behavior reporter name
     */
-   private static final String OUTPUT_HANDLER_TASCC = "tascc";
+   private static final String REPORTER_TASCC = "tascc";
 
    /**
     * Load and build the matrix
@@ -137,14 +137,14 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
       {
          switch(outputElem.getName())
          {
-            case OUTPUT_HANDLER_SERIAL:
-               factory = new OutputHandlerXMLSerialFactoryXML();
+            case REPORTER_SERIAL:
+               factory = new ReporterXMLSerialFactoryXML();
                break;
-            case OUTPUT_HANDLER_BEHAVIOR:
+            case REPORTER_BEHAVIOR:
                factory = new ReporterBehaviorFactoryXML();
                break;
-            case OUTPUT_HANDLER_TASCC:
-               factory = new OutputHandlerTASCCFactoryXML();
+            case REPORTER_TASCC:
+               factory = new ReporterTASCCFactoryXML();
                break;
          }
       }

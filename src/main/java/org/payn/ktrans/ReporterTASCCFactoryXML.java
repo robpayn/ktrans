@@ -1,13 +1,22 @@
 package org.payn.ktrans;
 
+import java.io.File;
+import java.util.HashMap;
+
 import org.payn.chsm.io.ReporterFactoryXML;
 import org.payn.chsm.io.file.ReporterIntervalFactoryXML;
 import org.payn.chsm.io.xml.ElementHelper;
 
-public class OutputHandlerTASCCFactoryXML extends ReporterFactoryXML<ReporterTASCC> {
+/**
+ * Factory for configuring a TASCC lagrangian reporter
+ * 
+ * @author robpayn
+ *
+ */
+public class ReporterTASCCFactoryXML extends ReporterFactoryXML<ReporterTASCC> {
 
    @Override
-   protected void init() 
+   protected void init() throws Exception 
    {
       new ReporterIntervalFactoryXML(reporter, config).init();
       ElementHelper particleElement = config.getFirstChildElementHelper("particle");
@@ -21,9 +30,9 @@ public class OutputHandlerTASCCFactoryXML extends ReporterFactoryXML<ReporterTAS
    }
 
    @Override
-   protected ReporterTASCC newReporter() throws Exception 
+   protected ReporterTASCC newReporter(File workingDir, HashMap<String, String> argMap) throws Exception 
    {
-      return new ReporterTASCC();
+      return new ReporterTASCC(workingDir, argMap);
    }
 
 }
