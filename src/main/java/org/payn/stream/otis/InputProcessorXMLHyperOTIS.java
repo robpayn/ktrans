@@ -3,9 +3,9 @@ package org.payn.stream.otis;
 import java.io.File;
 
 import org.payn.chsm.Behavior;
-import org.payn.chsm.io.file.interpolate.InterpolatorSnapshotTable;
-import org.payn.chsm.io.xml.ElementBehavior;
-import org.payn.chsm.io.xml.ElementHolon;
+import org.payn.chsm.io.interpolate.InterpolatorSnapshotTable;
+import org.payn.chsm.io.xmltools.ElementBehavior;
+import org.payn.chsm.io.xmltools.ElementHolon;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.ResourceSoluteOTIS;

@@ -3,7 +3,7 @@ package org.payn.stream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-import org.payn.chsm.io.xml.ElementHolon;
+import org.payn.chsm.io.xmltools.ElementHolon;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 
 /**

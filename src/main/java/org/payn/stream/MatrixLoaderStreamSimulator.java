@@ -4,19 +4,19 @@ import java.io.File;
 import java.util.HashMap;
 
 import org.payn.chsm.ModelLoaderXML;
+import org.payn.chsm.ReporterFactoryXML;
 import org.payn.chsm.Resource;
-import org.payn.chsm.io.ReporterFactoryXML;
-import org.payn.chsm.io.file.ReporterBehaviorFactoryXML;
 import org.payn.chsm.io.logger.LoggerSystemOut;
-import org.payn.chsm.io.xml.ElementReporter;
-import org.payn.chsm.io.xml.ElementResource;
+import org.payn.chsm.io.reporters.ReporterBehaviorFactoryXML;
+import org.payn.chsm.io.xmltools.ElementReporter;
+import org.payn.chsm.io.xmltools.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
 import org.payn.ktrans.ReporterTASCCFactoryXML;
 import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixBuilder;
 import org.payn.neoch.MatrixBuilderXML;
-import org.payn.neoch.io.ReporterXMLSerialFactoryXML;
-import org.payn.neoch.processors.ControllerNEORKTwo;
+import org.payn.neoch.io.reporters.ReporterXMLSerialFactoryXML;
+import org.payn.neoch.processors.ControllerNEOCHRKTwo;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.ResourceSoluteOTIS;
 import org.payn.resources.water.ResourceWater;
@@ -100,7 +100,7 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
       ControllerHolon controller = super.loadController();
       if (controller == null)
       {
-         controller = new ControllerNEORKTwo();
+         controller = new ControllerNEOCHRKTwo();
       }
       return controller;
    }

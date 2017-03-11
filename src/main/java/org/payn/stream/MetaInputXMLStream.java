@@ -1,7 +1,8 @@
 package org.payn.stream;
 
 import java.io.File;
-import org.payn.chsm.io.xml.ElementHelper;
+
+import org.payn.chsm.io.xmltools.ElementHelper;
 
 /**
  * Abstract meta input for a NEOCH stream model

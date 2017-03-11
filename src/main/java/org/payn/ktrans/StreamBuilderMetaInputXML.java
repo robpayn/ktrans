@@ -2,7 +2,7 @@ package org.payn.ktrans;
 
 import java.io.File;
 
-import org.payn.chsm.io.xml.ElementHelper;
+import org.payn.chsm.io.xmltools.ElementHelper;
 import org.payn.neoch.io.xmltools.ElementXMLInputMatrix;
 import org.payn.neoch.io.xmltools.XMLDocumentMatrixConfig;
 import org.payn.resources.solute.ResourceSolute;

@@ -3,7 +3,7 @@ package org.payn.stream.otis;
 import java.io.File;
 import java.util.HashMap;
 
-import org.payn.chsm.io.xml.ElementHelper;
+import org.payn.chsm.io.xmltools.ElementHelper;
 import org.payn.stream.MetaInputXMLStream;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

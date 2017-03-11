@@ -3,9 +3,9 @@ package org.payn.ktrans;
 import java.io.File;
 import java.util.HashMap;
 
-import org.payn.chsm.io.ReporterFactoryXML;
-import org.payn.chsm.io.file.ReporterIntervalFactoryXML;
-import org.payn.chsm.io.xml.ElementHelper;
+import org.payn.chsm.ReporterFactoryXML;
+import org.payn.chsm.io.reporters.ReporterIntervalFactoryXML;
+import org.payn.chsm.io.xmltools.ElementHelper;
 
 /**
  * Factory for configuring a TASCC lagrangian reporter

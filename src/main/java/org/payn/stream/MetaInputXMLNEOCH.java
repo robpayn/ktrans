@@ -2,7 +2,7 @@ package org.payn.stream;
 
 import java.io.File;
 
-import org.payn.chsm.io.xml.XMLDocumentModelConfig;
+import org.payn.chsm.io.xmltools.XMLDocumentModelConfig;
 import org.payn.neoch.io.xmltools.ElementXMLInputMatrix;
 import org.payn.simulation.metainputs.MetaInputXML;
 
