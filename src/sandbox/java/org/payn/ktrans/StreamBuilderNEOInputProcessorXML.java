@@ -107,17 +107,17 @@ public class StreamBuilderNEOInputProcessorXML
                   (BehaviorSoluteBoundInject)consResource.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND_INJECT);
             elementBehavior = elementBoundary.createBehaviorElement(consInjectBehavior);
             elementBehavior.createInitValueElement(
-                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_PATH, 
+                  consResource.getName() + InterpolatorSnapshotTable.NAME_PATH, 
                   metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_TYPE, 
+                  consResource.getName() + InterpolatorSnapshotTable.NAME_TYPE, 
                   metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_DELIMITER,  
+                  consResource.getName() + InterpolatorSnapshotTable.NAME_DELIMITER,  
                   metaInput.getDelimiter(), 
                   null
                   );
@@ -169,17 +169,17 @@ public class StreamBuilderNEOInputProcessorXML
                   actInjectBehavior
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_PATH,
+                  actResource.getName() + InterpolatorSnapshotTable.NAME_PATH,
                   metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_TYPE, 
+                  actResource.getName() + InterpolatorSnapshotTable.NAME_TYPE, 
                   metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_DELIMITER,  
+                  actResource.getName() + InterpolatorSnapshotTable.NAME_DELIMITER,  
                   metaInput.getDelimiter(), 
                   null
                   );
@@ -233,17 +233,17 @@ public class StreamBuilderNEOInputProcessorXML
                   consResource.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND)
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_PATH, 
+                  consResource.getName() + InterpolatorSnapshotTable.NAME_PATH, 
                   metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_TYPE, 
+                  consResource.getName() + InterpolatorSnapshotTable.NAME_TYPE, 
                   metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  consResource.getName() + InterpolatorSnapshotTable.REQ_STATE_DELIMITER, 
+                  consResource.getName() + InterpolatorSnapshotTable.NAME_DELIMITER, 
                   metaInput.getDelimiter(), 
                   null
                   );
@@ -272,17 +272,17 @@ public class StreamBuilderNEOInputProcessorXML
                   actResource.getBehavior(ResourceSolute.BEHAVIOR_CONCBOUND)
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_PATH, 
+                  actResource.getName() + InterpolatorSnapshotTable.NAME_PATH, 
                   metaInput.getConcBoundFile(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_TYPE, 
+                  actResource.getName() + InterpolatorSnapshotTable.NAME_TYPE, 
                   metaInput.getInterpolationType(), 
                   null
                   );
             elementBehavior.createInitValueElement(
-                  actResource.getName() + InterpolatorSnapshotTable.REQ_STATE_DELIMITER, 
+                  actResource.getName() + InterpolatorSnapshotTable.NAME_DELIMITER, 
                   metaInput.getDelimiter(), 
                   null
                   );

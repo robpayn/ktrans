@@ -5,21 +5,20 @@ require(XML);
 Simulation <- function(
    configFile, 
    conserveFile, 
-   activeFile, 
-   releaseTime
+   activeFile,
+   streamLength,
+   injectRatio = 1
    ) 
 {
    simulation <- new.env();
    class(simulation) <- c("Simulation", class(simulation));
    
-   simulation$releaseTime <- releaseTime;
-   
-   config <- xmlInternalTreeParse(configFile);
+   simulation$config <- xmlInternalTreeParse(configFile);
    
    simulation$timeStep <- as.numeric(xmlValue(
-      getNodeSet(config, "/document/holon/behavior/initval")[[1]]
+      getNodeSet(simulation$config, "/document/holon/behavior/initval")[[1]]
       ));
-   outputNode <- getNodeSet(config, "/document/reporters/reporter")[[1]];
+   outputNode <- getNodeSet(simulation$config, "/document/reporters/reporter")[[1]];
    simulation$outputInterval <- as.numeric(
       xmlGetAttr(
          getNodeSet(outputNode, "interval")[[1]], 
@@ -30,29 +29,17 @@ Simulation <- function(
       simulation$timeStep * simulation$outputInterval;
 
    conserveSoluteNode <- getNodeSet(
-      config, 
+      simulation$config, 
       "/document/streambuilder/solute"
       )[[1]];
    simulation$conservebkg <- as.numeric(
       xmlGetAttr(conserveSoluteNode,  "bkgConc")
       );
-   simulation$conserveMass <- as.numeric(
-      xmlGetAttr(
-         getNodeSet(conserveSoluteNode, "inject")[[1]], 
-         "soluteMass"
-         )
-      );
 
    activeSoluteNode <- getNodeSet(
-      config, 
+      simulation$config, 
       "/document/streambuilder/solute"
       )[[2]];
-   simulation$activeMass <- as.numeric(
-      xmlGetAttr(
-         getNodeSet(activeSoluteNode, "inject")[[1]], 
-         "soluteMass"
-         )
-      );
    simulation$umax <- as.numeric(
       xmlGetAttr(
          getNodeSet(activeSoluteNode, "hyperbolic")[[1]], 
@@ -71,41 +58,32 @@ Simulation <- function(
 
    simulation$discharge <- as.numeric(
       xmlGetAttr(
-         getNodeSet(config, "/document/streambuilder/flow")[[1]], 
+         getNodeSet(simulation$config, "/document/streambuilder/flow")[[1]], 
          "initialFlow")
       );
-   simulation$streamlength <- as.numeric(
-      xmlGetAttr(
-         getNodeSet(
-            config, 
-            "/document/streambuilder/channelgeometry"
-            )[[1]], 
-         "length")
-      );
+   simulation$streamLength <- streamLength;
    simulation$streamwidth <- as.numeric(
       xmlGetAttr(
          getNodeSet(
-            config, 
+            simulation$config, 
             "/document/streambuilder/channelgeometry/activechannel"
             )[[1]], 
          "averageWidth")
       );
    simulation$streamdepth <- as.numeric(
       xmlGetAttr(
-         getNodeSet(config, "/document/streambuilder/flow")[[1]], 
+         getNodeSet(simulation$config, "/document/streambuilder/flow")[[1]], 
          "initialDepth"
          )
       );
-   
-   
+
    simulation$xSectionArea <- 
       simulation$streamwidth * simulation$streamdepth;
    simulation$streamvel <- 
       simulation$discharge / simulation$xSectionArea;
    simulation$travelTime <- 
-      simulation$reachLength / simulation$streamvel;
-   simulation$injectRatio <-
-      simulation$activeMass / simulation$conserveMass;
+      simulation$streamLength / simulation$streamvel;
+   simulation$injectRatio <- injectRatio;
 
    simulation$conserveSolute <- read.table(
       file = conserveFile,
@@ -133,6 +111,7 @@ plotConservative <- function(
    ylim,
    xlab,
    ylab,
+   ratio,
    ...
    )
 {
@@ -157,6 +136,7 @@ plotConservative.Simulation <- function(
       ),
    xlab = "Time",
    ylab = "Concentration",
+   ratio = 1,
    ...
    ) 
 {
@@ -164,7 +144,7 @@ plotConservative.Simulation <- function(
    par(...);
    createBlankPlot(
       xlim = xlim * xfactor, 
-      ylim = ylim * yfactor, 
+      ylim = ylim * yfactor * ratio, 
       xlab = xlab, 
       ylab = ylab
       );
@@ -172,25 +152,19 @@ plotConservative.Simulation <- function(
    {
       lines(
          x = simulation$conserveSolute$Time * xfactor,
-         y = simulation$conserveSolute[[column]] * yfactor
+         y = simulation$conserveSolute[[column]] * yfactor * ratio
       )
    }
-   abline(v = simulation$releaseTime * xfactor, lty = "dashed", col = "green");
 }
 
 plotActive <- function(
    simulation,
-   device,
-   width,
-   height,
-   ratio,
    columns,
    xfactor,
    yfactor,
    xlim,
    ylim,
-   xlab,
-   ylab,
+   ratio,
    activeColor,
    window,
    ...
@@ -201,59 +175,126 @@ plotActive <- function(
 
 plotActive.Simulation <- function(
    simulation,
-   device = "default",
-   width = 8,
-   height = 6,
-   ratio = simulation$injectRatio,
    columns = 3:length(simulation$conserveSolute),
    xfactor = 1,
    yfactor = 1,
-   xlim = c(
-      min(simulation$conserveSolute$Time),
-      max(simulation$conserveSolute$Time)
-      ),
-   ylim = c(
-      0,
-      max(simulation$conserveSolute[,columns]) * ratio
-      ),
-   xlab = "Time",
-   ylab = "Concentration",
+   ratio = simulation$injectRatio,
    activeColor = "red",
    window = NULL,
    ...
    ) 
 {
-   createDevice(device, width, height);
-   par(...);
-   createBlankPlot(
-      xlim = xlim * xfactor, 
-      ylim = ylim * yfactor,
-      xlab = xlab, 
-      ylab = ylab
+   plotConservative.Simulation(
+      simulation = simulation,
+      columns = columns,
+      xfactor = xfactor,
+      yfactor = yfactor,
+      ratio = ratio,
+      ...
       );
-   for (column in columns)
-   {
-      lines(
-         x = simulation$conserveSolute$Time * xfactor,
-         y = (simulation$conserveSolute[[column]] - simulation$conservebkg) 
-            * ratio * yfactor
-      )
-   }
    for (column in columns)
    {
       lines(
          x = simulation$activeSolute$Time * xfactor,
          y = (simulation$activeSolute[[column]] - simulation$activebkg) 
             * yfactor,
-         col = activeColor,
-         ...
+         col = activeColor
       )
    }
-   abline(v = simulation$releaseTime * xfactor, lty = "dashed", col = "green");
    if (!is.null(window))
    {
       abline(v = window * xfactor, lty = "dashed", col = "red");
    }
+}
+
+# CLASS SimulationSlug ####
+
+SimulationSlug <- function(
+   configFile, 
+   conserveFile, 
+   activeFile, 
+   streamLength,
+   injectRatio = NULL,
+   releaseTime
+   )
+{
+   simulation <- Simulation(
+      configFile = configFile, 
+      conserveFile = conserveFile, 
+      activeFile = activeFile,
+      streamLength = streamLength
+      );
+   class(simulation) <- c("SimulationSlug", class(simulation));
+   
+   simulation$releaseTime <- releaseTime;
+   
+   conserveSoluteNode <- getNodeSet(
+      simulation$config, 
+      "/document/streambuilder/solute"
+      )[[1]];
+   simulation$conserveMass <- as.numeric(
+      xmlGetAttr(
+         getNodeSet(conserveSoluteNode, "inject")[[1]], 
+         "soluteMass"
+         )
+      );
+      
+   activeSoluteNode <- getNodeSet(
+      simulation$config, 
+      "/document/streambuilder/solute"
+      )[[2]];
+   simulation$activeMass <- as.numeric(
+      xmlGetAttr(
+         getNodeSet(activeSoluteNode, "inject")[[1]], 
+         "soluteMass"
+         )
+      );
+
+   if (is.null(injectRatio))
+   {
+      simulation$injectRatio <-
+         simulation$activeMass / simulation$conserveMass;
+   }
+   else
+   {
+      simulation$injectRatio <- injectRatio;
+   }
+
+   return(simulation);
+}
+
+plotConservative.SimulationSlug <- function(
+   simulation,
+   xfactor = 1,
+   ...
+   ) 
+{
+   plotConservative.Simulation(
+      simulation = simulation, 
+      xfactor = xfactor, 
+      ...
+      );
+   abline(v = simulation$releaseTime * xfactor, lty = "dashed", col = "green");
+}
+
+plotActive.SimulationSlug <- function(
+   simulation,
+   columns = 3:length(simulation$conserveSolute),
+   xfactor = 1,
+   yfactor = 1,
+   ratio = simulation$injectRatio,
+   activeColor = "red",
+   window = NULL,
+   ...
+   ) 
+{
+   plotActive.Simulation(
+      simulation = simulation,
+      xfactor = xfactor,
+      ratio = ratio,
+      ...
+      );
+   abline(v = simulation$releaseTime * xfactor, lty = "dashed", col = "green");
 }
 
 # CLASS SimulationLagrange ####
@@ -262,13 +303,20 @@ SimulationLagrange <- function(
    configFile, 
    conserveFile, 
    activeFile, 
+   streamLength,
    particleDir,
    analysisWindow,
    releaseTime, 
    pathTimeWindow = analysisWindow[2]
    ) 
 {
-   simulation <- Simulation(configFile, conserveFile, activeFile, releaseTime);
+   simulation <- SimulationSlug(
+      configFile = configFile, 
+      conserveFile = conserveFile, 
+      activeFile = activeFile,
+      streamLength = streamLength,
+      releaseTime = releaseTime
+      );
    class(simulation) <- c("SimulationLagrange", class(simulation));
    
    times <- seq(

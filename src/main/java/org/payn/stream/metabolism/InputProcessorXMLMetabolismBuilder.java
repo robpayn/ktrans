@@ -210,17 +210,17 @@ public class InputProcessorXMLMetabolismBuilder
                   this.resourceWater.getBehavior(ResourceWater.BEHAVIOR_FLOW_INTERPOLATE)
                   );
       elementBehavior.createInitValueElement(
-            InterpolatorSnapshotTable.REQ_STATE_DELIMITER, 
+            InterpolatorSnapshotTable.NAME_DELIMITER, 
             metaInput.getAttributeUpstreamFlowDelimiter(), 
             null
             );
       elementBehavior.createInitValueElement(
-            InterpolatorSnapshotTable.REQ_STATE_PATH, 
+            InterpolatorSnapshotTable.NAME_PATH, 
             metaInput.getAttributeUpstreamFlowPath(), 
             null
             );
       elementBehavior.createInitValueElement(
-            InterpolatorSnapshotTable.REQ_STATE_TYPE, 
+            InterpolatorSnapshotTable.NAME_TYPE, 
             metaInput.getAttributeUpstreamInterpType(), 
             null
             );

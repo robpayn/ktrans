@@ -235,22 +235,32 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    protected void configureUpstreamBoundary(ElementBoundary elementBoundary,
          int indexFirstCell) throws Exception 
    {
-      Behavior behavior = conserveResourceOTIS.getBehavior(
-            ResourceSolute.BEHAVIOR_CONCBOUND_INJECT);
+      boolean isInject = metaInput.isUpstreamInject("conservative");
+      Behavior behavior = null;
+      if (isInject)
+      {
+         behavior = conserveResourceOTIS.getBehavior(
+               ResourceSolute.BEHAVIOR_CONCBOUND_INJECT);
+      }
+      else
+      {
+         behavior = conserveResourceOTIS.getBehavior(
+               ResourceSolute.BEHAVIOR_CONCBOUND);
+      }
       ElementBehavior elementBehavior = 
             elementBoundary.createBehaviorElement(behavior);
       elementBehavior.createInitValueElement(
-            behavior.getAbstractStateName(InterpolatorSnapshotTable.REQ_STATE_PATH), 
+            behavior.getAbstractStateName(InterpolatorSnapshotTable.NAME_PATH), 
             metaInput.getAttributeConcBoundFile("conservative"), 
             null
             );
       elementBehavior.createInitValueElement(
-            behavior.getAbstractStateName(InterpolatorSnapshotTable.REQ_STATE_TYPE), 
+            behavior.getAbstractStateName(InterpolatorSnapshotTable.NAME_TYPE), 
             metaInput.getAttributeInterpolationType("conservative"), 
             null
             );
       elementBehavior.createInitValueElement(
-            behavior.getAbstractStateName(InterpolatorSnapshotTable.REQ_STATE_DELIMITER),  
+            behavior.getAbstractStateName(InterpolatorSnapshotTable.NAME_DELIMITER),  
             metaInput.getAttributeDelimiter("conservative"), 
             null
             );
@@ -259,68 +269,82 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
             initialFlow.toString(), 
             null
             );
-      elementBehavior.createInitValueElement(
-            behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_MASS), 
-            metaInput.getAttributeInjectMass("conservative").toString(), 
-            null
-            );
-      elementBehavior.createInitValueElement(
-            behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_DURATION), 
-            metaInput.getAttributeInjectDuration("conservative").toString(), 
-            null
-            );
-      elementBehavior.createInitValueElement(
-            behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_START), 
-            metaInput.getAttributeInjectStartInterval("conservative").toString(), 
-            null
-            );
-      elementBehavior.createInitValueElement(
-            behavior.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC),
-            conserveBkgConc.toString(), 
-            null
-            );
-      
-      if (isActiveConfigured)
+      if (isInject)
       {
-         behavior = activeResourceOTIS.getBehavior(
-               ResourceSolute.BEHAVIOR_CONCBOUND_INJECT);
-         elementBehavior = 
-               elementBoundary.createBehaviorElement(behavior);
-         elementBehavior.createInitValueElement(
-               behavior.getAbstractStateName(InterpolatorSnapshotTable.REQ_STATE_PATH), 
-               metaInput.getAttributeConcBoundFile("active"), 
-               null
-               );
-         elementBehavior.createInitValueElement(
-               behavior.getAbstractStateName(InterpolatorSnapshotTable.REQ_STATE_TYPE), 
-               metaInput.getAttributeInterpolationType("active"), 
-               null
-               );
-         elementBehavior.createInitValueElement(
-               behavior.getAbstractStateName(InterpolatorSnapshotTable.REQ_STATE_DELIMITER),  
-               metaInput.getAttributeDelimiter("active"), 
-               null
-               );
          elementBehavior.createInitValueElement(
                behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_MASS), 
-               metaInput.getAttributeInjectMass("active").toString(), 
+               metaInput.getAttributeInjectMass("conservative").toString(), 
                null
                );
          elementBehavior.createInitValueElement(
                behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_DURATION), 
-               metaInput.getAttributeInjectDuration("active").toString(), 
+               metaInput.getAttributeInjectDuration("conservative").toString(), 
                null
                );
          elementBehavior.createInitValueElement(
                behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_START), 
-               metaInput.getAttributeInjectStartInterval("active").toString(), 
+               metaInput.getAttributeInjectStartInterval("conservative").toString(), 
                null
                );
          elementBehavior.createInitValueElement(
                behavior.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC),
-               activeBkgConc.toString(), 
+               conserveBkgConc.toString(), 
                null
                );
+      }
+      
+      if (isActiveConfigured)
+      {
+         if (isInject)
+         {
+            behavior = activeResourceOTIS.getBehavior(
+                  ResourceSolute.BEHAVIOR_CONCBOUND_INJECT);
+         }
+         else
+         {
+            behavior = activeResourceOTIS.getBehavior(
+                  ResourceSolute.BEHAVIOR_CONCBOUND);
+         }
+         elementBehavior = 
+               elementBoundary.createBehaviorElement(behavior);
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(InterpolatorSnapshotTable.NAME_PATH), 
+               metaInput.getAttributeConcBoundFile("active"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(InterpolatorSnapshotTable.NAME_TYPE), 
+               metaInput.getAttributeInterpolationType("active"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(InterpolatorSnapshotTable.NAME_DELIMITER),  
+               metaInput.getAttributeDelimiter("active"), 
+               null
+               );
+         if (isInject)
+         {
+            elementBehavior.createInitValueElement(
+                  behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_MASS), 
+                  metaInput.getAttributeInjectMass("active").toString(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_DURATION), 
+                  metaInput.getAttributeInjectDuration("active").toString(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  behavior.getAbstractStateName(ResourceSolute.NAME_INJECT_START), 
+                  metaInput.getAttributeInjectStartInterval("active").toString(), 
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  behavior.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC),
+                  activeBkgConc.toString(), 
+                  null
+                  );
+         }
       }
    }
 

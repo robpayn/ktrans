@@ -71,6 +71,8 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
        * Get the injection element
        * 
        * @return
+       *        reference to the injection element, or null if
+       *        there is no injection element
        */
       private ElementHelper getElementInject() 
       {
@@ -257,6 +259,17 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
          {
             return helper.getAttributeDouble("concHalfSat");
          }
+      }
+
+      /**
+       * Determine if an inject element exists
+       * 
+       * @return
+       *        true if element exists, false otherwise
+       */
+      public boolean isUpstreamInject() 
+      {
+         return !(getElementInject() == null);
       }
 
    }
@@ -514,6 +527,29 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
       else
       {
          return helper.getAttributeConcHalfSat();
+      }
+   }
+
+   /**
+    * Determine if an inject element exists in the names solute
+    * element
+    * 
+    * @param soluteName 
+    *       name of the solute tag to check for inject tag
+    * 
+    * @return
+    *       true if element exists, false otherwise
+    */
+   public boolean isUpstreamInject(String soluteName) 
+   {
+      ElementSolute helper = getElementSolute(soluteName);
+      if (helper == null)
+      {
+         return false;
+      }
+      else
+      {
+         return helper.isUpstreamInject();
       }
    }
 

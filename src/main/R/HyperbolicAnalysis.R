@@ -1,16 +1,10 @@
 HyperbolicAnalysis <- function(
    simulation, 
-   analysisWindow,
-   conserveColumn = length(simulation$conserveSolute),
-   activeColumn = length(simulation$activeSolute)
+   metricsLength
    )
 {
    analysis <- new.env();
    class(analysis) <- c("HyperbolicAnalysis", class(analysis));
-
-   analysis$startIndex = trunc(analysisWindow[1] / simulation$outputTimeStep) + 1;
-   analysis$endIndex = trunc(analysisWindow[2] / simulation$outputTimeStep);
-   metricsLength <- (analysis$endIndex - analysis$startIndex) + 1;
 
    analysis$metrics <- data.frame(
       time = numeric(length = metricsLength),
@@ -45,6 +39,70 @@ HyperbolicAnalysis <- function(
       (simulation$discharge * simulation$activebkg) /
       (simulation$streamwidth * analysis$uambactual);
 
+   return(analysis);   
+}
+
+HyperbolicAnalysisMultilevel <- function(
+   simulation,
+   analysisWindow,
+   conserveColumn = length(simulation$conserveSolute),
+   activeColumn = length(simulation$activeSolute)
+   )
+{
+   analysis <- HyperbolicAnalysis(
+      simulation = simulation, 
+      metricsLength = length(analysisWindow)
+      );
+   
+   analysis$metrics$time <- analysisWindow;
+   analysis$indeces <- 
+      analysis$metrics$time / simulation$outputTimeStep + 1;
+   analysis$metrics$conserve <- simulation$conserveSolute[
+      analysis$indeces,
+      conserveColumn
+      ];
+   analysis$metrics$active <- simulation$activeSolute[
+      analysis$indeces,
+      activeColumn
+      ];
+   
+   analysis$metrics$conservebc <- 
+      analysis$metrics$conserve - simulation$conservebkg;
+   analysis$metrics$activebc <- 
+      analysis$metrics$active - simulation$activebkg;
+   analysis$metrics$activenr <- 
+      analysis$metrics$conservebc * simulation$injectRatio;
+   
+   analysis$metrics$ceffinject <-
+      sqrt(analysis$metrics$activebc * analysis$metrics$activenr);
+   analysis$metrics$k <-
+      ( log(simulation$injectRatio)
+         - (log(analysis$metrics$activebc / analysis$metrics$conservebc)) ) /
+         simulation$travelTime;
+   
+   calcMetrics(analysis);
+
+   return(analysis);
+}
+
+HyperbolicAnalysisSlug <- function(
+   simulation,
+   analysisWindow,
+   conserveColumn = length(simulation$conserveSolute),
+   activeColumn = length(simulation$activeSolute)
+   )
+{
+   startIndex <- trunc(analysisWindow[1] / simulation$outputTimeStep) + 1;
+   endIndex <- trunc(analysisWindow[2] / simulation$outputTimeStep);
+
+   analysis <- HyperbolicAnalysis(
+      simulation = simulation, 
+      metricsLength = (endIndex - startIndex) + 1
+      );
+   
+   analysis$startIndex <- startIndex;
+   analysis$endIndex <- endIndex;
+
    analysis$releaseTime <- simulation$releaseTime;
 
    analysis$metrics$time <- 
@@ -58,6 +116,7 @@ HyperbolicAnalysis <- function(
       analysis$startIndex:analysis$endIndex,
       activeColumn
       ];
+
    analysis$metrics$conservebc <- 
       analysis$metrics$conserve - simulation$conservebkg;
    analysis$metrics$activebc <- 
@@ -65,7 +124,7 @@ HyperbolicAnalysis <- function(
    analysis$metrics$activenr <- 
       analysis$metrics$conservebc * simulation$injectRatio;
 
-   return(analysis);   
+   return(analysis);
 }
 
 HyperbolicAnalysisTASCC <- function(
@@ -74,7 +133,7 @@ HyperbolicAnalysisTASCC <- function(
    ...
    )
 {
-   analysis <- HyperbolicAnalysis(simulation, analysisWindow, ...);
+   analysis <- HyperbolicAnalysisSlug(simulation, analysisWindow, ...);
    
    analysis$metricsOriginal <- data.frame(
       swo = numeric(length = length(analysis$metrics[[1]])),
@@ -101,7 +160,7 @@ HyperbolicAnalysisLagrangeTASCC <- function(
    ...
    )
 {
-   analysis <- HyperbolicAnalysis(simulation, analysisWindow, ...);
+   analysis <- HyperbolicAnalysisSlug(simulation, analysisWindow, ...);
    
    for (i in 1:length(analysis$metrics$time))
    {
@@ -171,16 +230,28 @@ run.HyperbolicAnalysis <- function(analysis)
 
    # Nonlinear regression of hyperbolic function for uptake vs. concentration
    nlsresults <- nls(
-     u ~ hyperbolicnet(umax = umaxp, halfsat = halfsatp, concadd = ceffinject, concbkg = actbkg),
+     u ~ hyperbolicnet(
+        umax = umaxp, 
+        halfsat = halfsatp, 
+        concadd = ceffinject, 
+        concbkg = actbkg
+        ),
      data = analysis$metrics,
-     start = list(umaxp = analysis$umaxactual, halfsatp = analysis$halfsatactual)
+     start = list(
+        umaxp = analysis$umaxactual, 
+        halfsatp = analysis$halfsatactual
+        )
       );
    umaxest = summary(nlsresults)$coefficients["umaxp","Estimate"];
    halfsatest = summary(nlsresults)$coefficients["halfsatp","Estimate"];
    analysis$uEstimates <- list(
       umax = umaxest,
       halfsat = halfsatest,
-      uamb = hyperbolic(umax = umaxest, halfsat = halfsatest, conc = actbkg)
+      uamb = hyperbolic(
+         umax = umaxest, 
+         halfsat = halfsatest, 
+         conc = actbkg
+         )
       );
 
    # Liner regression of 1/vf vs. concentration
@@ -271,12 +342,11 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
       0,
       max(
          analysis$metrics$u + analysis$uEstimates$uamb,
-         hyperbolicnet(
+         hyperbolic(
             analysis$umaxactual, 
             analysis$halfsatactual, 
-            max(analysis$metrics$ceffinject), 
-            analysis$simulation$activebkg
-            ) + analysis$uambactual
+            max(analysis$metrics$cefftot)
+            )
          )
       ),
    xlab = "Concentration",
@@ -294,8 +364,7 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
       );
    points(
       x = analysis$metrics$cefftot * xfactor, 
-      y = (analysis$metrics$u + analysis$uEstimates$uamb)
-         * yfactor
+      y = (analysis$uEstimates$uamb + analysis$metrics$u) * yfactor
       );
    xvals <- seq(
       from = 0, 
@@ -307,7 +376,8 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
       y = hyperbolic(
          analysis$uEstimates$umax, 
          analysis$uEstimates$halfsat, 
-         xvals) * yfactor
+         xvals
+         ) * yfactor
       );
    lines(
       x = xvals * xfactor,
