@@ -25,9 +25,9 @@ public abstract class SimulatorNEOCH extends SimulatorAbstract {
     * @param workingDir
     * @throws Exception
     */
-   public SimulatorNEOCH(String[] args, File workingDir) throws Exception 
+   public SimulatorNEOCH(File workingDir, String[] args) throws Exception 
    {
-      super(args, workingDir);
+      super(workingDir, args);
    }
 
    /**

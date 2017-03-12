@@ -32,7 +32,7 @@ public class InputProcessorXMLMetabolismBuilder
       try 
       {
          File workingDir = new File(System.getProperty("user.dir"));
-         SimulatorStream simulator = new SimulatorStream(args, workingDir);
+         SimulatorStream simulator = new SimulatorStream(workingDir, args);
          
          // Check for configuration file in file system
          if (!simulator.getArgMap().containsKey("config"))

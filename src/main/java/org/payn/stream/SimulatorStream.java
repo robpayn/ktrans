@@ -24,9 +24,9 @@ public class SimulatorStream extends SimulatorNEOCH {
     * @param workingDir
     * @throws Exception 
     */
-   public SimulatorStream(String[] args, File workingDir) throws Exception
+   public SimulatorStream(File workingDir, String[] args) throws Exception
    {
-      super(args, workingDir);
+      super(workingDir, args);
    }
 
    @Override
