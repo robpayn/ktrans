@@ -279,12 +279,8 @@ plotConservative.SimulationSlug <- function(
 
 plotActive.SimulationSlug <- function(
    simulation,
-   columns = 3:length(simulation$conserveSolute),
    xfactor = 1,
-   yfactor = 1,
    ratio = simulation$injectRatio,
-   activeColor = "red",
-   window = NULL,
    ...
    ) 
 {
