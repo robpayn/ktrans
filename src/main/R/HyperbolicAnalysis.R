@@ -1,10 +1,9 @@
 HyperbolicAnalysis <- function(
-   simulation, 
+   experiment, 
    metricsLength
    )
 {
    analysis <- new.env();
-   class(analysis) <- c("HyperbolicAnalysis", class(analysis));
 
    analysis$metrics <- data.frame(
       time = numeric(length = metricsLength),
@@ -22,24 +21,48 @@ HyperbolicAnalysis <- function(
       stringsAsFactors = FALSE
       );
 
-   analysis$simulation <- simulation;
+   analysis$experiment <- experiment;
    
-   analysis$umaxactual <- simulation$umax;
-   analysis$halfsatactual <- simulation$halfsat;
-   analysis$uambactual <- hyperbolic(
-      umax = simulation$umax, 
-      halfsat = simulation$halfsat, 
-      conc = simulation$activebkg
-      );
-   analysis$vfambactual <- 
-      analysis$uambactual / simulation$activebkg;
-   analysis$kambactual <- 
-      simulation$streamdepth / analysis$vfambactual;
-   analysis$swambactual <- 
-      (simulation$discharge * simulation$activebkg) /
-      (simulation$streamwidth * analysis$uambactual);
-
+   class(analysis) <- c("HyperbolicAnalysis", class(analysis));
    return(analysis);   
+}
+
+HyperbolicAnalysisTASCCField <- function(experiment)
+{
+   length <- length(experiment$conserveSolute$Time);
+   analysis <- HyperbolicAnalysis(
+      experiment,
+      length
+      );
+   
+   analysis$metrics$time <- experiment$conserveSolute$Time;
+   analysis$metrics$conserve <- experiment$conserveSolute$conserve;
+   analysis$metrics$active <- experiment$activeSolute$active;
+   
+   analysis$metrics$conservebc <- 
+      analysis$metrics$conserve - experiment$conserveBkg;
+   analysis$metrics$activebc <- 
+      analysis$metrics$active - experiment$activeBkg;
+   analysis$metrics$activenr <- 
+      analysis$metrics$conservebc * experiment$injectRatio;
+   
+   analysis$metricsOriginal <- data.frame(
+      swo = numeric(length = length),
+      vfo = numeric(length = length),
+      uo = numeric(length = length),
+      stringsAsFactors = FALSE
+      );
+   
+   analysis$metrics$ceffinject <-
+      sqrt(analysis$metrics$activebc * analysis$metrics$activenr);
+   analysis$metrics$k <- 
+      ( log(experiment$injectRatio) 
+         - log(analysis$metrics$activebc / analysis$metrics$conservebc) ) /
+         (analysis$metrics$time - experiment$releaseTime);
+   
+   calcMetrics(analysis);
+   
+   return(analysis);
 }
 
 HyperbolicAnalysisMultilevel <- function(
@@ -67,9 +90,9 @@ HyperbolicAnalysisMultilevel <- function(
       ];
    
    analysis$metrics$conservebc <- 
-      analysis$metrics$conserve - simulation$conservebkg;
+      analysis$metrics$conserve - simulation$conserveBkg;
    analysis$metrics$activebc <- 
-      analysis$metrics$active - simulation$activebkg;
+      analysis$metrics$active - simulation$activeBkg;
    analysis$metrics$activenr <- 
       analysis$metrics$conservebc * simulation$injectRatio;
    
@@ -96,7 +119,7 @@ HyperbolicAnalysisSlug <- function(
    endIndex <- trunc(analysisWindow[2] / simulation$outputTimeStep);
 
    analysis <- HyperbolicAnalysis(
-      simulation = simulation, 
+      experiment = simulation, 
       metricsLength = (endIndex - startIndex) + 1
       );
    
@@ -118,9 +141,9 @@ HyperbolicAnalysisSlug <- function(
       ];
 
    analysis$metrics$conservebc <- 
-      analysis$metrics$conserve - simulation$conservebkg;
+      analysis$metrics$conserve - simulation$conserveBkg;
    analysis$metrics$activebc <- 
-      analysis$metrics$active - simulation$activebkg;
+      analysis$metrics$active - simulation$activeBkg;
    analysis$metrics$activenr <- 
       analysis$metrics$conservebc * simulation$injectRatio;
 
@@ -135,14 +158,15 @@ HyperbolicAnalysisTASCC <- function(
 {
    analysis <- HyperbolicAnalysisSlug(simulation, analysisWindow, ...);
    
+   length <- length(analysis$metrics[[1]]);
    analysis$metricsOriginal <- data.frame(
-      swo = numeric(length = length(analysis$metrics[[1]])),
-      vfo = numeric(length = length(analysis$metrics[[1]])),
-      uo = numeric(length = length(analysis$metrics[[1]])),
+      swo = numeric(length = length),
+      vfo = numeric(length = length),
+      uo = numeric(length = length),
       stringsAsFactors = FALSE
       );
    
-   analysis$metrics$ceffinject <- 
+   analysis$metrics$ceffinject <-
       sqrt(analysis$metrics$activebc * analysis$metrics$activenr);
    analysis$metrics$k <- 
       ( log(simulation$injectRatio) 
@@ -165,9 +189,9 @@ HyperbolicAnalysisLagrangeTASCC <- function(
    for (i in 1:length(analysis$metrics$time))
    {
       activebc <- 
-         simulation$paths[[i]]$activeOTIS - simulation$activebkg;
+         simulation$paths[[i]]$activeOTIS - simulation$activeBkg;
       conservebc <- 
-         simulation$paths[[i]]$conserveOTIS - simulation$conservebkg;
+         simulation$paths[[i]]$conserveOTIS - simulation$conserveBkg;
       logy <- log(activebc / conservebc);
       x <- simulation$paths[[i]]$time;
       lmresults <- lm(logy ~ x);
@@ -187,21 +211,22 @@ calcMetrics <- function(analysis)
 
 calcMetrics.HyperbolicAnalysis <- function(analysis)
 {
-   analysis$metrics$cefftot <- simulation$activebkg + analysis$metrics$ceffinject;
-   analysis$metrics$sw <- simulation$streamvel / analysis$metrics$k;
-   analysis$metrics$vf <- analysis$metrics$k * simulation$streamdepth;
+   analysis$metrics$cefftot <- analysis$experiment$activeBkg + analysis$metrics$ceffinject;
+   analysis$metrics$sw <- analysis$experiment$streamVel / analysis$metrics$k;
+   analysis$metrics$vf <- analysis$metrics$k * analysis$experiment$streamDepth;
    analysis$metrics$u <- analysis$metrics$vf * analysis$metrics$ceffinject;
 }
 
-run <- function(analysis)
+run <- function(...)
 {
    UseMethod("run", analysis);
 }
 
-run.HyperbolicAnalysis <- function(analysis)
+run.HyperbolicAnalysis <- function(
+   analysis,
+   initialEstimates = NULL
+   )
 {
-   actbkg <- simulation$activebkg;
-
    # Regression of added solute uptake length vs. concentration
    lmresults <- lm(
      sw ~ cefftot,
@@ -210,47 +235,51 @@ run.HyperbolicAnalysis <- function(analysis)
    intercept <- as.numeric(lmresults$coefficients["(Intercept)"]);
    slope <- as.numeric(lmresults$coefficients["cefftot"]);
    swambest <- intercept;
-   halfsatest <- (intercept + slope * actbkg) / slope - actbkg;
-   slopeActual <- (analysis$simulation$discharge * (analysis$halfsatactual + actbkg)) /
-      (analysis$simulation$streamwidth * analysis$umaxactual * analysis$halfsatactual);
+   halfsatest <- ((intercept + slope * analysis$experiment$activeBkg) / slope) - 
+      analysis$experiment$activeBkg;
    analysis$swEstimates <- list(
       intercept = intercept,
       slope = slope,
       swamb = swambest,
-      uamb = (analysis$simulation$discharge * actbkg) /
-         (analysis$simulation$streamwidth * swambest),
+      uamb = (analysis$experiment$discharge * analysis$experiment$activeBkg) /
+         (analysis$experiment$streamWidth * swambest),
       halfsat = halfsatest,
-      umax = (analysis$simulation$discharge * (halfsatest + actbkg)) /
-         (analysis$simulation$streamwidth * slope * halfsatest),
-      interceptActual = ((analysis$simulation$discharge * (analysis$halfsatactual + actbkg)^2) /
-         (analysis$simulation$streamwidth * analysis$umaxactual * analysis$halfsatactual)) +
-         slopeActual * -actbkg,
-      slopeActual = slopeActual
+      umax = (analysis$experiment$discharge * (halfsatest + analysis$experiment$activeBkg)) /
+         (analysis$experiment$streamWidth * slope * halfsatest)
    );
 
    # Nonlinear regression of hyperbolic function for uptake vs. concentration
+   if (is.null(initialEstimates))
+   {
+      start = list(
+         umaxp = analysis$swEstimates$umax,
+         halfsatp = analysis$swEstimates$halfsat
+         );
+   }
+   else
+   {
+      start = initialEstimates;
+   }
+   activeBkg <- analysis$experiment$activeBkg;
    nlsresults <- nls(
-     u ~ hyperbolicnet(
+      u ~ hyperbolicnet(
         umax = umaxp, 
         halfsat = halfsatp, 
         concadd = ceffinject, 
-        concbkg = actbkg
+        concbkg = activeBkg
         ),
-     data = analysis$metrics,
-     start = list(
-        umaxp = analysis$umaxactual, 
-        halfsatp = analysis$halfsatactual
-        )
+      data = analysis$metrics,
+      start = start
       );
-   umaxest = summary(nlsresults)$coefficients["umaxp","Estimate"];
-   halfsatest = summary(nlsresults)$coefficients["halfsatp","Estimate"];
+   umaxest <- summary(nlsresults)$coefficients["umaxp","Estimate"];
+   halfsatest <- summary(nlsresults)$coefficients["halfsatp","Estimate"];
    analysis$uEstimates <- list(
       umax = umaxest,
       halfsat = halfsatest,
       uamb = hyperbolic(
          umax = umaxest, 
          halfsat = halfsatest, 
-         conc = actbkg
+         conc = analysis$experiment$activeBkg
          )
       );
 
@@ -263,18 +292,11 @@ run.HyperbolicAnalysis <- function(analysis)
    intercept = as.numeric(lmresults$coefficients["(Intercept)"]);
    slope = as.numeric(lmresults$coefficients["cefftot"]);
    vfambest = 1 / intercept;
-   slopeActual <- (analysis$simulation$discharge * (analysis$halfsatactual + actbkg)) /
-      (analysis$simulation$streamwidth * analysis$umaxactual * analysis$halfsatactual);
    analysis$vfEstimates = list(
       intercept = intercept,
       slope = slope,
       vfamb = vfambest,
-      uamb = vfambest * actbkg,
-      interceptActual = (1 / (analysis$simulation$streamdepth * analysis$simulation$streamvel)) *
-         (((analysis$simulation$discharge * (analysis$halfsatactual + actbkg)^2) /
-         (analysis$simulation$streamwidth * analysis$umaxactual * analysis$halfsatactual)) +
-         slopeActual * -actbkg),
-      slopeActual = (1 / (analysis$simulation$streamdepth * analysis$simulation$streamvel)) * slopeActual
+      uamb = vfambest * analysis$experiment$activeBkg
    );
 }
 
@@ -342,15 +364,18 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
       0,
       max(
          analysis$metrics$u + analysis$uEstimates$uamb,
-         hyperbolic(
-            analysis$umaxactual, 
-            analysis$halfsatactual, 
-            max(analysis$metrics$cefftot)
-            )
-         )
+         if (length(actualModel) == 2) 
+            hyperbolic(
+               actualModel["umax"], 
+               actualModel["halfsat"], 
+               max(analysis$metrics$cefftot)
+               ) 
+         else 0
+         ) 
       ),
    xlab = "Concentration",
    ylab = "Uptake",
+   actualModel = numeric(length = 0),
    ...
    )
 {
@@ -374,18 +399,21 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
    lines(
       x = xvals * xfactor,
       y = hyperbolic(
-         analysis$uEstimates$umax, 
-         analysis$uEstimates$halfsat, 
-         xvals
+         umax = analysis$uEstimates$umax, 
+         halfsat = analysis$uEstimates$halfsat, 
+         conc = xvals
          ) * yfactor
       );
-   lines(
-      x = xvals * xfactor,
-      y = hyperbolic(
-         analysis$umaxactual, 
-         analysis$halfsatactual, 
-         xvals
-         ) * yfactor,
-      lty = "dashed"
-      );
+   if (length(actualModel) == 2)
+   {
+      lines(
+         x = xvals * xfactor,
+         y = hyperbolic(
+            umax = actualModel["umax"], 
+            halfsat = actualModel["halfsat"], 
+            conc = xvals
+            ) * yfactor,
+         lty = "dashed"
+         );
+   }
 }
