@@ -204,7 +204,7 @@ HyperbolicAnalysisLagrangeTASCC <- function(
    return(analysis);
 }
 
-calcMetrics <- function(analysis)
+calcMetrics <- function(analysis, ...)
 {
    UseMethod("calcMetrics", analysis);
 }
@@ -217,13 +217,14 @@ calcMetrics.HyperbolicAnalysis <- function(analysis)
    analysis$metrics$u <- analysis$metrics$vf * analysis$metrics$ceffinject;
 }
 
-run <- function(...)
+run <- function(analysis, ...)
 {
    UseMethod("run", analysis);
 }
 
 run.HyperbolicAnalysis <- function(
    analysis,
+   fixedParameters = list(umaxp = NULL, halfsatp = NULL),
    initialEstimates = NULL
    )
 {
@@ -261,6 +262,9 @@ run.HyperbolicAnalysis <- function(
       start = initialEstimates;
    }
    activeBkg <- analysis$experiment$activeBkg;
+   
+   if (!is.null(fixedParameters$umaxp)) umaxp <- fixedParameters$umaxp;
+   if (!is.null(fixedParameters$halfsatp)) halfsatp <- fixedParameters$halfsatp;
    nlsresults <- nls(
       u ~ hyperbolicnet(
         umax = umaxp, 
@@ -271,8 +275,22 @@ run.HyperbolicAnalysis <- function(
       data = analysis$metrics,
       start = start
       );
-   umaxest <- summary(nlsresults)$coefficients["umaxp","Estimate"];
-   halfsatest <- summary(nlsresults)$coefficients["halfsatp","Estimate"];
+   if (is.null(fixedParameters$umaxp))
+   {
+      umaxest <- summary(nlsresults)$coefficients["umaxp","Estimate"];
+   }
+   else
+   {
+      umaxest <- fixedParameters$umaxp;
+   }
+   if (is.null(fixedParameters$halfsatp))
+   {
+      halfsatest <- summary(nlsresults)$coefficients["halfsatp","Estimate"];
+   }
+   else
+   {
+      halfsatest <- fixedParameters$halfsat;
+   }
    analysis$uEstimates <- list(
       umax = umaxest,
       halfsat = halfsatest,
@@ -389,7 +407,9 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
       );
    points(
       x = analysis$metrics$cefftot * xfactor, 
-      y = (analysis$uEstimates$uamb + analysis$metrics$u) * yfactor
+      y = (analysis$uEstimates$uamb + analysis$metrics$u) * yfactor,
+      pch = 16,
+      col = "red"
       );
    xvals <- seq(
       from = 0, 

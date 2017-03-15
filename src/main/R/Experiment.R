@@ -56,11 +56,15 @@ plotConservative.Experiment <- function(
       ),
    ylim = c(
       0,
-      max(experiment$conserveSolute[,columns])
+      max(
+         if (backgroundCorrect) (experiment$conserveSolute[,columns] - experiment$conserveBkg)
+         else experiment$conserveSolute[,columns]
+         )
       ),
    xlab = "Time",
    ylab = "Concentration",
    ratio = 1,
+   backgroundCorrect = TRUE,
    ...
    ) 
 {
@@ -76,7 +80,9 @@ plotConservative.Experiment <- function(
    {
       lines(
          x = experiment$conserveSolute$Time * xfactor,
-         y = experiment$conserveSolute[[column]] * yfactor * ratio
+         y = if (backgroundCorrect) 
+               ((experiment$conserveSolute[[column]] - experiment$conserveBkg) * yfactor * ratio)
+            else (experiment$conserveSolute[[column]] * yfactor * ratio)
       )
    }
 }
@@ -158,6 +164,8 @@ plotActive.ExperimentSlug <- function(
    experiment,
    xfactor = 1,
    ratio = experiment$injectRatio,
+   releaseTimeCol = "black",
+   releaseTimeLty = "dashed",
    ...
    ) 
 {
@@ -167,7 +175,11 @@ plotActive.ExperimentSlug <- function(
       ratio = ratio,
       ...
       );
-   abline(v = experiment$releaseTime * xfactor, lty = "dashed", col = "green");
+   abline(
+      v = experiment$releaseTime * xfactor, 
+      lty = releaseTimeLty, 
+      col = releaseTimeCol
+      );
 }
 
 # CLASS Simulation ####
@@ -475,6 +487,8 @@ plotPathsConservative.SimulationLagrange <- function(
    logy = FALSE,
    backgroundCorrect = FALSE,
    activeNR = FALSE,
+   releaseTimeCol = "black",
+   releaseTimeLty = "dashed",
    ...
    )
 {
@@ -499,7 +513,11 @@ plotPathsConservative.SimulationLagrange <- function(
       ylab = ylab,
       log = log
       );
-   abline(v = simulation$releaseTime * xfactor, lty = "dashed", col = "green");
+   abline(
+      v = simulation$releaseTime * xfactor, 
+      lty = releaseTimeLty, 
+      col = releaseTimeCol
+      );
    for (column in columns)
    {
       time = simulation$conserveSolute$Time;
@@ -540,19 +558,7 @@ plotPathsConservative.SimulationLagrange <- function(
    }
 }
 
-plotPathsActive <- function(
-   simulation,
-   columns,
-   xfactor,
-   yfactor,
-   ylim,
-   pathPlotWindow,
-   pathPlotInterval,
-   pathPlotSequence,
-   logy,
-   activeColor,
-   ...
-   )
+plotPathsActive <- function(simulation, ...)
 {
    UseMethod("plotPathsActive", simulation);
 }
