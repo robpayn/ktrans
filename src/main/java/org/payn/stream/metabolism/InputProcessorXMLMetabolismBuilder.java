@@ -3,7 +3,6 @@ package org.payn.stream.metabolism;
 import java.io.File;
 
 import org.payn.chsm.Behavior;
-import org.payn.chsm.io.initialize.InitialConditionTable;
 import org.payn.chsm.io.interpolate.InterpolatorSnapshotTable;
 import org.payn.chsm.io.xmltools.ElementBehavior;
 import org.payn.chsm.io.xmltools.ElementHolon;
@@ -90,93 +89,64 @@ public class InputProcessorXMLMetabolismBuilder
    @Override
    protected void configureStreamLoop() throws Exception 
    {
+      // Create behaviors
       behaviorChannelStorage = 
             resourceWater.getBehavior(ResourceWater.BEHAVIOR_CHANNEL_STORAGE);
       behaviorDynamicWaveWiele =
             resourceWater.getBehavior(ResourceWater.BEHAVIOR_DYNAMIC_WAVE_WIELE);
       
-   }
-
-   @Override
-   protected void configureStreamCell(ElementHolon elementCell, long index) 
-   {
-      ElementBehavior elementBehavior = 
-            elementCell.createBehaviorElement(behaviorChannelStorage);
-      elementBehavior.createInitValueElement(
-            ResourceWater.NAME_LENGTH, 
-            Double.toString(cellLength), 
-            null
-            );
-      double distance = (cellLength * index) - (cellLength / 2);
-      elementBehavior.createInitValueElement(
-            ResourceWater.NAME_COORDINATE_X, 
-            Double.toString(distance), 
-            null
-            );
+      // Set up default cell states
+      ElementBehavior elementBehavior =
+            documentCell.createDefaultBehaviorElement(behaviorChannelStorage);
+      if (isInitialConditions)
+      {
+         elementBehavior.setInitTable(
+               metaInput.getAttributeInitialConditionPathCell(),
+               metaInput.getAttributeInitialConditionDelimiterCell()
+               ); 
+         elementBehavior.createInitValueElement(
+               "WaterHead", 
+               "",
+               null
+               );
+      }
       elementBehavior.createInitValueElement(
             ResourceWater.NAME_COORDINATE_Y, 
             Double.toString(0), 
             null
             );
-      double bedElevation = elevationDatum + bedSlope * (streamLength - distance);
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_BED_ELEVATION, 
-            Double.toString(bedElevation), 
+            ResourceWater.NAME_LENGTH, 
+            Double.toString(cellLength), 
             null
             );
-      elementBehavior.createInitValueElement(
-            ResourceWater.NAME_BANK_ELEVATION, 
-            Double.toString(bedElevation + activeDepth), 
-            null
-            );
-      if (isInitialConditions)
-      {
-         elementBehavior.createInitValueElement(
-               InitialConditionTable.NAME_INITIAL_CONDITION_PATH, 
-               metaInput.getAttributeInitialConditionPathCell(),
-               null
-               );
-         elementBehavior.createInitValueElement(
-               InitialConditionTable.NAME_INITIAL_CONDITION_DELIMITER, 
-               metaInput.getAttributeInitialConditionDelimiterCell(),
-               null
-               );
-      }
-      else
-      {
-         elementBehavior.createInitValueElement(
-               ResourceWater.NAME_WATER_HEAD, 
-               Double.toString(bedElevation + initialDepth), 
-               null
-               );
-      }
       elementBehavior.createInitValueElement(
             ResourceWater.NAME_ACTIVE_CHANNEL_WIDTH_AVERAGE, 
             Double.toString(averageWidth), 
             null
             );
-   }
-
-   @Override
-   protected void configureStreamBoundary(ElementBoundary elementBoundary,
-         ElementBoundary elementBoundaryAdj, int index) 
-   {
-      ElementBehavior elementBehavior = 
-            elementBoundary.createBehaviorElement(behaviorDynamicWaveWiele);
+         
+      // Set up default boundary states
+      elementBehavior =
+            documentBoundary.createDefaultBehaviorElement(behaviorDynamicWaveWiele);
       if (isInitialConditions)
       {
-         elementBehavior.createInitValueElement(
-               InitialConditionTable.NAME_INITIAL_CONDITION_PATH, 
+         elementBehavior.setInitTable(
                metaInput.getAttributeInitialConditionPathBound(),
+               metaInput.getAttributeInitialConditionDelimiterBound()
+               ); 
+         elementBehavior.createInitValueElement(
+               "WaterFlow", 
+               "",
                null
                );
          elementBehavior.createInitValueElement(
-               InitialConditionTable.NAME_INITIAL_CONDITION_DELIMITER, 
-               metaInput.getAttributeInitialConditionDelimiterBound(),
+               "Velocity", 
+               "",
                null
                );
       }
-      else
+      else 
       {
          elementBehavior.createInitValueElement(
                ResourceWater.NAME_WATER_FLOW, 
@@ -199,6 +169,45 @@ public class InputProcessorXMLMetabolismBuilder
             Double.toString(averageWidth), 
             null
             );
+   }
+
+   @Override
+   protected void configureStreamCell(ElementHolon elementCell, long index) 
+   {
+      ElementBehavior elementBehavior = 
+            elementCell.createBehaviorElement(behaviorChannelStorage);
+      double distance = (cellLength * index) - (cellLength / 2);
+      elementBehavior.createInitValueElement(
+            ResourceWater.NAME_COORDINATE_X, 
+            Double.toString(distance), 
+            null
+            );
+      double bedElevation = elevationDatum + bedSlope * (streamLength - distance);
+      elementBehavior.createInitValueElement(
+            ResourceWater.NAME_BED_ELEVATION, 
+            Double.toString(bedElevation), 
+            null
+            );
+      elementBehavior.createInitValueElement(
+            ResourceWater.NAME_BANK_ELEVATION, 
+            Double.toString(bedElevation + activeDepth), 
+            null
+            );
+      if (!metaInput.isInitialConditions())
+      {
+         elementBehavior.createInitValueElement(
+               ResourceWater.NAME_WATER_HEAD, 
+               Double.toString(bedElevation + initialDepth), 
+               null
+               );
+      }
+   }
+
+   @Override
+   protected void configureStreamBoundary(ElementBoundary elementBoundary,
+         ElementBoundary elementBoundaryAdj, int index) 
+   {
+      elementBoundary.createBehaviorElement(behaviorDynamicWaveWiele);
    }
 
    @Override
