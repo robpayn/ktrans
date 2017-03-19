@@ -66,7 +66,17 @@ public class InputProcessorXMLMetabolismBuilder
    /**
     * Water movement behavior
     */
-   private Behavior behaviorDynamicWaveWiele;
+   private Behavior behaviorDynamicWave;
+
+   /**
+    * Friction behavior
+    */
+   private Behavior behaviorWieleFriction;
+
+   /**
+    * Flag for configuration of wiele friction behavior
+    */
+   private boolean isWieleConfigured;
 
    /**
     * Construct a new instance with the given meta input and simulator
@@ -92,8 +102,11 @@ public class InputProcessorXMLMetabolismBuilder
       // Create behaviors
       behaviorChannelStorage = 
             resourceWater.getBehavior(ResourceWater.BEHAVIOR_CHANNEL_STORAGE);
-      behaviorDynamicWaveWiele =
-            resourceWater.getBehavior(ResourceWater.BEHAVIOR_DYNAMIC_WAVE_WIELE);
+      behaviorDynamicWave =
+            resourceWater.getBehavior(ResourceWater.BEHAVIOR_DYNAMIC_WAVE);
+      isWieleConfigured = metaInput.isWieleConfigured();
+      behaviorWieleFriction =
+            resourceWater.getBehavior(ResourceWater.BEHAVIOR_WIELE_FRICTION);
       
       // Set up default cell states
       ElementBehavior elementBehavior =
@@ -111,24 +124,24 @@ public class InputProcessorXMLMetabolismBuilder
                );
       }
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_COORDINATE_Y, 
+            ResourceWater.DEFAULT_NAME_COORD_Y, 
             Double.toString(0), 
             null
             );
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_LENGTH, 
+            ResourceWater.DEFAULT_NAME_LENGTH, 
             Double.toString(cellLength), 
             null
             );
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_ACTIVE_CHANNEL_WIDTH_AVERAGE, 
+            ResourceWater.DEFAULT_NAME_ACTIVE_CHANNEL_WIDTH_AVG, 
             Double.toString(averageWidth), 
             null
             );
          
       // Set up default boundary states
       elementBehavior =
-            documentBoundary.createDefaultBehaviorElement(behaviorDynamicWaveWiele);
+            documentBoundary.createDefaultBehaviorElement(behaviorDynamicWave);
       if (isInitialConditions)
       {
          elementBehavior.setInitTable(
@@ -149,26 +162,39 @@ public class InputProcessorXMLMetabolismBuilder
       else 
       {
          elementBehavior.createInitValueElement(
-               ResourceWater.NAME_WATER_FLOW, 
+               ResourceWater.DEFAULT_NAME_FLOW, 
                Double.toString(initialFlow), 
                null
                );
       }
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_WIELE_MODEL_INTERCEPT, 
-            Double.toString(wieleInt), 
-            null
-            );
-      elementBehavior.createInitValueElement(
-            ResourceWater.NAME_WIELE_MODEL_SLOPE, 
-            Double.toString(wieleSlope), 
-            null
-            );
-      elementBehavior.createInitValueElement(
-            ResourceWater.NAME_ACTIVE_CHANNEL_WIDTH_AVERAGE, 
+            ResourceWater.DEFAULT_NAME_ACTIVE_CHANNEL_WIDTH_AVG, 
             Double.toString(averageWidth), 
             null
             );
+      if (isWieleConfigured)
+      {
+         elementBehavior =
+               documentBoundary.createDefaultBehaviorElement(behaviorWieleFriction);
+         elementBehavior.createInitValueElement(
+               ResourceWater.DEFAULT_NAME_WIELE_MODEL_INTERCEPT, 
+               Double.toString(wieleInt), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               ResourceWater.DEFAULT_NAME_WIELE_MODEL_SLOPE, 
+               Double.toString(wieleSlope), 
+               null
+               );
+      }
+      else
+      {
+         elementBehavior.createInitValueElement(
+               ResourceWater.DEFAULT_NAME_CHEZEY,
+               metaInput.getAttributeChezey().toString(),
+               null
+               );
+      }
    }
 
    @Override
@@ -178,25 +204,25 @@ public class InputProcessorXMLMetabolismBuilder
             elementCell.createBehaviorElement(behaviorChannelStorage);
       double distance = (cellLength * index) - (cellLength / 2);
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_COORDINATE_X, 
+            ResourceWater.DEFAULT_NAME_COORD_X, 
             Double.toString(distance), 
             null
             );
       double bedElevation = elevationDatum + bedSlope * (streamLength - distance);
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_BED_ELEVATION, 
+            ResourceWater.DEFAULT_NAME_BED_ELEV, 
             Double.toString(bedElevation), 
             null
             );
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_BANK_ELEVATION, 
+            ResourceWater.DEFAULT_NAME_BANK_ELEV, 
             Double.toString(bedElevation + activeDepth), 
             null
             );
       if (!metaInput.isInitialConditions())
       {
          elementBehavior.createInitValueElement(
-               ResourceWater.NAME_WATER_HEAD, 
+               ResourceWater.DEFAULT_NAME_HEAD, 
                Double.toString(bedElevation + initialDepth), 
                null
                );
@@ -207,7 +233,11 @@ public class InputProcessorXMLMetabolismBuilder
    protected void configureStreamBoundary(ElementBoundary elementBoundary,
          ElementBoundary elementBoundaryAdj, int index) 
    {
-      elementBoundary.createBehaviorElement(behaviorDynamicWaveWiele);
+      elementBoundary.createBehaviorElement(behaviorDynamicWave);
+      if (isWieleConfigured)
+      {
+         elementBoundary.createBehaviorElement(behaviorWieleFriction);
+      }
    }
 
    @Override
@@ -250,7 +280,7 @@ public class InputProcessorXMLMetabolismBuilder
             indexLastCell - 1
             );
       elementBehavior.createInitValueElement(
-            ResourceWater.NAME_UPSTREAM_BOUNDARY_NAME, 
+            ResourceWater.DEFAULT_NAME_UPSTREAM_BOUNDARY_NAME, 
             boundaryName, 
             null
             );

@@ -261,6 +261,25 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       }
 
       /**
+       * Get the Chezey coefficient friction attribute
+       * 
+       * @return
+       *        Chezey coefficient
+       */
+      public Double getAttributeChezey() 
+      {
+         ElementHelper helper = getElementFriction();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("chezey");
+         }
+      }
+
+      /**
        * Get the Wiele model intercept attribute
        * 
        * @return
@@ -561,6 +580,38 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       {
          return helper.getAttributeDispersionCoefficient();
       }
+   }
+
+   /**
+    * Get the Chezey coefficient friction attribute
+    * 
+    * @return
+    *        Chezey coefficient
+    */
+   public Double getAttributeChezey() 
+   {
+      ElementFlow helper = getElementFlow();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeChezey();
+      }
+   }
+
+   /**
+    * Determine if the Wiele model of friction vs. depth
+    * is configured
+    * 
+    * @return
+    *       true if configured, false otherwise
+    */
+   public boolean isWieleConfigured() 
+   {
+      return (getAttributeWieleInt() != null) 
+            && (getAttributeWieleSlope() != null);
    }
 
    /**
