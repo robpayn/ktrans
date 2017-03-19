@@ -194,6 +194,19 @@ public class InputProcessorXMLMetabolismBuilder
                metaInput.getAttributeChezey().toString(),
                null
                );
+         if (metaInput.isChezyExpConfigured())
+         {
+            elementBehavior.createInitValueElement(
+                  ResourceWater.DEFAULT_NAME_CHEZEY_EXP_VELOCITY,
+                  metaInput.getAttributeChezeyExpVel().toString(),
+                  null
+                  );
+            elementBehavior.createInitValueElement(
+                  ResourceWater.DEFAULT_NAME_CHEZEY_EXP_RADIUS,
+                  metaInput.getAttributeChezeyExpRad().toString(),
+                  null
+                  );
+         }
       }
    }
 

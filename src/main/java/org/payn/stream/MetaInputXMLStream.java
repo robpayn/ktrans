@@ -280,6 +280,44 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       }
 
       /**
+       * Get the exponent for velocity in the Chezey model
+       * 
+       * @return
+       *        exponent for velocity
+       */
+      public Double getAttributeChezeyExpVel() 
+      {
+         ElementHelper helper = getElementFriction();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("chezeyExponentVelocity");
+         }
+      }
+
+      /**
+       * Get the exponent for radius in the Chezey model
+       * 
+       * @return
+       *        exponent for radius
+       */
+      public Double getAttributeChezeyExpRad() 
+      {
+         ElementHelper helper = getElementFriction();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("chezeyExponentRadius");
+         }
+      }
+
+      /**
        * Get the Wiele model intercept attribute
        * 
        * @return
@@ -598,6 +636,56 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       else
       {
          return helper.getAttributeChezey();
+      }
+   }
+
+   /**
+    * Determine if Chezey exponents are configured
+    * 
+    * @return
+    *       true if configured, false otherwise
+    */
+   public boolean isChezyExpConfigured() 
+   {
+      return (getAttributeChezeyExpVel() != null) 
+            && (getAttributeChezeyExpRad() != null);
+   }
+
+   /**
+    * Get the exponent for velocity in the Chezey model
+    * 
+    * @return
+    *        exponent for velocity
+    */
+   public Double getAttributeChezeyExpVel() 
+   {
+      ElementFlow helper = getElementFlow();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeChezeyExpVel();
+      }
+   }
+
+   /**
+    * Get the exponent for radius in the Chezey model
+    * 
+    * @return
+    *        exponent for radius
+    */
+   public Double getAttributeChezeyExpRad() 
+   {
+      ElementFlow helper = getElementFlow();
+      if (helper == null)
+      {
+         return null;
+      }
+      else
+      {
+         return helper.getAttributeChezeyExpRad();
       }
    }
 
