@@ -111,6 +111,11 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    private Double halfSat;
 
    /**
+    * Behavior for uptake with hyperbolic kinetics
+    */
+   private Behavior activeBehaviorStorageUptake;
+
+   /**
     * Construct a new instance based on the provided meta input
     * 
     * @param metaInput
@@ -134,24 +139,8 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
             ResourceSolute.BEHAVIOR_FLOW
             );
       conserveBkgConc = metaInput.getAttributeBkgConc("conservative");
-      
-      if (isActiveConfigured)
-      {
-         activeBehaviorStorage = activeResourceOTIS.getBehavior(
-               ResourceSolute.BEHAVIOR_STORAGE_HYPER
-               );
-         activeBkgConc = metaInput.getAttributeBkgConc("active");
-         uptakeMax = metaInput.getAttributeUptakeMax("active");
-         halfSat = metaInput.getAttributeConcHalfSat("active");
-      }
-   }
-
-   @Override
-   protected void configureStreamCell(ElementHolon elementCell,
-         long index) 
-   {
       ElementBehavior elementBehavior = 
-            elementCell.createBehaviorElement(conserveBehaviorStorage);
+            documentCell.createDefaultBehaviorElement(conserveBehaviorStorage);
       elementBehavior.createInitValueElement(
             conserveBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC), 
             conserveBkgConc.toString(), 
@@ -177,21 +166,27 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
             dispersionCoeff.toString(), 
             null
             );
-      
+     
       if (isActiveConfigured)
       {
+         activeBehaviorStorage = activeResourceOTIS.getBehavior(
+               ResourceSolute.BEHAVIOR_STORAGE
+               );
+         activeBehaviorStorageUptake = activeResourceOTIS.getBehavior(
+               ResourceSolute.BEHAVIOR_STORAGE_HYPER
+               );
+         activeBkgConc = metaInput.getAttributeBkgConc("active");
+         uptakeMax = metaInput.getAttributeUptakeMax("active");
+         halfSat = metaInput.getAttributeConcHalfSat("active");
          elementBehavior = 
-               elementCell.createBehaviorElement(activeBehaviorStorage);         
+               documentCell.createDefaultBehaviorElement(activeBehaviorStorage);
          elementBehavior.createInitValueElement(
                activeBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC), 
                activeBkgConc.toString(), 
                null
                );
-         elementBehavior.createInitValueElement(
-               activeBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_BKG_CONC), 
-               activeBkgConc.toString(), 
-               null
-               );
+         elementBehavior = 
+               documentCell.createDefaultBehaviorElement(activeBehaviorStorageUptake);
          elementBehavior.createInitValueElement(
                activeBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_UPTAKE_MAX), 
                uptakeMax.toString(), 
@@ -203,10 +198,28 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
                null
                );
          elementBehavior.createInitValueElement(
+               activeBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_BKG_CONC), 
+               activeBkgConc.toString(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
                ResourceSolute.NAME_DEPTH, 
                initialDepth.toString(), 
                null
                );
+      }
+   }
+
+   @Override
+   protected void configureStreamCell(ElementHolon elementCell,
+         long index) 
+   {
+      elementCell.createBehaviorElement(conserveBehaviorStorage);
+      
+      if (isActiveConfigured)
+      {
+         elementCell.createBehaviorElement(activeBehaviorStorage);         
+         elementCell.createBehaviorElement(activeBehaviorStorageUptake);         
       }
       
    }

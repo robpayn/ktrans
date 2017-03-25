@@ -73,7 +73,7 @@ HyperbolicAnalysisMultilevel <- function(
    )
 {
    analysis <- HyperbolicAnalysis(
-      simulation = simulation, 
+      experiment = simulation, 
       metricsLength = length(analysisWindow)
       );
    
@@ -301,7 +301,7 @@ run.HyperbolicAnalysis <- function(
          )
       );
 
-   # Liner regression of 1/vf vs. concentration
+   # Linear regression of 1/vf vs. concentration
    ineff <- 1 / analysis$metrics$vf;
    lmresults <- lm(
       ineff ~ cefftot,
@@ -309,10 +309,14 @@ run.HyperbolicAnalysis <- function(
    );
    intercept = as.numeric(lmresults$coefficients["(Intercept)"]);
    slope = as.numeric(lmresults$coefficients["cefftot"]);
+   halfsat = intercept / slope;
    vfambest = 1 / intercept;
    analysis$vfEstimates = list(
       intercept = intercept,
       slope = slope,
+      umax = (halfsat + analysis$experiment$activeBkg) /
+         intercept,
+      halfsat = halfsat,
       vfamb = vfambest,
       uamb = vfambest * analysis$experiment$activeBkg
    );
@@ -352,17 +356,7 @@ plot.HyperbolicAnalysis <- function(
       );
 }
 
-plotUptakeEstimate <- function(
-   analysis, 
-   device,
-   xfactor,
-   yfactor,
-   xlim,
-   ylim,
-   xlab,
-   ylab,
-   ...
-   )
+plotUptakeEstimate <- function(analysis, ...)
 {
    UseMethod("plotUptakeEstimate", analysis);
 }
@@ -433,6 +427,81 @@ plotUptakeEstimate.HyperbolicAnalysis <- function(
             halfsat = actualModel["halfsat"], 
             conc = xvals
             ) * yfactor,
+         lty = "dashed"
+         );
+   }
+}
+
+plotVfEstimate <- function(analysis, ...)
+{
+   UseMethod("plotVfEstimate", analysis);
+}
+
+plotVfEstimate.HyperbolicAnalysis <- function(
+   analysis, 
+   device = "default",
+   width = 8,
+   height = 6,   
+   xfactor = 1,
+   yfactor = 1,
+   xlim = c(
+      0,
+      max(analysis$metrics$cefftot)
+      ),
+   ylim = c(
+      min(
+         1 / max(analysis$metrics$vf),
+         analysis$vfEstimates$intercept,
+         if (length(actualModel) == 2) 
+            actualModel["vfint"]
+         ),
+      max(
+         1 / analysis$metrics$vf,
+         if (length(actualModel) == 2) 
+            actualModel["vfint"] +
+               actualModel["vfslope"] * max(analysis$metrics$cefftot)
+         else 0
+         ) 
+      ),
+   xlab = "Concentration",
+   ylab = bquote(paste(
+      v[f]^-1
+      )),
+   actualModel = numeric(length = 0),
+   ...
+   )
+{
+   createDevice(device, width, height);
+   par(...);
+   createBlankPlot(
+      xlim = xlim * xfactor, 
+      ylim = ylim * yfactor, 
+      xlab = xlab, 
+      ylab = ylab
+      );
+   points(
+      x = analysis$metrics$cefftot * xfactor, 
+      y = (1 / analysis$metrics$vf) * yfactor,
+      pch = 16,
+      col = "red"
+      );
+   lines(
+      x = xlim,
+      y = c(
+         analysis$vfEstimates$intercept,
+         analysis$vfEstimates$intercept +
+            analysis$vfEstimates$slope * xlim[2]
+         )
+      );
+   if (length(actualModel) == 2)
+   {
+      lines(
+         x = xlim,
+         y = c(
+            actualModel["vfint"],
+            actualModel["vfint"] +
+               actualModel["vfslope"] * xlim[2]
+            ),
          lty = "dashed"
          );
    }
