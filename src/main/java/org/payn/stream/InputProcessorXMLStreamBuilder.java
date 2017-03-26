@@ -121,7 +121,6 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
    public void configureModel() throws Exception 
    {
       System.out.println("Building the stream matrix...");
-      
 
       isInitialConditions = metaInput.isInitialConditions();
 

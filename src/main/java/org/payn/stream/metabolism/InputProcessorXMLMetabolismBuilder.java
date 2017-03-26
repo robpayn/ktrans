@@ -7,6 +7,7 @@ import org.payn.chsm.io.interpolate.InterpolatorSnapshotTable;
 import org.payn.chsm.io.xmltools.ElementBehavior;
 import org.payn.chsm.io.xmltools.ElementHolon;
 import org.payn.neoch.io.xmltools.ElementBoundary;
+import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.water.ResourceWater;
 import org.payn.stream.InputProcessorXMLStreamBuilder;
 import org.payn.stream.SimulatorStream;
@@ -79,6 +80,15 @@ public class InputProcessorXMLMetabolismBuilder
    private boolean isWieleConfigured;
 
    /**
+    * Solute resource for oxygen
+    */
+   private ResourceSolute resourceOxygen;
+
+   private boolean isOxygenConfigured;
+
+   private Behavior behaviorOxygenStorage;
+
+   /**
     * Construct a new instance with the given meta input and simulator
     * @param metaInput
     * @param sim
@@ -94,6 +104,12 @@ public class InputProcessorXMLMetabolismBuilder
    {
       resourceWater = new ResourceWater();
       resourceWater.initialize("water");
+      isOxygenConfigured = metaInput.isSoluteConfigured("oxygen");
+      if (isOxygenConfigured)
+      {
+         resourceOxygen = new ResourceSolute();
+         resourceOxygen.initialize("oxygen");
+      }
    }
 
    @Override
@@ -105,8 +121,16 @@ public class InputProcessorXMLMetabolismBuilder
       behaviorDynamicWave =
             resourceWater.getBehavior(ResourceWater.BEHAVIOR_DYNAMIC_WAVE);
       isWieleConfigured = metaInput.isWieleConfigured();
-      behaviorWieleFriction =
-            resourceWater.getBehavior(ResourceWater.BEHAVIOR_WIELE_FRICTION);
+      if (isWieleConfigured)
+      {
+         behaviorWieleFriction =
+               resourceWater.getBehavior(ResourceWater.BEHAVIOR_WIELE_FRICTION);
+      }
+      if (isOxygenConfigured)
+      {
+         behaviorOxygenStorage =
+               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_STORAGE);
+      }
       
       // Set up default cell states
       ElementBehavior elementBehavior =
@@ -232,13 +256,18 @@ public class InputProcessorXMLMetabolismBuilder
             Double.toString(bedElevation + activeDepth), 
             null
             );
-      if (!metaInput.isInitialConditions())
+      if (!isInitialConditions)
       {
          elementBehavior.createInitValueElement(
                ResourceWater.DEFAULT_NAME_HEAD, 
                Double.toString(bedElevation + initialDepth), 
                null
                );
+      }
+      if (isOxygenConfigured)
+      {
+         elementBehavior = 
+               elementCell.createBehaviorElement(behaviorOxygenStorage);
       }
    }
 
@@ -259,7 +288,7 @@ public class InputProcessorXMLMetabolismBuilder
    {
       ElementBehavior elementBehavior =
             elementBoundary.createBehaviorElement(
-                  this.resourceWater.getBehavior(ResourceWater.BEHAVIOR_FLOW_INTERPOLATE)
+                  resourceWater.getBehavior(ResourceWater.BEHAVIOR_FLOW_INTERPOLATE)
                   );
       elementBehavior.createInitValueElement(
             InterpolatorSnapshotTable.NAME_DELIMITER, 
@@ -276,6 +305,15 @@ public class InputProcessorXMLMetabolismBuilder
             metaInput.getAttributeUpstreamInterpType(), 
             null
             );
+      if (isOxygenConfigured)
+      {
+         elementBehavior = elementBoundary.createBehaviorElement(
+               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_FLOWBOUND)
+               );
+         elementBehavior = elementBoundary.createBehaviorElement(
+               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_CONC_INTERP)
+               );
+      }
    }
 
    @Override

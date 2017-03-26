@@ -118,6 +118,7 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
                break;
             case "cons":
             case "active":
+            case "oxygen":
                resource = new ResourceSolute();
                break;
             case "conserveOTIS":

@@ -1,8 +1,11 @@
 package org.payn.stream;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.payn.chsm.io.xmltools.ElementHelper;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  * Abstract meta input for a NEOCH stream model
@@ -11,6 +14,262 @@ import org.payn.chsm.io.xmltools.ElementHelper;
  *
  */
 public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
+   
+   /**
+    * XML element for solute configuration information
+    * 
+    * @author robpayn
+    *
+    */
+   protected class ElementSolute extends ElementHelper {
+
+      /**
+       * Element with information about interpolation
+       */
+      private ElementHelper elementInterp;
+      
+      /**
+       * Element with information for injection boundary
+       */
+      private ElementHelper elementInject;
+
+      /**
+       * Element with information about a hyperbolic function
+       */
+      private ElementHelper elementHyperbolic;
+
+      /**
+       * Construct a new instance for the provided solute name
+       * based on information in the provided
+       * element helper
+       * 
+       * @param element
+       */
+      public ElementSolute(Element element) 
+      {
+         super(element);
+      }
+
+      /**
+       * Get the interpolation element
+       * 
+       * @return
+       */
+      private ElementHelper getElementInterp() 
+      {
+         if (elementInterp == null)
+         {
+            elementInterp = getFirstChildElementHelper("interpolate");
+         }
+         return elementInterp;
+      }
+      
+      /**
+       * Get the injection element
+       * 
+       * @return
+       *        reference to the injection element, or null if
+       *        there is no injection element
+       */
+      private ElementHelper getElementInject() 
+      {
+         if (elementInject == null)
+         {
+            elementInject = getFirstChildElementHelper("inject");
+         }
+         return elementInject;
+      }
+
+      /**
+       * Get the element with information about a hyperbolic function
+       * 
+       * @return
+       */
+      private ElementHelper getHyperbolicElement() 
+      {
+         if (elementHyperbolic == null)
+         {
+            elementHyperbolic = getFirstChildElementHelper("hyperbolic");
+         }
+         return elementHyperbolic;
+      }
+
+      /**
+       * Get the background concentration attribute
+       * 
+       * @return
+       *        Double object
+       */
+      public Double getAttributeBkgConc() 
+      {
+         return getAttributeDouble("bkgConc");
+      }
+
+      /**
+       * Get the path to the interpolation file
+       * 
+       * @return
+       *        String object
+       */
+      public String getAttributeConcBoundFile() 
+      {
+         ElementHelper helper = getElementInterp();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeString("path");
+         }
+      }
+
+      /**
+       * Get the type of interpolation
+       * 
+       * @return
+       *        String object
+       */
+      public String getAttributeInterpolationType() 
+      {
+         ElementHelper helper = getElementInterp();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeString("type");
+         }
+      }
+
+      /**
+       * Get the delimiter attribute
+       * 
+       * @return
+       *        String object
+       */
+      public String getAttributeDelimiter() 
+      {
+         ElementHelper helper = getElementInterp();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeString("delimiter");
+         }
+      }
+
+      /**
+       * Get the injection mass attribute
+       * 
+       * @return
+       *        Double object
+       */
+      public Double getAttributeInjectMass() 
+      {
+         ElementHelper helper = getElementInject();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("soluteMass");
+         }
+      }
+
+      /**
+       * Get the injection duration attribute (number of iterations)
+       * 
+       * @return
+       *        Long object
+       */
+      public Long getAttributeInjectDuration() 
+      {
+         ElementHelper helper = getElementInject();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeLong("durationIterations");
+         }
+      }
+
+      /**
+       * Get the injection start iteration attribute
+       * 
+       * @return
+       *        Long object
+       */
+      public Long getAttributeInjectStartInterval() 
+      {
+         ElementHelper helper = getElementInject();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeLong("startIteration");
+         }
+      }
+
+      /**
+       * Get the maximum uptake parameter of a hyperbolic function
+       * 
+       * @return
+       *        Double object
+       */
+      public Double getAttributeUptakeMax() 
+      {
+         ElementHelper helper = getHyperbolicElement();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("uptakeMax");
+         }
+      }
+
+      /**
+       * Get the attribute for the half saturation concentration
+       * in the hyperbolic function
+       * 
+       * @return
+       *        Double object
+       */
+      public Double getAttributeConcHalfSat() 
+      {
+         ElementHelper helper = getHyperbolicElement();
+         if (helper == null)
+         {
+            return null;
+         }
+         else
+         {
+            return helper.getAttributeDouble("concHalfSat");
+         }
+      }
+
+      /**
+       * Determine if an inject element exists
+       * 
+       * @return
+       *        true if element exists, false otherwise
+       */
+      public boolean isUpstreamInject() 
+      {
+         return !(getElementInject() == null);
+      }
+
+   }
    
    /**
     * An element helper for the geometry element
@@ -423,6 +682,11 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * Element for the flow configuration
     */
    private ElementFlow elementFlow;
+
+   /**
+    * Hash map for looking up the elements for each simulated solute
+    */
+   HashMap<String, ElementSolute> elementSoluteMap;
 
    /**
     * Construct a new instance that uses the provided working directory,
@@ -877,4 +1141,51 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       return helper.getAttribute("boundDelimiter");
    }
    
+   /**
+    * Determine if the provided solute is configured
+    * 
+    * @param soluteName
+    * @return
+    *       true if configured, false otherwise
+    */
+   public boolean isSoluteConfigured(String soluteName) 
+   {
+      ElementSolute elementSolute = getElementSolute(soluteName);
+      if (elementSolute == null)
+      {
+         return false;
+      }
+      else
+      {
+         return elementSolute.isActive();
+      }
+   }
+
+   /**
+    * Get the element for the provided solute name
+    * 
+    * @param soluteName
+    * @return
+    */
+   protected ElementSolute getElementSolute(String soluteName) 
+   {
+      if (elementSoluteMap == null)
+      {
+         elementSoluteMap = new HashMap<String, ElementSolute>();
+         NodeList nodes = helper.getElement().getElementsByTagName("solute");
+         for (int nodeCount = 0; nodeCount < nodes.getLength(); nodeCount++)
+         {
+            ElementSolute elementSolute = 
+                  new ElementSolute((Element)nodes.item(nodeCount));
+            elementSoluteMap.put(elementSolute.getName(), elementSolute);
+         }
+      }
+      ElementSolute elementSolute = elementSoluteMap.get(soluteName);
+      if (elementSolute == null)
+      {
+         return null;
+      }
+      return elementSolute;
+   }
+
 }
