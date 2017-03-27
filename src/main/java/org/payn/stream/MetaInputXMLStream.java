@@ -38,6 +38,8 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        */
       private ElementHelper elementHyperbolic;
 
+      private ElementHelper elementUpstreamBound;
+
       /**
        * Construct a new instance for the provided solute name
        * based on information in the provided
@@ -267,6 +269,30 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       public boolean isUpstreamInject() 
       {
          return !(getElementInject() == null);
+      }
+
+      public String getAttributeUpstreamFlowPath() 
+      {
+         return getElementUpstreamBound().getAttribute("upstreamPath");
+      }
+
+      private ElementHelper getElementUpstreamBound() 
+      {
+         if (elementUpstreamBound == null)
+         {
+            elementUpstreamBound = getFirstChildElementHelper("upstreambound");
+         }
+         return elementUpstreamBound;
+      }
+
+      public String getAttributeUpstreamInterpType() 
+      {
+         return getElementUpstreamBound().getAttribute("upstreamInterpType");
+      }
+
+      public String getAttributeUpstreamConcDelimiter() 
+      {
+         return getElementUpstreamBound().getAttribute("upstreamDelimiter");
       }
 
    }
@@ -1051,9 +1077,24 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       interpolation type
     */
-   public String getAttributeUpstreamInterpType()
+   public String getAttributeUpstreamFlowInterpType()
    {
       return getElementFlow().getAttributeUpstreamInterpType();
+   }
+
+   public String getAttributeUpstreamConcPath(String soluteName) 
+   {
+      return getElementSolute(soluteName).getAttributeUpstreamFlowPath();
+   }
+   
+   public String getAttributeUpstreamConcInterpType(String soluteName) 
+   {
+      return getElementSolute(soluteName).getAttributeUpstreamInterpType();
+   }
+
+   public String getAttributeUpstreamConcDelimiter(String soluteName) 
+   {
+      return getElementSolute(soluteName).getAttributeUpstreamConcDelimiter();
    }
 
    /**

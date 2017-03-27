@@ -84,9 +84,17 @@ public class InputProcessorXMLMetabolismBuilder
     */
    private ResourceSolute resourceOxygen;
 
+   /**
+    * Flag indicating if oxygen is configured
+    */
    private boolean isOxygenConfigured;
 
+   /**
+    * Behavior for oxygen storage
+    */
    private Behavior behaviorOxygenStorage;
+
+   private Behavior behaviorOxygenAdvect;
 
    /**
     * Construct a new instance with the given meta input and simulator
@@ -130,6 +138,8 @@ public class InputProcessorXMLMetabolismBuilder
       {
          behaviorOxygenStorage =
                resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_STORAGE);
+         behaviorOxygenAdvect =
+               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_ADVECT);
       }
       
       // Set up default cell states
@@ -280,6 +290,10 @@ public class InputProcessorXMLMetabolismBuilder
       {
          elementBoundary.createBehaviorElement(behaviorWieleFriction);
       }
+      if (isOxygenConfigured)
+      {
+         elementBoundary.createBehaviorElement(behaviorOxygenAdvect);
+      }
    }
 
    @Override
@@ -291,18 +305,18 @@ public class InputProcessorXMLMetabolismBuilder
                   resourceWater.getBehavior(ResourceWater.BEHAVIOR_FLOW_INTERPOLATE)
                   );
       elementBehavior.createInitValueElement(
-            InterpolatorSnapshotTable.NAME_DELIMITER, 
-            metaInput.getAttributeUpstreamFlowDelimiter(), 
-            null
-            );
-      elementBehavior.createInitValueElement(
             InterpolatorSnapshotTable.NAME_PATH, 
             metaInput.getAttributeUpstreamFlowPath(), 
             null
             );
       elementBehavior.createInitValueElement(
             InterpolatorSnapshotTable.NAME_TYPE, 
-            metaInput.getAttributeUpstreamInterpType(), 
+            metaInput.getAttributeUpstreamFlowInterpType(), 
+            null
+            );
+      elementBehavior.createInitValueElement(
+            InterpolatorSnapshotTable.NAME_DELIMITER, 
+            metaInput.getAttributeUpstreamFlowDelimiter(), 
             null
             );
       if (isOxygenConfigured)
@@ -310,8 +324,32 @@ public class InputProcessorXMLMetabolismBuilder
          elementBehavior = elementBoundary.createBehaviorElement(
                resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_FLOWBOUND)
                );
+         Behavior behaviorConcInterp = resourceOxygen.getBehavior(
+               ResourceSolute.BEHAVIOR_CONC_INTERP
+               );
          elementBehavior = elementBoundary.createBehaviorElement(
-               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_CONC_INTERP)
+               behaviorConcInterp
+               );
+         elementBehavior.createInitValueElement(
+               behaviorConcInterp.getAbstractStateName(
+                     InterpolatorSnapshotTable.NAME_PATH
+                     ), 
+               metaInput.getAttributeUpstreamConcPath("oxygen"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behaviorConcInterp.getAbstractStateName(
+                     InterpolatorSnapshotTable.NAME_TYPE
+                     ), 
+               metaInput.getAttributeUpstreamConcInterpType("oxygen"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behaviorConcInterp.getAbstractStateName(
+                     InterpolatorSnapshotTable.NAME_DELIMITER
+                     ), 
+               metaInput.getAttributeUpstreamConcDelimiter("oxygen"), 
+               null
                );
       }
    }
@@ -335,6 +373,19 @@ public class InputProcessorXMLMetabolismBuilder
             boundaryName, 
             null
             );
+      if (isOxygenConfigured)
+      {
+         Behavior behaviorOxygenFlow = 
+               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_FLOWBOUND);
+         elementBehavior = elementBoundary.createBehaviorElement(
+               behaviorOxygenFlow
+               );
+         elementBehavior.createInitValueElement(
+               behaviorOxygenFlow.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC), 
+               "0.0", 
+               null
+               );
+      }
    }
 
 }
