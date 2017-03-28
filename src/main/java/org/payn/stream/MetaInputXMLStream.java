@@ -295,6 +295,11 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
          return getElementUpstreamBound().getAttribute("upstreamDelimiter");
       }
 
+      public Double getAttributeInitialConc() 
+      {
+         return getAttributeDouble("initialConc");
+      }
+
    }
    
    /**
@@ -1227,6 +1232,11 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
          return null;
       }
       return elementSolute;
+   }
+
+   public Double getAttributeInitialConc(String soluteName) 
+   {
+      return getElementSolute(soluteName).getAttributeInitialConc();
    }
 
 }

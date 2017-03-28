@@ -129,19 +129,7 @@ public class InputProcessorXMLMetabolismBuilder
       behaviorDynamicWave =
             resourceWater.getBehavior(ResourceWater.BEHAVIOR_DYNAMIC_WAVE);
       isWieleConfigured = metaInput.isWieleConfigured();
-      if (isWieleConfigured)
-      {
-         behaviorWieleFriction =
-               resourceWater.getBehavior(ResourceWater.BEHAVIOR_WIELE_FRICTION);
-      }
-      if (isOxygenConfigured)
-      {
-         behaviorOxygenStorage =
-               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_STORAGE);
-         behaviorOxygenAdvect =
-               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_ADVECT);
-      }
-      
+
       // Set up default cell states
       ElementBehavior elementBehavior =
             documentCell.createDefaultBehaviorElement(behaviorChannelStorage);
@@ -183,12 +171,12 @@ public class InputProcessorXMLMetabolismBuilder
                metaInput.getAttributeInitialConditionDelimiterBound()
                ); 
          elementBehavior.createInitValueElement(
-               "WaterFlow", 
+               ResourceWater.DEFAULT_NAME_FLOW, 
                "",
                null
                );
          elementBehavior.createInitValueElement(
-               "Velocity", 
+               ResourceWater.DEFAULT_NAME_VELOCITY, 
                "",
                null
                );
@@ -206,8 +194,11 @@ public class InputProcessorXMLMetabolismBuilder
             Double.toString(averageWidth), 
             null
             );
+      
       if (isWieleConfigured)
       {
+         behaviorWieleFriction =
+               resourceWater.getBehavior(ResourceWater.BEHAVIOR_WIELE_FRICTION);
          elementBehavior =
                documentBoundary.createDefaultBehaviorElement(behaviorWieleFriction);
          elementBehavior.createInitValueElement(
@@ -241,6 +232,41 @@ public class InputProcessorXMLMetabolismBuilder
                   null
                   );
          }
+      }
+      
+      if (isOxygenConfigured)
+      {
+         behaviorOxygenStorage =
+               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_STORAGE);
+         elementBehavior =
+               documentCell.createDefaultBehaviorElement(behaviorOxygenStorage);
+         if (isInitialConditions)
+         {
+            elementBehavior.setInitTable(
+                  metaInput.getAttributeInitialConditionPathCell(),
+                  metaInput.getAttributeInitialConditionDelimiterCell()
+                  ); 
+            elementBehavior.createInitValueElement(
+                  behaviorOxygenStorage.getAbstractStateName(
+                        ResourceSolute.NAME_SOLUTE_CONC
+                        ), 
+                  "",
+                  null
+                  );
+         }
+         else
+         {
+            elementBehavior.createInitValueElement(
+                  behaviorOxygenStorage.getAbstractStateName(
+                        ResourceSolute.NAME_SOLUTE_CONC
+                        ),
+                  metaInput.getAttributeInitialConc("oxygen").toString(),
+                  null
+                  );
+         }
+         
+         behaviorOxygenAdvect =
+               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_ADVECT);
       }
    }
 
