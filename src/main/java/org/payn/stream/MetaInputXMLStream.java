@@ -38,6 +38,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        */
       private ElementHelper elementHyperbolic;
 
+      /**
+       * Element for the upstream boundary configuration
+       */
       private ElementHelper elementUpstreamBound;
 
       /**
@@ -271,11 +274,23 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
          return !(getElementInject() == null);
       }
 
-      public String getAttributeUpstreamFlowPath() 
+      /**
+       * Get the attribute for the path to the upstream interpolation file
+       * 
+       * @return
+       *        path
+       */
+      public String getAttributeUpstreamPath() 
       {
          return getElementUpstreamBound().getAttribute("upstreamPath");
       }
 
+      /**
+       * Get the element with the upstream bound configuration
+       * 
+       * @return
+       *        element helper
+       */
       private ElementHelper getElementUpstreamBound() 
       {
          if (elementUpstreamBound == null)
@@ -285,16 +300,34 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
          return elementUpstreamBound;
       }
 
+      /**
+       * Get the element with the upstream interpolation type
+       * 
+       * @return
+       *        interpolation type
+       */
       public String getAttributeUpstreamInterpType() 
       {
          return getElementUpstreamBound().getAttribute("upstreamInterpType");
       }
 
-      public String getAttributeUpstreamConcDelimiter() 
+      /**
+       * Get the attribute with the delimiter for the upstream interpolation file
+       * 
+       * @return
+       *        delimiter
+       */
+      public String getAttributeUpstreamDelimiter() 
       {
          return getElementUpstreamBound().getAttribute("upstreamDelimiter");
       }
 
+      /**
+       * Get the attribute with the initial concentration
+       * 
+       * @return
+       *        initial concentration
+       */
       public Double getAttributeInitialConc() 
       {
          return getAttributeDouble("initialConc");
@@ -1087,19 +1120,40 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       return getElementFlow().getAttributeUpstreamInterpType();
    }
 
+   /**
+    * Get the path to the interpolation file for upstream concentration
+    * 
+    * @param soluteName
+    * @return
+    *       path to file
+    */
    public String getAttributeUpstreamConcPath(String soluteName) 
    {
-      return getElementSolute(soluteName).getAttributeUpstreamFlowPath();
+      return getElementSolute(soluteName).getAttributeUpstreamPath();
    }
    
+   /**
+    * Get the interpolation type for the file with upstream concentration
+    * 
+    * @param soluteName
+    * @return
+    *       interpolation type
+    */
    public String getAttributeUpstreamConcInterpType(String soluteName) 
    {
       return getElementSolute(soluteName).getAttributeUpstreamInterpType();
    }
 
+   /**
+    * Get the column delimiter for the upstream concentration file
+    * 
+    * @param soluteName
+    * @return
+    *       delimiter
+    */
    public String getAttributeUpstreamConcDelimiter(String soluteName) 
    {
-      return getElementSolute(soluteName).getAttributeUpstreamConcDelimiter();
+      return getElementSolute(soluteName).getAttributeUpstreamDelimiter();
    }
 
    /**
@@ -1234,6 +1288,13 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       return elementSolute;
    }
 
+   /**
+    * Get the attribute with the initial concentration
+    * 
+    * @param soluteName
+    * @return
+    *       initial concentration
+    */
    public Double getAttributeInitialConc(String soluteName) 
    {
       return getElementSolute(soluteName).getAttributeInitialConc();

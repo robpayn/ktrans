@@ -94,6 +94,9 @@ public class InputProcessorXMLMetabolismBuilder
     */
    private Behavior behaviorOxygenStorage;
 
+   /**
+    * Behavior for oxygen advection
+    */
    private Behavior behaviorOxygenAdvect;
 
    /**
