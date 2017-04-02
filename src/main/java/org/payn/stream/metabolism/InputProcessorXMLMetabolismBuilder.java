@@ -339,6 +339,11 @@ public class InputProcessorXMLMetabolismBuilder
             null
             );
       elementBehavior.createInitValueElement(
+            ResourceWater.DEFAULT_NAME_FLOW_HEADER, 
+            "WaterFlow", 
+            null
+            );
+      elementBehavior.createInitValueElement(
             InterpolatorSnapshotTable.NAME_TYPE, 
             metaInput.getAttributeUpstreamFlowInterpType(), 
             null
@@ -378,6 +383,32 @@ public class InputProcessorXMLMetabolismBuilder
                      InterpolatorSnapshotTable.NAME_DELIMITER
                      ), 
                metaInput.getAttributeUpstreamConcDelimiter("oxygen"), 
+               null
+               );
+         Behavior behaviorAvgTemp = resourceWater.getBehavior(
+               ResourceWater.BEHAVIOR_REACH_AVG_TEMP
+               );
+         elementBehavior = elementBoundary.createBehaviorElement(
+               behaviorAvgTemp
+               );
+         elementBehavior.createInitValueElement(
+               "Temp" + InterpolatorSnapshotTable.NAME_TYPE, 
+               metaInput.getAttributeUpstreamTempType(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               "Temp" + InterpolatorSnapshotTable.NAME_DELIMITER, 
+               metaInput.getAttributeUpstreamTempDelimiter(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               "UpstreamTemp" + InterpolatorSnapshotTable.NAME_PATH, 
+               metaInput.getAttributeUpstreamTempPath(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               "DownstreamTemp" + InterpolatorSnapshotTable.NAME_PATH, 
+               metaInput.getAttributeDownstreamTempPath(), 
                null
                );
       }

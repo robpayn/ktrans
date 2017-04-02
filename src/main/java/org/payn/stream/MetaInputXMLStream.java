@@ -753,6 +753,11 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
    HashMap<String, ElementSolute> elementSoluteMap;
 
    /**
+    * Element helper for the temperature element
+    */
+   private ElementHelper elementTemperature;
+
+   /**
     * Construct a new instance that uses the provided working directory,
     * path to the configuration file, and the name of the XML element
     * with the configuration information
@@ -810,6 +815,20 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
          elementFlow = new ElementFlow(helper);
       }
       return elementFlow;
+   }
+
+   /**
+    * Get the element helper for the temperature element
+    * 
+    * @return
+    */
+   private ElementHelper getElementTemperature() 
+   {
+      if (elementTemperature == null)
+      {
+         elementTemperature = helper.getFirstChildElementHelper("temperature");
+      }
+      return elementTemperature;
    }
 
   /**
@@ -1298,6 +1317,52 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
    public Double getAttributeInitialConc(String soluteName) 
    {
       return getElementSolute(soluteName).getAttributeInitialConc();
+   }
+
+   /**
+    * Get the attribute for the path to the interpolation file
+    * for upstream temperature
+    * 
+    * @return
+    *       path
+    */
+   public String getAttributeUpstreamTempPath() 
+   {
+      return getElementTemperature().getAttributeString("upstreamPath");
+   }
+
+   /**
+    * Get the attribute for the path to the interpolation file
+    * for downstream temperature
+    * 
+    * @return
+    *       path
+    */
+   public String getAttributeDownstreamTempPath() 
+   {
+      return getElementTemperature().getAttributeString("downstreamPath");
+   }
+
+   /**
+    * Get the interpolation type for temperature interpolation
+    * 
+    * @return
+    *       interpolation type
+    */
+   public String getAttributeUpstreamTempType() 
+   {
+      return getElementTemperature().getAttributeString("interpType");
+   }
+
+   /**
+    * Get the column delimiter for temperature interpolation files
+    * 
+    * @return
+    *       delimiter
+    */
+   public String getAttributeUpstreamTempDelimiter() 
+   {
+      return getElementTemperature().getAttributeString("delimiter");
    }
 
 }
