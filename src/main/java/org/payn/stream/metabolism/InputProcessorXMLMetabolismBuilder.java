@@ -100,6 +100,11 @@ public class InputProcessorXMLMetabolismBuilder
    private Behavior behaviorOxygenAdvect;
 
    /**
+    * Behavior for the temperature over the reach
+    */
+   private Behavior behaviorTemperature;
+
+   /**
     * Construct a new instance with the given meta input and simulator
     * @param metaInput
     * @param sim
@@ -270,6 +275,15 @@ public class InputProcessorXMLMetabolismBuilder
          
          behaviorOxygenAdvect =
                resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_ADVECT);
+         behaviorTemperature = 
+               resourceWater.getBehavior(ResourceWater.BEHAVIOR_REACH_AVG_TEMP);
+         elementBehavior =
+               documentCell.createDefaultBehaviorElement(behaviorTemperature);
+         elementBehavior.createInitValueElement(
+               ResourceWater.DEFAULT_NAME_AVG_TEMP_HOLON, 
+               "boundext_001",
+               null
+               );
       }
    }
 
@@ -305,8 +319,8 @@ public class InputProcessorXMLMetabolismBuilder
       }
       if (isOxygenConfigured)
       {
-         elementBehavior = 
-               elementCell.createBehaviorElement(behaviorOxygenStorage);
+         elementCell.createBehaviorElement(behaviorOxygenStorage);
+         elementCell.createBehaviorElement(behaviorTemperature);
       }
    }
 
@@ -339,7 +353,7 @@ public class InputProcessorXMLMetabolismBuilder
             null
             );
       elementBehavior.createInitValueElement(
-            ResourceWater.DEFAULT_NAME_FLOW_HEADER, 
+            InterpolatorSnapshotTable.DEFAULT_NAME_HEADER, 
             "WaterFlow", 
             null
             );
@@ -373,6 +387,13 @@ public class InputProcessorXMLMetabolismBuilder
                );
          elementBehavior.createInitValueElement(
                behaviorConcInterp.getAbstractStateName(
+                     InterpolatorSnapshotTable.DEFAULT_NAME_HEADER
+                     ),
+               "oxygenConc",
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behaviorConcInterp.getAbstractStateName(
                      InterpolatorSnapshotTable.NAME_TYPE
                      ), 
                metaInput.getAttributeUpstreamConcInterpType("oxygen"), 
@@ -386,7 +407,7 @@ public class InputProcessorXMLMetabolismBuilder
                null
                );
          Behavior behaviorAvgTemp = resourceWater.getBehavior(
-               ResourceWater.BEHAVIOR_REACH_AVG_TEMP
+               ResourceWater.BEHAVIOR_REACH_AVG_TEMP_BOUND
                );
          elementBehavior = elementBoundary.createBehaviorElement(
                behaviorAvgTemp
