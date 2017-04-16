@@ -140,7 +140,7 @@ public class InputProcessorXMLMetabolismBuilder
 
       // Set up default cell states
       ElementBehavior elementBehavior =
-            documentCell.createDefaultBehaviorElement(behaviorChannelStorage);
+            documentHolon.createDefaultBehaviorElement(behaviorChannelStorage);
       if (isInitialConditions)
       {
          elementBehavior.setInitTable(
@@ -171,7 +171,7 @@ public class InputProcessorXMLMetabolismBuilder
          
       // Set up default boundary states
       elementBehavior =
-            documentBoundary.createDefaultBehaviorElement(behaviorDynamicWave);
+            documentHolon.createDefaultBehaviorElement(behaviorDynamicWave);
       if (isInitialConditions)
       {
          elementBehavior.setInitTable(
@@ -208,7 +208,7 @@ public class InputProcessorXMLMetabolismBuilder
          behaviorWieleFriction =
                resourceWater.getBehavior(ResourceWater.BEHAVIOR_WIELE_FRICTION);
          elementBehavior =
-               documentBoundary.createDefaultBehaviorElement(behaviorWieleFriction);
+               documentHolon.createDefaultBehaviorElement(behaviorWieleFriction);
          elementBehavior.createInitValueElement(
                ResourceWater.DEFAULT_NAME_WIELE_MODEL_INTERCEPT, 
                Double.toString(wieleInt), 
@@ -247,7 +247,7 @@ public class InputProcessorXMLMetabolismBuilder
          behaviorOxygenStorage =
                resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_STORAGE);
          elementBehavior =
-               documentCell.createDefaultBehaviorElement(behaviorOxygenStorage);
+               documentHolon.createDefaultBehaviorElement(behaviorOxygenStorage);
          if (isInitialConditions)
          {
             elementBehavior.setInitTable(
@@ -278,7 +278,7 @@ public class InputProcessorXMLMetabolismBuilder
          behaviorTemperature = 
                resourceWater.getBehavior(ResourceWater.BEHAVIOR_REACH_AVG_TEMP);
          elementBehavior =
-               documentCell.createDefaultBehaviorElement(behaviorTemperature);
+               documentHolon.createDefaultBehaviorElement(behaviorTemperature);
          elementBehavior.createInitValueElement(
                ResourceWater.DEFAULT_NAME_AVG_TEMP_HOLON, 
                "boundext_001",

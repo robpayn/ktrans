@@ -2,6 +2,7 @@ package org.payn.stream;
 
 import java.io.File;
 
+import org.payn.chsm.io.xmltools.ElementHelper;
 import org.payn.chsm.io.xmltools.XMLDocumentModelConfig;
 import org.payn.neoch.io.xmltools.ElementXMLInputMatrix;
 import org.payn.simulation.metainputs.MetaInputXML;
@@ -18,6 +19,11 @@ public abstract class MetaInputXMLNEOCH extends MetaInputXML<XMLDocumentModelCon
     * Input element for the model input
     */
    private ElementXMLInputMatrix xmlInputElement;
+   
+   /**
+    * Time element with information about simulation time
+    */
+   private ElementHelper timeElement;
 
    /**
     * Construct a new instance that uses the provided working directory,
@@ -48,27 +54,54 @@ public abstract class MetaInputXMLNEOCH extends MetaInputXML<XMLDocumentModelCon
    }
 
    /**
-    * Get the cell file from the NEOCH settings
+    * Get the holon file from the NEOCH settings
     * 
     * @return
     *       cell file
     * @throws Exception
     */
-   public File getCellFile() throws Exception 
+   public File getHolonFile() throws Exception 
    {
-      return xmlInputElement.getCellFile();
+      return xmlInputElement.getHolonFile();
+   }
+   
+   /**
+    * Get the time interval attribute
+    * 
+    * @return
+    *       time interval
+    */
+   public Double getAttributeTimeInterval()
+   {
+      return getTimeElement().getAttributeDouble("timeInterval");
+   }
+   
+   /**
+    * Get the last iteration attribute
+    * 
+    * @return
+    *       last iteration
+    */
+   public Long getAttributeLastIteration()
+   {
+      return getTimeElement().getAttributeLong("lastIteration");
    }
 
    /**
-    * Get the boundary file from the NEOCH settings
+    * Get the time XML element
     * 
     * @return
-    *       boundary file
-    * @throws Exception
+    *       time element
     */
-   public File getBoundaryFile() throws Exception 
+   public ElementHelper getTimeElement()
    {
-      return xmlInputElement.getBoundaryFile();
+      if (timeElement == null)
+      {
+         timeElement = new ElementHelper(
+               document.getRootElementHelper().getFirstChildElement("time")
+               );
+      }
+      return timeElement;
    }
-
+   
 }

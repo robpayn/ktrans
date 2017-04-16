@@ -2,8 +2,12 @@ package org.payn.stream;
 
 import java.io.File;
 
-import org.payn.neoch.io.xmltools.DocumentBoundary;
-import org.payn.neoch.io.xmltools.DocumentCell;
+import org.payn.chsm.Behavior;
+import org.payn.chsm.Resource;
+import org.payn.chsm.io.xmltools.ElementBehavior;
+import org.payn.chsm.resources.time.BehaviorTime;
+import org.payn.chsm.resources.time.ResourceTime;
+import org.payn.neoch.io.xmltools.DocumentHolonMatrix;
 import org.payn.simulation.InputProcessorAbstract;
 
 /**
@@ -21,14 +25,9 @@ public abstract class InputProcessorXMLNEOCHBuilder<MIT extends MetaInputXMLNEOC
       extends InputProcessorAbstract<MIT, ST> {
 
    /**
-    * Cell XML document
+    * Holon XML document
     */
-   protected DocumentCell documentCell;
-   
-   /**
-    * Boundary XML document
-    */
-   protected DocumentBoundary documentBoundary;
+   protected DocumentHolonMatrix documentHolon;
 
    /**
     * Construct a new instance with the given meta input and simulator
@@ -52,23 +51,34 @@ public abstract class InputProcessorXMLNEOCHBuilder<MIT extends MetaInputXMLNEOC
       {
          System.out.println("Building the NEOCH files...");
 
-         // Set up cell XML document
-         File cellFile = metaInput.getCellFile();
-         documentCell = new DocumentCell(cellFile.getName());
+         File holonFile = metaInput.getHolonFile();
+         documentHolon = new DocumentHolonMatrix(holonFile.getName());
          
-         // Set up boundary XML document
-         File boundaryFile = metaInput.getBoundaryFile();
-         documentBoundary = new DocumentBoundary(boundaryFile.getName());
+         Resource resourceTime = new ResourceTime();
+         resourceTime.initialize("time");
+         Behavior behaviorTime = resourceTime.getBehavior(
+               ResourceTime.BEHAVIOR_TIME
+               );
+         ElementBehavior elementTime =
+               documentHolon.getRootHolonElement().createBehaviorElement(behaviorTime);
+         elementTime.createInitValueElement(
+               BehaviorTime.ITERATION_INTERVAL,
+               metaInput.getAttributeTimeInterval().toString(), 
+               null
+               );
+         elementTime.createInitValueElement(
+               BehaviorTime.LAST_ITERATION,
+               metaInput.getAttributeLastIteration().toString(), 
+               null
+               );
          
          configureResources();
          
          configureModel();
          
          // Write the model input files
-         cellFile.getParentFile().mkdirs();
-         documentCell.write(cellFile.getParentFile());
-         boundaryFile.getParentFile().mkdirs();
-         documentBoundary.write(boundaryFile.getParentFile());
+         holonFile.getParentFile().mkdirs();
+         documentHolon.write(holonFile.getParentFile());
       }
       simulator.initializeModel();
    }

@@ -140,7 +140,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
             );
       conserveBkgConc = metaInput.getAttributeBkgConc("conservative");
       ElementBehavior elementBehavior = 
-            documentCell.createDefaultBehaviorElement(conserveBehaviorStorage);
+            documentHolon.createDefaultBehaviorElement(conserveBehaviorStorage);
       elementBehavior.createInitValueElement(
             conserveBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC), 
             conserveBkgConc.toString(), 
@@ -179,14 +179,14 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
          uptakeMax = metaInput.getAttributeUptakeMax("active");
          halfSat = metaInput.getAttributeConcHalfSat("active");
          elementBehavior = 
-               documentCell.createDefaultBehaviorElement(activeBehaviorStorage);
+               documentHolon.createDefaultBehaviorElement(activeBehaviorStorage);
          elementBehavior.createInitValueElement(
                activeBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_SOLUTE_CONC), 
                activeBkgConc.toString(), 
                null
                );
          elementBehavior = 
-               documentCell.createDefaultBehaviorElement(activeBehaviorStorageUptake);
+               documentHolon.createDefaultBehaviorElement(activeBehaviorStorageUptake);
          elementBehavior.createInitValueElement(
                activeBehaviorStorage.getAbstractStateName(ResourceSolute.NAME_UPTAKE_MAX), 
                uptakeMax.toString(), 

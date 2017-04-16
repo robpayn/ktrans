@@ -165,7 +165,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
             cellNameRoot,
             1
             );
-      elementCell = documentCell.createCellElement(cellName);
+      elementCell = documentHolon.createCellElement(cellName);
       configureStreamCell(elementCell, 1);
 
       // Create upstream boundary
@@ -174,7 +174,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
             boundaryNameRoot,
             1
             );
-      elementBoundary = documentBoundary.createBoundaryElement(
+      elementBoundary = documentHolon.createBoundaryElement(
             boundaryName, cellName);
       configureUpstreamBoundary(elementBoundary, 1);
 
@@ -187,7 +187,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
                cellNameRoot,
                i
                );
-         elementCell = documentCell.createCellElement(cellName);
+         elementCell = documentHolon.createCellElement(cellName);
          configureStreamCell(elementCell, i);
 
          // Create upstream boundary
@@ -197,7 +197,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
                i,
                i - 1
                );
-         elementBoundary = documentBoundary.createBoundaryElement(boundaryName, cellName);
+         elementBoundary = documentHolon.createBoundaryElement(boundaryName, cellName);
          
          // Create adjacent boundary
          cellName = String.format(
@@ -226,7 +226,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
             boundaryNameRoot,
             numCells
             );
-      elementBoundary = documentBoundary.createBoundaryElement(
+      elementBoundary = documentHolon.createBoundaryElement(
             boundaryName, cellName);
       configureDownstreamBoundary(elementBoundary, numCells);
    }

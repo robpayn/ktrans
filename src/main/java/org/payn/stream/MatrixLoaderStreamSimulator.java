@@ -3,6 +3,8 @@ package org.payn.stream;
 import java.io.File;
 import java.util.HashMap;
 
+import org.payn.chsm.ModelBuilder;
+import org.payn.chsm.ModelLoader;
 import org.payn.chsm.ModelLoaderXML;
 import org.payn.chsm.ReporterFactoryXML;
 import org.payn.chsm.Resource;
@@ -12,7 +14,6 @@ import org.payn.chsm.io.xmltools.ElementReporter;
 import org.payn.chsm.io.xmltools.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
 import org.payn.neoch.HolonMatrix;
-import org.payn.neoch.MatrixBuilder;
 import org.payn.neoch.MatrixBuilderXML;
 import org.payn.neoch.io.reporters.ReporterXMLSerialFactoryXML;
 import org.payn.neoch.processors.ControllerNEOCHRKTwo;
@@ -56,12 +57,12 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
    public static HolonMatrix initializeStreamSimulator(HashMap<String, String> argMap,
          File workingDir) throws Exception 
    {
-      MatrixBuilder builder = MatrixBuilder.loadBuilder(
+      ModelBuilder builder = ModelLoader.loadBuilder(
             workingDir,
             argMap,
             new MatrixLoaderStreamSimulator()
             );
-      HolonMatrix matrix = builder.buildModel();
+      HolonMatrix matrix = (HolonMatrix)builder.buildModel();
       matrix.getController().initializeController();
       return matrix;
    }
@@ -73,20 +74,10 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
    }   
 
    @Override
-   protected MatrixBuilder loadBuilder() throws Exception 
+   protected ModelBuilder loadBuilder() throws Exception 
    {
-      MatrixBuilder builder = null;
-      try
-      {
-         builder = (MatrixBuilder)super.loadBuilder();
-      }
-      catch (Exception e)
-      {
-         throw new Exception(String.format(
-               "Designated builder %s is not a matrix builder", 
-               builder.getClass().getCanonicalName()
-               ));
-      }
+      ModelBuilder builder = null;
+      builder = super.loadBuilder();
       if (builder == null)
       {
          builder = new MatrixBuilderXML();
