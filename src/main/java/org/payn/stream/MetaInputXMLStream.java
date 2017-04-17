@@ -44,6 +44,11 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       private ElementHelper elementUpstreamBound;
 
       /**
+       * XML element with information about air-water gas exchange
+       */
+      private ElementHelper elementAWExchange;
+
+      /**
        * Construct a new instance for the provided solute name
        * based on information in the provided
        * element helper
@@ -97,6 +102,20 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
             elementHyperbolic = getFirstChildElementHelper("hyperbolic");
          }
          return elementHyperbolic;
+      }
+
+      /**
+       * Get the XML element with information about air-water gas exchange
+       * 
+       * @return
+       */
+      private ElementHelper getElementAWExchange() 
+      {
+         if (elementAWExchange == null)
+         {
+            elementAWExchange = getFirstChildElementHelper("awexchange");
+         }
+         return elementAWExchange;
       }
 
       /**
@@ -331,6 +350,18 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       public Double getAttributeInitialConc() 
       {
          return getAttributeDouble("initialConc");
+      }
+
+      /**
+       * Get the attribute with the air-water gas exchange velocity
+       * at a Schmidt number of 600
+       * 
+       * @return
+       *        air-water gas exchange velocity
+       */
+      public Double getAttributeK600() 
+      {
+         return getElementAWExchange().getAttributeDouble("k600");
       }
 
    }
@@ -758,6 +789,11 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
    private ElementHelper elementTemperature;
 
    /**
+    * Element helper for the atmosphere element
+    */
+   private ElementHelper elementAtmosphere;
+
+   /**
     * Construct a new instance that uses the provided working directory,
     * path to the configuration file, and the name of the XML element
     * with the configuration information
@@ -785,6 +821,20 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
          elementStructure = helper.getFirstChildElementHelper("modelstructure");
       }
       return elementStructure;
+   }
+
+   /**
+    * Get the XML element for with information about the atmosphere
+    * 
+    * @return
+    */
+   private ElementHelper getElementAtmosphere() 
+   {
+      if (elementAtmosphere == null)
+      {
+         elementAtmosphere = helper.getFirstChildElementHelper("atmosphere");
+      }
+      return elementAtmosphere;
    }
 
    /**
@@ -1363,6 +1413,31 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
    public String getAttributeUpstreamTempDelimiter() 
    {
       return getElementTemperature().getAttributeString("delimiter");
+   }
+
+   /**
+    * Get the attribute with the air-water gas exchange velocity
+    * at a Schmidt number of 600
+    * 
+    * @param soluteName 
+    *       name of the solute
+    * @return
+    *       air-water gas exchange velocity
+    */
+   public Double getAttributeK600(String soluteName) 
+   {
+      return getElementSolute(soluteName).getAttributeK600();
+   }
+
+   /**
+    * Get the attribute with the atmospheric pressure
+    * 
+    * @return
+    *       atmospheric pressure
+    */
+   public Double getAttributeAirPressure() 
+   {
+      return getElementAtmosphere().getAttributeDouble("airPressure");
    }
 
 }

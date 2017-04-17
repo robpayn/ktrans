@@ -100,11 +100,6 @@ public class InputProcessorXMLMetabolismBuilder
    private Behavior behaviorOxygenAdvect;
 
    /**
-    * Behavior for the temperature over the reach
-    */
-   private Behavior behaviorTemperature;
-
-   /**
     * Construct a new instance with the given meta input and simulator
     * @param metaInput
     * @param sim
@@ -275,15 +270,6 @@ public class InputProcessorXMLMetabolismBuilder
          
          behaviorOxygenAdvect =
                resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_ADVECT);
-         behaviorTemperature = 
-               resourceWater.getBehavior(ResourceWater.BEHAVIOR_REACH_AVG_TEMP);
-         elementBehavior =
-               documentHolon.createDefaultBehaviorElement(behaviorTemperature);
-         elementBehavior.createInitValueElement(
-               ResourceWater.DEFAULT_NAME_AVG_TEMP_HOLON, 
-               "boundext_001",
-               null
-               );
       }
    }
 
@@ -320,7 +306,6 @@ public class InputProcessorXMLMetabolismBuilder
       if (isOxygenConfigured)
       {
          elementCell.createBehaviorElement(behaviorOxygenStorage);
-         elementCell.createBehaviorElement(behaviorTemperature);
       }
    }
 
@@ -406,6 +391,8 @@ public class InputProcessorXMLMetabolismBuilder
                metaInput.getAttributeUpstreamConcDelimiter("oxygen"), 
                null
                );
+         
+         // Behavior for calculating reach average temperature
          Behavior behaviorAvgTemp = resourceWater.getBehavior(
                ResourceWater.BEHAVIOR_REACH_AVG_TEMP_BOUND
                );
@@ -432,7 +419,26 @@ public class InputProcessorXMLMetabolismBuilder
                metaInput.getAttributeDownstreamTempPath(), 
                null
                );
+         
+         // Behavior for calculating gas exchange velocity
+         Behavior behaviorAWExchangeBound = resourceOxygen.getBehavior(
+               ResourceSolute.BEHAVIOR_AW_EXCHANGE_BOUND
+               );
+         elementBehavior = elementBoundary.createBehaviorElement(
+               behaviorAWExchangeBound
+               );
+         elementBehavior.createInitValueElement(
+               ResourceSolute.DEFAULT_NAME_AIR_PRESSURE, 
+               metaInput.getAttributeAirPressure().toString(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               ResourceSolute.DEFAULT_NAME_K600, 
+               metaInput.getAttributeK600("oxygen").toString(), 
+               null
+               );
       }
+      
    }
 
    @Override

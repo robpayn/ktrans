@@ -186,6 +186,7 @@ plotActive.ExperimentSlug <- function(
 
 Simulation <- function(
    configFile, 
+   holonFile,
    conserveFile, 
    activeFile,
    ...
@@ -251,9 +252,11 @@ Simulation <- function(
    simulation$config <- config;
    
    # Get the model timing characteristics
-   simulation$timeStep <- as.numeric(xmlValue(
-      getNodeSet(simulation$config, "/document/holon/behavior/initval")[[1]]
-      ));
+   simulation$timeStep <- as.numeric(
+      xmlGetAttr(
+         getNodeSet(simulation$config, "/document/time")[[1]], 
+         "timeInterval")[[1]]
+      );
    outputNode <- getNodeSet(simulation$config, "/document/reporters/reporter")[[1]];
    simulation$outputInterval <- as.numeric(
       xmlGetAttr(
