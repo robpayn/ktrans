@@ -126,6 +126,53 @@ public class InputProcessorXMLMetabolismBuilder
    @Override
    protected void configureStreamLoop() throws Exception 
    {
+      // Behavior for calculating reach average temperature
+      Behavior behaviorAvgTemp = resourceWater.getBehavior(
+            ResourceWater.BEHAVIOR_REACH_AVG_TEMP_BOUND
+            );
+      ElementBehavior elementBehavior = 
+            documentHolon.getRootHolonElement().createBehaviorElement(
+            behaviorAvgTemp
+            );
+      elementBehavior.createInitValueElement(
+            "Temp" + InterpolatorSnapshotTable.NAME_TYPE, 
+            metaInput.getAttributeUpstreamTempType(), 
+            null
+            );
+      elementBehavior.createInitValueElement(
+            "Temp" + InterpolatorSnapshotTable.NAME_DELIMITER, 
+            metaInput.getAttributeUpstreamTempDelimiter(), 
+            null
+            );
+      elementBehavior.createInitValueElement(
+            "UpstreamTemp" + InterpolatorSnapshotTable.NAME_PATH, 
+            metaInput.getAttributeUpstreamTempPath(), 
+            null
+            );
+      elementBehavior.createInitValueElement(
+            "DownstreamTemp" + InterpolatorSnapshotTable.NAME_PATH, 
+            metaInput.getAttributeDownstreamTempPath(), 
+            null
+            );
+      
+      // Behavior for calculating gas exchange velocity
+      Behavior behaviorAWExchangeBound = resourceOxygen.getBehavior(
+            ResourceSolute.BEHAVIOR_AW_EXCHANGE_BOUND
+            );
+      elementBehavior = documentHolon.getRootHolonElement().createBehaviorElement(
+            behaviorAWExchangeBound
+            );
+      elementBehavior.createInitValueElement(
+            ResourceSolute.DEFAULT_NAME_AIR_PRESSURE, 
+            metaInput.getAttributeAirPressure().toString(), 
+            null
+            );
+      elementBehavior.createInitValueElement(
+            ResourceSolute.DEFAULT_NAME_K600, 
+            metaInput.getAttributeK600("oxygen").toString(), 
+            null
+            );
+      
       // Create behaviors
       behaviorChannelStorage = 
             resourceWater.getBehavior(ResourceWater.BEHAVIOR_CHANNEL_STORAGE);
@@ -134,7 +181,7 @@ public class InputProcessorXMLMetabolismBuilder
       isWieleConfigured = metaInput.isWieleConfigured();
 
       // Set up default cell states
-      ElementBehavior elementBehavior =
+      elementBehavior =
             documentHolon.createDefaultBehaviorElement(behaviorChannelStorage);
       if (isInitialConditions)
       {
@@ -392,51 +439,7 @@ public class InputProcessorXMLMetabolismBuilder
                null
                );
          
-         // Behavior for calculating reach average temperature
-         Behavior behaviorAvgTemp = resourceWater.getBehavior(
-               ResourceWater.BEHAVIOR_REACH_AVG_TEMP_BOUND
-               );
-         elementBehavior = elementBoundary.createBehaviorElement(
-               behaviorAvgTemp
-               );
-         elementBehavior.createInitValueElement(
-               "Temp" + InterpolatorSnapshotTable.NAME_TYPE, 
-               metaInput.getAttributeUpstreamTempType(), 
-               null
-               );
-         elementBehavior.createInitValueElement(
-               "Temp" + InterpolatorSnapshotTable.NAME_DELIMITER, 
-               metaInput.getAttributeUpstreamTempDelimiter(), 
-               null
-               );
-         elementBehavior.createInitValueElement(
-               "UpstreamTemp" + InterpolatorSnapshotTable.NAME_PATH, 
-               metaInput.getAttributeUpstreamTempPath(), 
-               null
-               );
-         elementBehavior.createInitValueElement(
-               "DownstreamTemp" + InterpolatorSnapshotTable.NAME_PATH, 
-               metaInput.getAttributeDownstreamTempPath(), 
-               null
-               );
-         
-         // Behavior for calculating gas exchange velocity
-         Behavior behaviorAWExchangeBound = resourceOxygen.getBehavior(
-               ResourceSolute.BEHAVIOR_AW_EXCHANGE_BOUND
-               );
-         elementBehavior = elementBoundary.createBehaviorElement(
-               behaviorAWExchangeBound
-               );
-         elementBehavior.createInitValueElement(
-               ResourceSolute.DEFAULT_NAME_AIR_PRESSURE, 
-               metaInput.getAttributeAirPressure().toString(), 
-               null
-               );
-         elementBehavior.createInitValueElement(
-               ResourceSolute.DEFAULT_NAME_K600, 
-               metaInput.getAttributeK600("oxygen").toString(), 
-               null
-               );
+
       }
       
    }
