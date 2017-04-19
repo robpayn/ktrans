@@ -157,7 +157,7 @@ public class InputProcessorXMLMetabolismBuilder
       
       // Behavior for calculating gas exchange velocity
       Behavior behaviorAWExchangeBound = resourceOxygen.getBehavior(
-            ResourceSolute.BEHAVIOR_AW_EXCHANGE_BOUND
+            ResourceSolute.BEHAVIOR_DO_AW_EXCHANGE_BOUND
             );
       elementBehavior = documentHolon.getRootHolonElement().createBehaviorElement(
             behaviorAWExchangeBound
@@ -168,7 +168,9 @@ public class InputProcessorXMLMetabolismBuilder
             null
             );
       elementBehavior.createInitValueElement(
-            ResourceSolute.DEFAULT_NAME_K600, 
+            behaviorAWExchangeBound.getAbstractStateName(
+                  ResourceSolute.DEFAULT_NAME_K600
+                  ), 
             metaInput.getAttributeK600("oxygen").toString(), 
             null
             );
@@ -321,7 +323,7 @@ public class InputProcessorXMLMetabolismBuilder
    }
 
    @Override
-   protected void configureStreamCell(ElementHolon elementCell, long index) 
+   protected void configureStreamCell(ElementHolon elementCell, long index) throws Exception 
    {
       ElementBehavior elementBehavior = 
             elementCell.createBehaviorElement(behaviorChannelStorage);
@@ -354,6 +356,23 @@ public class InputProcessorXMLMetabolismBuilder
       {
          elementCell.createBehaviorElement(behaviorOxygenStorage);
       }
+      
+      // Add a boundary for nonconservative gas behavior
+      String boundaryName = String.format(
+            "%sext_%s", 
+            boundaryNameRoot,
+            elementCell.getName()
+            );
+      ElementBoundary elementBoundary = documentHolon.createBoundaryElement(
+            boundaryName, 
+            elementCell.getName()
+            );
+      Behavior behaviorGasAWExchange = resourceOxygen.getBehavior(
+            ResourceSolute.BEHAVIOR_DO_AW_EXCHANGE
+            );
+      elementBehavior = 
+            elementBoundary.createBehaviorElement(behaviorGasAWExchange);
+
    }
 
    @Override

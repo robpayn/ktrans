@@ -246,8 +246,9 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
     *       cell element to configure
     * @param index
     *       index number of cell         
+    * @throws Exception 
     */
-   protected abstract void configureStreamCell(ElementHolon elementCell, long index);
+   protected abstract void configureStreamCell(ElementHolon elementCell, long index) throws Exception;
 
    /**
     * Set up a stream boundary
