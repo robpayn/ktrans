@@ -100,6 +100,21 @@ public class InputProcessorXMLMetabolismBuilder
    private Behavior behaviorOxygenAdvect;
 
    /**
+    * Behavior for photosynthesis
+    */
+   private Behavior behaviorPhotosynthesis;
+
+   /**
+    * Behavior for air-water gas exchange
+    */
+   private Behavior behaviorGasAWExchange;
+
+   /**
+    * Behavior for respiration
+    */
+   private Behavior behaviorRespiration;
+
+   /**
     * Construct a new instance with the given meta input and simulator
     * @param metaInput
     * @param sim
@@ -126,54 +141,97 @@ public class InputProcessorXMLMetabolismBuilder
    @Override
    protected void configureStreamLoop() throws Exception 
    {
-      // Behavior for calculating reach average temperature
-      Behavior behaviorAvgTemp = resourceWater.getBehavior(
-            ResourceWater.BEHAVIOR_REACH_AVG_TEMP_BOUND
-            );
-      ElementBehavior elementBehavior = 
-            documentHolon.getRootHolonElement().createBehaviorElement(
-            behaviorAvgTemp
-            );
-      elementBehavior.createInitValueElement(
-            "Temp" + InterpolatorSnapshotTable.NAME_TYPE, 
-            metaInput.getAttributeUpstreamTempType(), 
-            null
-            );
-      elementBehavior.createInitValueElement(
-            "Temp" + InterpolatorSnapshotTable.NAME_DELIMITER, 
-            metaInput.getAttributeUpstreamTempDelimiter(), 
-            null
-            );
-      elementBehavior.createInitValueElement(
-            "UpstreamTemp" + InterpolatorSnapshotTable.NAME_PATH, 
-            metaInput.getAttributeUpstreamTempPath(), 
-            null
-            );
-      elementBehavior.createInitValueElement(
-            "DownstreamTemp" + InterpolatorSnapshotTable.NAME_PATH, 
-            metaInput.getAttributeDownstreamTempPath(), 
-            null
-            );
-      
-      // Behavior for calculating gas exchange velocity
-      Behavior behaviorAWExchangeBound = resourceOxygen.getBehavior(
-            ResourceSolute.BEHAVIOR_DO_AW_EXCHANGE_BOUND
-            );
-      elementBehavior = documentHolon.getRootHolonElement().createBehaviorElement(
-            behaviorAWExchangeBound
-            );
-      elementBehavior.createInitValueElement(
-            ResourceSolute.DEFAULT_NAME_AIR_PRESSURE, 
-            metaInput.getAttributeAirPressure().toString(), 
-            null
-            );
-      elementBehavior.createInitValueElement(
-            behaviorAWExchangeBound.getAbstractStateName(
-                  ResourceSolute.DEFAULT_NAME_K600
-                  ), 
-            metaInput.getAttributeK600("oxygen").toString(), 
-            null
-            );
+      if (isOxygenConfigured)
+      {
+         // Behavior for calculating reach average temperature
+         Behavior behaviorAvgTemp = resourceWater.getBehavior(
+               ResourceWater.BEHAVIOR_REACH_AVG_TEMP_BOUND
+               );
+         ElementBehavior elementBehavior = 
+               documentHolon.getRootHolonElement().createBehaviorElement(
+               behaviorAvgTemp
+               );
+         elementBehavior.createInitValueElement(
+               "Temp" + InterpolatorSnapshotTable.NAME_TYPE, 
+               metaInput.getAttributeUpstreamTempType(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               "Temp" + InterpolatorSnapshotTable.NAME_DELIMITER, 
+               metaInput.getAttributeUpstreamTempDelimiter(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               "UpstreamTemp" + InterpolatorSnapshotTable.NAME_PATH, 
+               metaInput.getAttributeUpstreamTempPath(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               "DownstreamTemp" + InterpolatorSnapshotTable.NAME_PATH, 
+               metaInput.getAttributeDownstreamTempPath(), 
+               null
+               );
+         
+         // Behavior for calculating gas exchange velocity
+         Behavior behaviorAWExchangeBound = resourceOxygen.getBehavior(
+               ResourceSolute.BEHAVIOR_DO_AW_EXCHANGE_BOUND
+               );
+         elementBehavior = documentHolon.getRootHolonElement().createBehaviorElement(
+               behaviorAWExchangeBound
+               );
+         elementBehavior.createInitValueElement(
+               ResourceSolute.DEFAULT_NAME_AIR_PRESSURE, 
+               metaInput.getAttributeAirPressure().toString(), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behaviorAWExchangeBound.getAbstractStateName(
+                     ResourceSolute.DEFAULT_NAME_K600
+                     ), 
+               metaInput.getAttributeK600("oxygen").toString(), 
+               null
+               );
+         
+         // Behavior for photosynthesis over the reach
+         Behavior behaviorPhotosynthesisReach = resourceOxygen.getBehavior(
+               ResourceSolute.BEHAVIOR_DO_PHOTOSYNTHESIS_REACH
+               );
+         elementBehavior = documentHolon.getRootHolonElement().createBehaviorElement(
+               behaviorPhotosynthesisReach
+               );
+         elementBehavior.createInitValueElement(
+               "PAR" + InterpolatorSnapshotTable.NAME_TYPE, 
+               metaInput.getAttributePARType("oxygen"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               "PAR" + InterpolatorSnapshotTable.NAME_DELIMITER, 
+               metaInput.getAttributePARDelimiter("oxygen"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               "PAR" + InterpolatorSnapshotTable.NAME_PATH, 
+               metaInput.getAttributePARPath("oxygen"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               ResourceSolute.DEFAULT_NAME_DO_PTOPAR_RATIO, 
+               metaInput.getAttributePToPARRatio("oxygen").toString(), 
+               null
+               );
+
+         Behavior behaviorRespirationReach = resourceOxygen.getBehavior(
+               ResourceSolute.BEHAVIOR_DO_RESPIRATION_REACH
+               );
+         elementBehavior = documentHolon.getRootHolonElement().createBehaviorElement(
+               behaviorRespirationReach
+               );
+         elementBehavior.createInitValueElement(
+               ResourceSolute.DEFAULT_NAME_DO_RESPIRATION, 
+               metaInput.getAttributeRespiration("oxygen").toString(), 
+               null
+               );
+      }
       
       // Create behaviors
       behaviorChannelStorage = 
@@ -183,7 +241,7 @@ public class InputProcessorXMLMetabolismBuilder
       isWieleConfigured = metaInput.isWieleConfigured();
 
       // Set up default cell states
-      elementBehavior =
+      ElementBehavior elementBehavior =
             documentHolon.createDefaultBehaviorElement(behaviorChannelStorage);
       if (isInitialConditions)
       {
@@ -317,8 +375,18 @@ public class InputProcessorXMLMetabolismBuilder
                   );
          }
          
-         behaviorOxygenAdvect =
-               resourceOxygen.getBehavior(ResourceSolute.BEHAVIOR_ADVECT);
+         behaviorOxygenAdvect = resourceOxygen.getBehavior(
+               ResourceSolute.BEHAVIOR_ADVECT
+               );
+         behaviorGasAWExchange = resourceOxygen.getBehavior(
+               ResourceSolute.BEHAVIOR_DO_AW_EXCHANGE
+               );
+         behaviorPhotosynthesis = resourceOxygen.getBehavior(
+               ResourceSolute.BEHAVIOR_DO_PHOTOSYNTHESIS
+               );
+         behaviorRespiration = resourceOxygen.getBehavior(
+               ResourceSolute.BEHAVIOR_DO_RESPIRATION
+               );
       }
    }
 
@@ -355,23 +423,21 @@ public class InputProcessorXMLMetabolismBuilder
       if (isOxygenConfigured)
       {
          elementCell.createBehaviorElement(behaviorOxygenStorage);
-      }
       
-      // Add a boundary for nonconservative gas behavior
-      String boundaryName = String.format(
-            "%sext_%s", 
-            boundaryNameRoot,
-            elementCell.getName()
-            );
-      ElementBoundary elementBoundary = documentHolon.createBoundaryElement(
-            boundaryName, 
-            elementCell.getName()
-            );
-      Behavior behaviorGasAWExchange = resourceOxygen.getBehavior(
-            ResourceSolute.BEHAVIOR_DO_AW_EXCHANGE
-            );
-      elementBehavior = 
-            elementBoundary.createBehaviorElement(behaviorGasAWExchange);
+         // Add a boundary for nonconservative gas behavior
+         String boundaryName = String.format(
+               "%sext_%s", 
+               boundaryNameRoot,
+               elementCell.getName()
+               );
+         ElementBoundary elementBoundary = documentHolon.createBoundaryElement(
+               boundaryName, 
+               elementCell.getName()
+               );
+         elementBoundary.createBehaviorElement(behaviorGasAWExchange);
+         elementBoundary.createBehaviorElement(behaviorPhotosynthesis);
+         elementBoundary.createBehaviorElement(behaviorRespiration);
+      }
 
    }
 

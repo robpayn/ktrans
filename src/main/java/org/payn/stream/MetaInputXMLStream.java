@@ -49,6 +49,18 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       private ElementHelper elementAWExchange;
 
       /**
+       * XML element helper with information about photosynthesis effects
+       * on oxygen
+       */
+      private ElementHelper elementPhotosynthesis;
+
+      /**
+       * XML element helper with information about respiration effects
+       * on oxygen
+       */
+      private ElementHelper elementRespiration;
+
+      /**
        * Construct a new instance for the provided solute name
        * based on information in the provided
        * element helper
@@ -116,6 +128,34 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
             elementAWExchange = getFirstChildElementHelper("awexchange");
          }
          return elementAWExchange;
+      }
+
+      /**
+       * Get the element helper with information about photosynthesis
+       * 
+       * @return
+       *        element helper
+       */
+      private ElementHelper getElementPhotosynthesis() 
+      {
+         if (elementPhotosynthesis == null)
+         {
+            elementPhotosynthesis = getFirstChildElementHelper("photosynthesis");
+         }
+         return elementPhotosynthesis;
+      }
+
+      /**
+       * Get the element helper with information about respiration
+       * @return
+       */
+      private ElementHelper getElementRespiration() 
+      {
+         if (elementRespiration == null)
+         {
+            elementRespiration = getFirstChildElementHelper("respiration");
+         }
+         return elementRespiration;
       }
 
       /**
@@ -362,6 +402,63 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       public Double getAttributeK600() 
       {
          return getElementAWExchange().getAttributeDouble("k600");
+      }
+
+      /**
+       * Get the attribute for the interpolation type for PAR
+       * 
+       * @return
+       *        interpolation type
+       */
+      public String getAttributePARType() 
+      {
+         return getElementPhotosynthesis().getAttributeString("parType");
+      }
+
+      /**
+       * Get the attribute for the delimiter for the interpolation table for PAR
+       * 
+       * @return
+       *        delimiter
+       */
+      public String getAttributePARDelimiter() 
+      {
+         return getElementPhotosynthesis().getAttributeString("parDelimiter");
+      }
+
+      /**
+       * Get the attribute for the path to the interpolation file for PAR
+       * 
+       * @return
+       *        path to interpolation file
+       */
+      public String getAttributePARPath() 
+      {
+         return getElementPhotosynthesis().getAttributeString("parPath");
+      }
+
+      /**
+       * Get the attribute for the primary production to PAR ratio
+       * 
+       * @return
+       *        ratio of primary production to PAR
+       */
+      public Double getAttributePToPARRatio() 
+      {
+         return getElementPhotosynthesis().getAttributeDouble("pToPARRatio");
+      }
+
+      /**
+       * Get the attribute for the rate of respiration effect
+       * 
+       * @param soluteName
+       *       name of the solute
+       * @return
+       *       respiration rate
+       */
+      public Double getAttributeRespiration() 
+      {
+         return getElementRespiration().getAttributeDouble("respiration");
       }
 
    }
@@ -1438,6 +1535,71 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
    public Double getAttributeAirPressure() 
    {
       return getElementAtmosphere().getAttributeDouble("airPressure");
+   }
+
+   /**
+    * Get the attribute for the interpolation type for PAR
+    * 
+    * @param soluteName 
+    *       name of the solute
+    * @return
+    *       interpolation type
+    */
+   public String getAttributePARType(String soluteName) 
+   {
+      return getElementSolute(soluteName).getAttributePARType();
+   }
+
+   /**
+    * Get the attribute for the delimiter for the interpolation table for PAR
+    * 
+    * @param soluteName 
+    *       name of the solute
+    * @return
+    *        delimiter
+    */
+   public String getAttributePARDelimiter(String soluteName) 
+   {
+      return getElementSolute(soluteName).getAttributePARDelimiter();
+   }
+
+   /**
+    * Get the attribute for the path to the interpolation file for PAR
+    * 
+    * @param soluteName 
+    *       name of the solute
+    * @return
+    *        path to interpolation file
+    */
+   public String getAttributePARPath(String soluteName) 
+   {
+      return getElementSolute(soluteName).getAttributePARPath();
+   }
+
+   /**
+    * Get the attribute for the primary production to PAR ratio
+    * 
+    * @param soluteName 
+    *       name of the solute
+    * @return
+    *       ratio of primary production to PAR
+    */
+   public Double getAttributePToPARRatio(String soluteName) 
+   {
+      return getElementSolute(soluteName).getAttributePToPARRatio();
+   }
+
+   /**
+    * Get the attribute for the rate of respiration effect
+    * 
+    * @param soluteName
+    *       name of the solute
+    * @return
+    *       respiration rate
+    */
+   public Double getAttributeRespiration(String soluteName) 
+   {
+      return getElementSolute(soluteName).getAttributeRespiration();
    }
 
 }
