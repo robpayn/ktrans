@@ -13,10 +13,10 @@ import org.payn.chsm.io.reporters.ReporterBehaviorFactoryXML;
 import org.payn.chsm.io.xmltools.ElementReporter;
 import org.payn.chsm.io.xmltools.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
+import org.payn.chsm.processors.ControllerRungeKuttaTwo;
 import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixBuilderXML;
 import org.payn.neoch.io.reporters.ReporterXMLSerialFactoryXML;
-import org.payn.neoch.processors.ControllerNEOCHRKTwo;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.ResourceSoluteOTIS;
 import org.payn.resources.water.ResourceWater;
@@ -91,7 +91,7 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
       ControllerHolon controller = super.loadController();
       if (controller == null)
       {
-         controller = new ControllerNEOCHRKTwo();
+         controller = new ControllerRungeKuttaTwo();
       }
       return controller;
    }
