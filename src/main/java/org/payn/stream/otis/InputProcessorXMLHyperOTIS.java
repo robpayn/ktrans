@@ -8,7 +8,7 @@ import org.payn.chsm.io.xmltools.ElementBehavior;
 import org.payn.chsm.io.xmltools.ElementHolon;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.resources.solute.ResourceSolute;
-import org.payn.resources.solute.ResourceSoluteOTIS;
+import org.payn.resources.solute.concentration.ResourceSoluteConcentration;
 import org.payn.stream.InputProcessorXMLStreamBuilder;
 import org.payn.stream.SimulatorStream;
 
@@ -57,7 +57,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    /**
     * Solute resource for a conservative tracer
     */
-   private ResourceSoluteOTIS conserveResourceOTIS;
+   private ResourceSoluteConcentration conserveResourceOTIS;
    
    /**
     * Storage behavior for the conservative tracer
@@ -88,7 +88,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    /**
     * The resource for the active tracer
     */
-   private ResourceSoluteOTIS activeResourceOTIS;
+   private ResourceSoluteConcentration activeResourceOTIS;
 
    /**
     * The storage behavior for the active tracer
@@ -397,13 +397,13 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    @Override
    protected void configureResources() throws Exception 
    {
-      conserveResourceOTIS = new ResourceSoluteOTIS();
+      conserveResourceOTIS = new ResourceSoluteConcentration();
       conserveResourceOTIS.initialize("conserveOTIS");
       
       isActiveConfigured = metaInput.isSoluteConfigured("active");
       if (isActiveConfigured)
       {
-        activeResourceOTIS = new ResourceSoluteOTIS();
+        activeResourceOTIS = new ResourceSoluteConcentration();
         activeResourceOTIS.initialize("activeOTIS");
       }
    }

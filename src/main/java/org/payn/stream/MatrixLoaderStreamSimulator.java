@@ -18,7 +18,7 @@ import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.MatrixBuilderXML;
 import org.payn.neoch.io.reporters.ReporterXMLSerialFactoryXML;
 import org.payn.resources.solute.ResourceSolute;
-import org.payn.resources.solute.ResourceSoluteOTIS;
+import org.payn.resources.solute.concentration.ResourceSoluteConcentration;
 import org.payn.resources.water.ResourceWater;
 import org.payn.stream.reporter.ReporterTASCCFactoryXML;
 
@@ -114,7 +114,7 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
                break;
             case "conserveOTIS":
             case "activeOTIS":
-               resource = new ResourceSoluteOTIS();
+               resource = new ResourceSoluteConcentration();
                break;
          }
       }
