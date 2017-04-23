@@ -2,8 +2,8 @@ package org.payn.ktrans;
 
 import java.io.File;
 
-import org.payn.chsm.Behavior;
-import org.payn.chsm.io.interpolate.InterpolatorSnapshotTable;
+import org.payn.chsm.io.inputters.InterpolatorSnapshotTable;
+import org.payn.chsm.resources.Behavior;
 import org.payn.neoch.io.xmltools.DocumentBoundary;
 import org.payn.neoch.io.xmltools.DocumentCell;
 import org.payn.neoch.io.xmltools.ElementBehaviorMatrix;

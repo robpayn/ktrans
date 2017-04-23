@@ -2,9 +2,9 @@ package org.payn.stream;
 
 import java.io.File;
 
-import org.payn.chsm.Behavior;
-import org.payn.chsm.Resource;
 import org.payn.chsm.io.xmltools.ElementBehavior;
+import org.payn.chsm.resources.Behavior;
+import org.payn.chsm.resources.Resource;
 import org.payn.chsm.resources.time.BehaviorTime;
 import org.payn.chsm.resources.time.ResourceTime;
 import org.payn.neoch.io.xmltools.DocumentHolonMatrix;

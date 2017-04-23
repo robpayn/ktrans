@@ -3,7 +3,7 @@ package org.payn.stream.reporter;
 import java.io.File;
 import java.util.HashMap;
 
-import org.payn.chsm.ReporterFactoryXML;
+import org.payn.chsm.io.reporters.ReporterFactoryXML;
 import org.payn.chsm.io.reporters.ReporterIntervalFactoryXML;
 import org.payn.chsm.io.xmltools.ElementHelper;
 

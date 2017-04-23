@@ -2,10 +2,10 @@ package org.payn.stream.metabolism;
 
 import java.io.File;
 
-import org.payn.chsm.Behavior;
-import org.payn.chsm.io.interpolate.InterpolatorSnapshotTable;
+import org.payn.chsm.io.inputters.InterpolatorSnapshotTable;
 import org.payn.chsm.io.xmltools.ElementBehavior;
 import org.payn.chsm.io.xmltools.ElementHolon;
+import org.payn.chsm.resources.Behavior;
 import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.water.ResourceWater;
