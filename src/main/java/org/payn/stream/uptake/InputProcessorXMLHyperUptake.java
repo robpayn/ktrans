@@ -278,6 +278,11 @@ public class InputProcessorXMLHyperUptake extends InputProcessorXMLStreamBuilder
             null
             );
       elementBehavior.createInitValueElement(
+            behavior.getAbstractStateName(InterpolatorSnapshotTable.DEFAULT_NAME_HEADER),  
+            "conservative", 
+            null
+            );
+      elementBehavior.createInitValueElement(
             ResourceSolute.NAME_WATER_FLOW, 
             initialFlow.toString(), 
             null
@@ -333,6 +338,11 @@ public class InputProcessorXMLHyperUptake extends InputProcessorXMLStreamBuilder
          elementBehavior.createInitValueElement(
                behavior.getAbstractStateName(InterpolatorSnapshotTable.NAME_DELIMITER),  
                metaInput.getAttributeDelimiter("active"), 
+               null
+               );
+         elementBehavior.createInitValueElement(
+               behavior.getAbstractStateName(InterpolatorSnapshotTable.DEFAULT_NAME_HEADER),  
+               "active", 
                null
                );
          if (isInject)
@@ -398,13 +408,13 @@ public class InputProcessorXMLHyperUptake extends InputProcessorXMLStreamBuilder
    protected void configureResources() throws Exception 
    {
       conserveResource = new ResourceSoluteConcentration();
-      conserveResource.initialize("conserveConc");
+      conserveResource.initialize("conserve");
       
       isActiveConfigured = metaInput.isSoluteConfigured("active");
       if (isActiveConfigured)
       {
         activeResource = new ResourceSoluteConcentration();
-        activeResource.initialize("activeConc");
+        activeResource.initialize("active");
       }
    }
 

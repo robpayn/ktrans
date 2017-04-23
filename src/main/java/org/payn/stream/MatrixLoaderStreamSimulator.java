@@ -107,13 +107,11 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
             case "water":
                resource = new ResourceWater();
                break;
-            case "cons":
-            case "active":
             case "oxygen":
                resource = new ResourceSolute();
                break;
-            case "conserveConc":
-            case "activeConc":
+            case "conserve":
+            case "active":
                resource = new ResourceSoluteConcentration();
                break;
          }
