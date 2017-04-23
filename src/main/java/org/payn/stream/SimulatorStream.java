@@ -6,8 +6,8 @@ import org.payn.simulation.OutputProcessorFactory;
 import org.payn.simulation.OutputProcessorFactoryAbstract;
 import org.payn.stream.metabolism.InputProcessorXMLMetabolismBuilder;
 import org.payn.stream.metabolism.MetaInputXMLMetabolism;
-import org.payn.stream.otis.InputProcessorXMLHyperOTIS;
-import org.payn.stream.otis.MetaInputXMLHyperOTIS;
+import org.payn.stream.uptake.InputProcessorXMLHyperUptake;
+import org.payn.stream.uptake.MetaInputXMLHyperUptake;
 
 /**
  * Implementation of a simulator for stream simulations
@@ -45,11 +45,11 @@ public class SimulatorStream extends SimulatorNEOCH {
          }
 
          @Override
-         public void addHyperOTISBuilderInputProcessor(File workingDir,
+         public void addHyperUptakeBuilderInputProcessor(File workingDir,
                String configPath) throws Exception 
          {
-            new InputProcessorXMLHyperOTIS(
-                  new MetaInputXMLHyperOTIS(workingDir, configPath, "streambuilder"), 
+            new InputProcessorXMLHyperUptake(
+                  new MetaInputXMLHyperUptake(workingDir, configPath, "streambuilder"), 
                   getSimulator()
                   );
          }

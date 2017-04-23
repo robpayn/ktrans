@@ -545,7 +545,7 @@ plotPathsConservative.SimulationLagrange <- function(
    }
    for (i in pathPlotSequence)
    {
-      conc = simulation$paths[[i]]$conserveOTIS;
+      conc = simulation$paths[[i]]$conserveConc;
       if (backgroundCorrect || activeNR)
       {
          conc = conc - simulation$conserveBkg;
@@ -623,7 +623,7 @@ plotPathsActive.SimulationLagrange <- function(
    {
       lines(
          x = simulation$paths[[i]]$time * xfactor,
-         y = (simulation$paths[[i]]$activeOTIS - simulation$activeBkg) 
+         y = (simulation$paths[[i]]$activeConc - simulation$activeBkg) 
             * yfactor,
          col = activeColor
       );

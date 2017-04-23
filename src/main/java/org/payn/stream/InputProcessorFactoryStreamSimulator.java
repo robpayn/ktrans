@@ -46,7 +46,7 @@ public abstract class InputProcessorFactoryStreamSimulator extends InputProcesso
     * @param configPath
     * @throws Exception
     */
-   public abstract void addHyperOTISBuilderInputProcessor(File workingDir, String configPath)
+   public abstract void addHyperUptakeBuilderInputProcessor(File workingDir, String configPath)
          throws Exception;
 
 }

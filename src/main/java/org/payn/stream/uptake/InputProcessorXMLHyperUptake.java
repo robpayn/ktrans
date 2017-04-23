@@ -1,4 +1,4 @@
-package org.payn.stream.otis;
+package org.payn.stream.uptake;
 
 import java.io.File;
 
@@ -19,7 +19,7 @@ import org.payn.stream.SimulatorStream;
  * @author robpayn
  *
  */
-public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<MetaInputXMLHyperOTIS>{
+public class InputProcessorXMLHyperUptake extends InputProcessorXMLStreamBuilder<MetaInputXMLHyperUptake>{
 
    /**
     * Entry point for stream simulations
@@ -43,7 +43,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
                   );
          }
 
-         simulator.getInputProcessorFactory().addHyperOTISBuilderInputProcessor(
+         simulator.getInputProcessorFactory().addHyperUptakeBuilderInputProcessor(
                workingDir, simulator.getArgMap().get("config")
                );
          simulator.execute();
@@ -57,7 +57,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    /**
     * Solute resource for a conservative tracer
     */
-   private ResourceSoluteConcentration conserveResourceOTIS;
+   private ResourceSoluteConcentration conserveResource;
    
    /**
     * Storage behavior for the conservative tracer
@@ -88,7 +88,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    /**
     * The resource for the active tracer
     */
-   private ResourceSoluteConcentration activeResourceOTIS;
+   private ResourceSoluteConcentration activeResource;
 
    /**
     * The storage behavior for the active tracer
@@ -121,7 +121,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
     * @param metaInput
     * @param simulator
     */
-   public InputProcessorXMLHyperOTIS(MetaInputXMLHyperOTIS metaInput,
+   public InputProcessorXMLHyperUptake(MetaInputXMLHyperUptake metaInput,
          SimulatorStream simulator) 
    {
       super(metaInput, simulator);
@@ -132,10 +132,10 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    {
       xSectionalArea = averageWidth * initialDepth;
       
-      conserveBehaviorStorage = conserveResourceOTIS.getBehavior(
+      conserveBehaviorStorage = conserveResource.getBehavior(
             ResourceSolute.BEHAVIOR_STORAGE
             );
-      conserveBehaviorFlow = conserveResourceOTIS.getBehavior(
+      conserveBehaviorFlow = conserveResource.getBehavior(
             ResourceSolute.BEHAVIOR_FLOW
             );
       conserveBkgConc = metaInput.getAttributeBkgConc("conservative");
@@ -169,10 +169,10 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
      
       if (isActiveConfigured)
       {
-         activeBehaviorStorage = activeResourceOTIS.getBehavior(
+         activeBehaviorStorage = activeResource.getBehavior(
                ResourceSolute.BEHAVIOR_STORAGE
                );
-         activeBehaviorStorageUptake = activeResourceOTIS.getBehavior(
+         activeBehaviorStorageUptake = activeResource.getBehavior(
                ResourceSolute.BEHAVIOR_STORAGE_HYPER
                );
          activeBkgConc = metaInput.getAttributeBkgConc("active");
@@ -252,12 +252,12 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
       Behavior behavior = null;
       if (isInject)
       {
-         behavior = conserveResourceOTIS.getBehavior(
+         behavior = conserveResource.getBehavior(
                ResourceSolute.BEHAVIOR_CONCBOUND_INJECT);
       }
       else
       {
-         behavior = conserveResourceOTIS.getBehavior(
+         behavior = conserveResource.getBehavior(
                ResourceSolute.BEHAVIOR_CONCBOUND);
       }
       ElementBehavior elementBehavior = 
@@ -310,12 +310,12 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
       {
          if (isInject)
          {
-            behavior = activeResourceOTIS.getBehavior(
+            behavior = activeResource.getBehavior(
                   ResourceSolute.BEHAVIOR_CONCBOUND_INJECT);
          }
          else
          {
-            behavior = activeResourceOTIS.getBehavior(
+            behavior = activeResource.getBehavior(
                   ResourceSolute.BEHAVIOR_CONCBOUND);
          }
          elementBehavior = 
@@ -365,7 +365,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    protected void configureDownstreamBoundary(ElementBoundary elementBoundary,
          long indexLastCell) throws Exception 
    {
-      Behavior behavior = conserveResourceOTIS.getBehavior(
+      Behavior behavior = conserveResource.getBehavior(
             ResourceSolute.BEHAVIOR_FLOWBOUND);
       ElementBehavior elementBehavior = 
             elementBoundary.createBehaviorElement(behavior);
@@ -382,7 +382,7 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
       
       if (isActiveConfigured)
       {
-         behavior = activeResourceOTIS.getBehavior(
+         behavior = activeResource.getBehavior(
                ResourceSolute.BEHAVIOR_FLOWBOUND);
          elementBehavior = 
                elementBoundary.createBehaviorElement(behavior);
@@ -397,14 +397,14 @@ public class InputProcessorXMLHyperOTIS extends InputProcessorXMLStreamBuilder<M
    @Override
    protected void configureResources() throws Exception 
    {
-      conserveResourceOTIS = new ResourceSoluteConcentration();
-      conserveResourceOTIS.initialize("conserveOTIS");
+      conserveResource = new ResourceSoluteConcentration();
+      conserveResource.initialize("conserveConc");
       
       isActiveConfigured = metaInput.isSoluteConfigured("active");
       if (isActiveConfigured)
       {
-        activeResourceOTIS = new ResourceSoluteConcentration();
-        activeResourceOTIS.initialize("activeOTIS");
+        activeResource = new ResourceSoluteConcentration();
+        activeResource.initialize("activeConc");
       }
    }
 

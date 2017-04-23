@@ -189,9 +189,9 @@ HyperbolicAnalysisLagrangeTASCC <- function(
    for (i in 1:length(analysis$metrics$time))
    {
       activebc <- 
-         simulation$paths[[i]]$activeOTIS - simulation$activeBkg;
+         simulation$paths[[i]]$activeConc - simulation$activeBkg;
       conservebc <- 
-         simulation$paths[[i]]$conserveOTIS - simulation$conserveBkg;
+         simulation$paths[[i]]$conserveConc - simulation$conserveBkg;
       logy <- log(activebc / conservebc);
       x <- simulation$paths[[i]]$time;
       lmresults <- lm(logy ~ x);

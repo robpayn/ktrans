@@ -1,4 +1,4 @@
-package org.payn.stream.otis;
+package org.payn.stream.uptake;
 
 import java.io.File;
 import org.payn.stream.MetaInputXMLStream;
@@ -11,7 +11,7 @@ import org.payn.stream.MetaInputXMLStream;
  * @author robpayn
  *
  */
-public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
+public class MetaInputXMLHyperUptake extends MetaInputXMLStream {
    
    /**
     * Construct a new instance of the meta-input
@@ -21,7 +21,7 @@ public class MetaInputXMLHyperOTIS extends MetaInputXMLStream {
     * @param elementName
     * @throws Exception
     */
-   public MetaInputXMLHyperOTIS(File workingDir, String path,
+   public MetaInputXMLHyperUptake(File workingDir, String path,
          String elementName) throws Exception 
    {
       super(workingDir, path, elementName);
