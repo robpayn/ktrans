@@ -196,34 +196,34 @@ Simulation <- function(
 
    conserveSoluteNode <- getNodeSet(
       config, 
-      "/document/streambuilder/solute"
+      "/document/stream/solute"
       )[[1]];
    conserveBkg <- as.numeric(
       xmlGetAttr(conserveSoluteNode,  "bkgConc")
       );
    activeSoluteNode <- getNodeSet(
       config, 
-      "/document/streambuilder/solute"
+      "/document/stream/solute"
       )[[2]];
    activeBkg <- as.numeric(
       xmlGetAttr(activeSoluteNode,  "bkgConc")
       );
    discharge <- as.numeric(
       xmlGetAttr(
-         getNodeSet(config, "/document/streambuilder/flow")[[1]], 
+         getNodeSet(config, "/document/stream/flow")[[1]], 
          "initialFlow")
       );
    streamWidth <- as.numeric(
       xmlGetAttr(
          getNodeSet(
             config, 
-            "/document/streambuilder/channelgeometry/activechannel"
+            "/document/stream/channelgeometry/activechannel"
             )[[1]], 
          "averageWidth")
       );
    streamDepth <- as.numeric(
       xmlGetAttr(
-         getNodeSet(config, "/document/streambuilder/flow")[[1]], 
+         getNodeSet(config, "/document/stream/flow")[[1]], 
          "initialDepth"
          )
       );
@@ -336,7 +336,7 @@ SimulationSlug <- function(
 
    conserveSoluteNode <- getNodeSet(
       simulation$config, 
-      "/document/streambuilder/solute"
+      "/document/stream/solute"
       )[[1]];
    conserveMass <- as.numeric(
       xmlGetAttr(
@@ -347,7 +347,7 @@ SimulationSlug <- function(
       
    activeSoluteNode <- getNodeSet(
       simulation$config, 
-      "/document/streambuilder/solute"
+      "/document/stream/solute"
       )[[2]];
    activeMass <- as.numeric(
       xmlGetAttr(

@@ -39,7 +39,7 @@ public class SimulatorStream extends SimulatorNEOCH {
                throws Exception 
          {
             new InputProcessorXMLMetabolismBuilder(
-                  new MetaInputXMLMetabolism(workingDir, configPath, "streambuilder"), 
+                  new MetaInputXMLMetabolism(workingDir, configPath, "stream"), 
                   getSimulator()
                   );
          }
@@ -49,7 +49,7 @@ public class SimulatorStream extends SimulatorNEOCH {
                String configPath) throws Exception 
          {
             new InputProcessorXMLHyperUptake(
-                  new MetaInputXMLHyperUptake(workingDir, configPath, "streambuilder"), 
+                  new MetaInputXMLHyperUptake(workingDir, configPath, "stream"), 
                   getSimulator()
                   );
          }
