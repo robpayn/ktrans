@@ -18,15 +18,27 @@ import org.payn.stream.uptake.MetaInputXMLHyperUptake;
 public class SimulatorStream extends SimulatorNEOCH {
    
    /**
+    * Loader to use to create the matrix
+    */
+   private MatrixLoaderStreamSimulator loader;
+
+   /**
     * Construct a new instance based on the provided command line arguments and working directory
     * 
     * @param args
     * @param workingDir
+    * @param loader 
+    *       loader to use to create the matrix
     * @throws Exception 
     */
-   public SimulatorStream(File workingDir, String[] args) throws Exception
+   public SimulatorStream(
+         File workingDir, 
+         String[] args, 
+         MatrixLoaderStreamSimulator loader
+         ) throws Exception
    {
       super(workingDir, args);
+      this.loader = loader;
    }
 
    @Override
@@ -74,8 +86,9 @@ public class SimulatorStream extends SimulatorNEOCH {
    public HolonMatrix createMatrix() throws Exception 
    {
       return MatrixLoaderStreamSimulator.initializeStreamSimulator(
-            argMap, 
-            workingDir
+            workingDir, 
+            argMap,
+            loader
             );
    }
 

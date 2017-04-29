@@ -48,19 +48,23 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
    /**
     * Load and build the matrix
     * 
-    * @param argMap
     * @param workingDir
+    * @param argMap
+    * @param loader 
     * @return
     *       matrix object
     * @throws Exception
     */
-   public static HolonMatrix initializeStreamSimulator(HashMap<String, String> argMap,
-         File workingDir) throws Exception 
+   public static HolonMatrix initializeStreamSimulator(
+         File workingDir, 
+         HashMap<String, String> argMap,
+         MatrixLoaderStreamSimulator loader
+         ) throws Exception 
    {
       ModelBuilder builder = ModelLoader.loadBuilder(
             workingDir,
             argMap,
-            new MatrixLoaderStreamSimulator()
+            loader
             );
       HolonMatrix matrix = (HolonMatrix)builder.buildModel();
       matrix.getController().initializeController();
