@@ -10,7 +10,6 @@ import org.payn.neoch.io.xmltools.ElementBoundary;
 import org.payn.resources.solute.ResourceSolute;
 import org.payn.resources.solute.concentration.ResourceSoluteConcentration;
 import org.payn.stream.InputProcessorXMLStreamBuilder;
-import org.payn.stream.MatrixLoaderStreamSimulator;
 import org.payn.stream.SimulatorStream;
 
 /**
@@ -36,7 +35,7 @@ public class InputProcessorXMLHyperUptake extends InputProcessorXMLStreamBuilder
          SimulatorStream simulator = new SimulatorStream(
                workingDir, 
                args,
-               new MatrixLoaderStreamSimulator()
+               new MatrixLoaderUptakeSimulator()
                );
          
          // Check for configuration file in file system
