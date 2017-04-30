@@ -119,6 +119,7 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
                resource = new ResourceSoluteConcentration();
                break;
          }
+         resource.initialize(resourceElem.getName());
       }
       return resource;
    }
