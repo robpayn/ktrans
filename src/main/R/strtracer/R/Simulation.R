@@ -2,6 +2,9 @@ require(XML);
 
 # CLASS Simulation ####
 
+#' Create a new object for a simulation of a stream tracer experiment
+#' 
+#' @export
 Simulation <- function(
    configFile, 
    holonFile,
@@ -136,6 +139,9 @@ Simulation <- function(
 
 # CLASS SimulationSlug ####
 
+#' Create a new object for a simulation of an instantaneous-release (slug) stream tracer experiment
+#' 
+#' @export
 SimulationSlug <- function(
    configFile, 
    conserveFile, 
@@ -194,6 +200,9 @@ SimulationSlug <- function(
 
 # CLASS SimulationLagrange ####
 
+#' Create a new object for a Lagrangian simulation of a stream tracer experiment
+#' 
+#' @export
 SimulationLagrange <- function(
    configFile, 
    conserveFile, 
@@ -272,11 +281,17 @@ SimulationLagrange <- function(
    return(simulation);
 }
 
+#' Plot the conservative tracer breakthrough curve with Lagrangian flow path concentrations
+#' 
+#' @export
 plotPathsConservative <- function(simulation, ...)
 {
    UseMethod("plotPathsConservative", simulation);
 }
 
+#' Plot the conservative tracer breakthrough curve with Lagrangian flow path concentrations
+#' 
+#' @export
 plotPathsConservative.SimulationLagrange <- function(
    simulation,
    device = "default",
@@ -379,11 +394,17 @@ plotPathsConservative.SimulationLagrange <- function(
    }
 }
 
+#' Plot the active tracer breakthrough curve with Lagrangian flow path concentrations
+#' 
+#' @export
 plotPathsActive <- function(simulation, ...)
 {
    UseMethod("plotPathsActive", simulation);
 }
 
+#' Plot the active tracer breakthrough curve with Lagrangian flow path concentrations
+#' 
+#' @export
 plotPathsActive.SimulationLagrange <- function(
    simulation,
    columns = 3:length(simulation$conserveSolute),

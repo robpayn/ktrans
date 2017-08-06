@@ -2,6 +2,26 @@ require(XML);
 
 # CLASS Experiment ####
 
+#' Create a new stream tracer experiment object
+#' 
+#' @export
+#' @param discharge Stream discharge during experiment
+#' @param streamLength Length of experimental stream reach
+#' @param streamWidth Average width of stream channel
+#' @param streamDepth Average depth of stream channel
+#' @param xSectionArea Cross-sectional area of stream channel.  
+#'    Calculated as product of width and depth by default.
+#' @param streamVel Depth-averaged velocity of stream channel.  
+#'    Calculated as the discharge divided by the cross-sectional area by default.
+#' @param travelTime Average transport time of water along the reach.  
+#'    Calculated as reach length devided by the depth averaged velocity by default.
+#' @param conserveSolute Dataframe with the time series of conservative solute breakthrough concentrations
+#' @param activeSolute Dataframe with the time series of active solute breakthrough concentrations
+#' @param conserveBkg Background concentration for conservative solute
+#' @param activeBkg Background concentration for active solute
+#' @param injectRatio Ratio of the active to conservative tracer in injectate.
+#'    Default value is unity.
+#' @return a new experiment object configured by arguments
 Experiment <- function(
    discharge,
    streamLength,
@@ -37,11 +57,23 @@ Experiment <- function(
    return(experiment);
 }
 
+#' Plot the conservative tracer breakthrough curve
+#' 
+#' @export
+#' @param experiment Experiment for which the plot is generated
+#' @param ... Other parameters
+#' @return Output written to graphics device, nothing is returned
 plotConservative <- function(experiment, ...)
 {
    UseMethod("plotConservative", experiment);
 }
 
+#' Plot the conservative tracer breakthrough curve
+#' 
+#' @export
+#' @param experiment Experiment for which the plot is generated
+#' @param ... Other parameters
+#' @return Output written to graphics device, nothing is returned
 plotConservative.Experiment <- function(
    experiment,
    device = "default",
@@ -87,6 +119,9 @@ plotConservative.Experiment <- function(
    }
 }
 
+#' Plot the active tracer breakthrough curve
+#' 
+#' @export
 plotActive <- function(experiment, ...)
 {
    UseMethod("plotActive", experiment);
@@ -128,6 +163,9 @@ plotActive.Experiment <- function(
 
 # CLASS ExperimentSlug ####
 
+#' Create a new instance of an instantaneous release (slug) tracer experiment
+#' 
+#' @export
 ExperimentSlug <- function(
    experiment = Experiment(injectRatio = injectRatio, ...),
    releaseTime,
@@ -146,6 +184,9 @@ ExperimentSlug <- function(
    return(experiment);   
 }
 
+#' Plot the conservative tracer breakthrough curve for a slug experiment
+#' 
+#' @export
 plotConservative.ExperimentSlug <- function(
    experiment,
    xfactor = 1,
@@ -166,6 +207,9 @@ plotConservative.ExperimentSlug <- function(
    );
 }
 
+#' Plot the active tracer breakthrough curve for a slug experiment
+#' 
+#' @export
 plotActive.ExperimentSlug <- function(
    experiment,
    xfactor = 1,
