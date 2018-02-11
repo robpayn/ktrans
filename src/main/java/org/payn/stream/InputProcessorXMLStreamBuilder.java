@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 
 import org.payn.chsm.io.xmltools.ElementHolon;
 import org.payn.neoch.io.xmltools.ElementBoundary;
+import org.payn.simulation.neoch.InputProcessorXMLNEOCHBuilder;
 
 /**
  * Abstract input processor for building NEOCH models from meta input

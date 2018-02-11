@@ -1,9 +1,10 @@
 package org.payn.stream;
 
 import java.io.File;
-import org.payn.neoch.HolonMatrix;
+
 import org.payn.simulation.OutputProcessorFactory;
 import org.payn.simulation.OutputProcessorFactoryAbstract;
+import org.payn.simulation.neoch.SimulatorNEOCH;
 import org.payn.stream.metabolism.InputProcessorXMLMetabolismBuilder;
 import org.payn.stream.metabolism.MetaInputXMLMetabolism;
 import org.payn.stream.uptake.InputProcessorXMLHyperUptake;
@@ -17,11 +18,6 @@ import org.payn.stream.uptake.MetaInputXMLHyperUptake;
  */
 public class SimulatorStream extends SimulatorNEOCH {
    
-   /**
-    * Loader to use to create the matrix
-    */
-   private MatrixLoaderStreamSimulator loader;
-
    /**
     * Construct a new instance based on the provided command line arguments and working directory
     * 
@@ -37,8 +33,7 @@ public class SimulatorStream extends SimulatorNEOCH {
          MatrixLoaderStreamSimulator loader
          ) throws Exception
    {
-      super(workingDir, args);
-      this.loader = loader;
+      super(workingDir, args, loader);
    }
 
    @Override
@@ -80,16 +75,6 @@ public class SimulatorStream extends SimulatorNEOCH {
    {
       return new OutputProcessorFactoryAbstract(this) {
       };
-   }
-
-   @Override
-   public HolonMatrix createMatrix() throws Exception 
-   {
-      return MatrixLoaderStreamSimulator.initializeStreamSimulator(
-            workingDir, 
-            argMap,
-            loader
-            );
    }
 
 }

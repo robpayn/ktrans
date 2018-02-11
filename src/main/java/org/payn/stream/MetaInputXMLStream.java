@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 
 import org.payn.chsm.io.xmltools.ElementHelper;
+import org.payn.simulation.neoch.MetaInputXMLNEOCH;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 

@@ -1,10 +1,6 @@
 package org.payn.stream;
 
-import java.io.File;
-import java.util.HashMap;
-
 import org.payn.chsm.io.ModelBuilder;
-import org.payn.chsm.io.ModelLoader;
 import org.payn.chsm.io.ModelLoaderXML;
 import org.payn.chsm.io.logger.LoggerSystemOut;
 import org.payn.chsm.io.reporters.ReporterBehaviorFactoryXML;
@@ -14,7 +10,6 @@ import org.payn.chsm.io.xmltools.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
 import org.payn.chsm.processors.finitedifference.ControllerRungeKuttaTwo;
 import org.payn.chsm.resources.Resource;
-import org.payn.neoch.HolonMatrix;
 import org.payn.neoch.io.MatrixBuilderXML;
 import org.payn.neoch.io.reporters.ReporterXMLSerialFactoryXML;
 import org.payn.resources.solute.ResourceSolute;
@@ -44,32 +39,6 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
     * Behavior reporter name
     */
    private static final String REPORTER_TASCC = "tascc";
-
-   /**
-    * Load and build the matrix
-    * 
-    * @param workingDir
-    * @param argMap
-    * @param loader 
-    * @return
-    *       matrix object
-    * @throws Exception
-    */
-   public static HolonMatrix initializeStreamSimulator(
-         File workingDir, 
-         HashMap<String, String> argMap,
-         MatrixLoaderStreamSimulator loader
-         ) throws Exception 
-   {
-      ModelBuilder builder = ModelLoader.loadBuilder(
-            workingDir,
-            argMap,
-            loader
-            );
-      HolonMatrix matrix = (HolonMatrix)builder.buildModel();
-      matrix.getController().initializeController();
-      return matrix;
-   }
 
    @Override
    protected void loadLoggers() throws Exception {
