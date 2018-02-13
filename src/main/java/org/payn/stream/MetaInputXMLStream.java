@@ -77,6 +77,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * Get the interpolation element
        * 
        * @return
+       *        interpolation element
        */
       private ElementHelper getElementInterp() 
       {
@@ -107,6 +108,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * Get the element with information about a hyperbolic function
        * 
        * @return
+       *        hyperbolic element
        */
       private ElementHelper getHyperbolicElement() 
       {
@@ -121,6 +123,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
        * Get the XML element with information about air-water gas exchange
        * 
        * @return
+       *        air water gas exchange element
        */
       private ElementHelper getElementAWExchange() 
       {
@@ -148,7 +151,9 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
 
       /**
        * Get the element helper with information about respiration
+       * 
        * @return
+       *        respiration element
        */
       private ElementHelper getElementRespiration() 
       {
@@ -699,9 +704,10 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
       }
 
       /**
-       * Get the element with information about dipsersion
+       * Get the element with information about dispersion
        * 
        * @return
+       *    dispersion element
        */
       private ElementHelper getElementDispersion() 
       {
@@ -911,6 +917,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * Get the model structure element
     * 
     * @return
+    *       model structure element
     */
    private ElementHelper getElementModelStructure() 
    {
@@ -925,6 +932,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * Get the XML element for with information about the atmosphere
     * 
     * @return
+    *       atmosphere element
     */
    private ElementHelper getElementAtmosphere() 
    {
@@ -969,6 +977,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * Get the element helper for the temperature element
     * 
     * @return
+    *       temperature element
     */
    private ElementHelper getElementTemperature() 
    {
@@ -1433,6 +1442,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * 
     * @param soluteName
     * @return
+    *       solute element
     */
    protected ElementSolute getElementSolute(String soluteName) 
    {

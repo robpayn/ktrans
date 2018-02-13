@@ -204,6 +204,7 @@ public class ParticleConcTrackerTASCC {
     * Determine if water flow is positive in the current boundary
     * 
     * @return
+    *       true if flow is positive, false otherwise
     */
    protected boolean isFlowPositive() 
    {

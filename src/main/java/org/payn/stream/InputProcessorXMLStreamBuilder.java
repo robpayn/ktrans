@@ -256,6 +256,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
     * 
     * @param elementBoundary
     *       boundary element to configure
+    * @param elementBoundaryAdj 
     * @param index
     *       index number of cell
     */
