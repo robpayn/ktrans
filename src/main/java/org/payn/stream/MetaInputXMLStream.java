@@ -898,6 +898,11 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
    private ElementHelper elementAtmosphere;
 
    /**
+    * Element helper for the initial conditions element
+    */
+   private ElementHelper elementInitialConditions;
+
+   /**
     * Construct a new instance that uses the provided working directory,
     * path to the configuration file, and the name of the XML element
     * with the configuration information
@@ -949,7 +954,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     * @return
     *       geometry element helper object
     */
-   public ElementGeometry getElementGeometry()
+   private ElementGeometry getElementGeometry()
    {
       if (elementGeometry == null)
       {
@@ -986,6 +991,21 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
          elementTemperature = helper.getFirstChildElementHelper("temperature");
       }
       return elementTemperature;
+   }
+   
+   /**
+    * Get the element helper for the initial conditions element
+    * 
+    * @return
+    *       intial conditions element helper
+    */
+   private ElementHelper getElementInitialConditions()
+   {
+      if (elementInitialConditions == null)
+      {
+         elementInitialConditions = helper.getFirstChildElementHelper("initialConditions");
+      }
+      return elementInitialConditions;
    }
 
   /**
@@ -1362,15 +1382,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public boolean isInitialConditions()
    {
-      String value = helper.getAttribute("initialConditions");
-      if (value.equals(""))
-      {
-         return false;
-      }
-      else
-      {
-         return Boolean.valueOf(helper.getAttribute("initialConditions"));
-      }
+      return getElementInitialConditions().isActive();
    }
    
    /**
@@ -1381,7 +1393,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public String getAttributeInitialConditionPathCell()
    {
-      return helper.getAttribute("cellPath");
+      return getElementInitialConditions().getAttribute("cellPath");
    }
 
    /**
@@ -1392,7 +1404,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public String getAttributeInitialConditionDelimiterCell()
    {
-      return helper.getAttribute("cellDelimiter");
+      return getElementInitialConditions().getAttribute("cellDelimiter");
    }
 
    /**
@@ -1403,7 +1415,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public String getAttributeInitialConditionPathBound()
    {
-      return helper.getAttribute("boundPath");
+      return getElementInitialConditions().getAttribute("boundPath");
    }
 
    /**
@@ -1414,7 +1426,7 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public String getAttributeInitialConditionDelimiterBound()
    {
-      return helper.getAttribute("boundDelimiter");
+      return getElementInitialConditions().getAttribute("boundDelimiter");
    }
    
    /**
