@@ -46,7 +46,7 @@ public class SimulatorStream extends SimulatorNEOCH {
                throws Exception 
          {
             new InputProcessorXMLMetabolismBuilder(
-                  new MetaInputXMLMetabolism(workingDir, configPath, "stream"), 
+                  new MetaInputXMLMetabolism(workingDir, configPath, "streamsimulator"), 
                   getSimulator()
                   );
          }
