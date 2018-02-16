@@ -1,5 +1,6 @@
 package org.payn.stream;
 
+import org.payn.chsm.finitediff.processors.ControllerRungeKuttaTwo;
 import org.payn.chsm.io.ModelBuilder;
 import org.payn.chsm.io.ModelLoaderXML;
 import org.payn.chsm.io.logger.LoggerSystemOut;
@@ -8,7 +9,6 @@ import org.payn.chsm.io.reporters.ReporterFactoryXML;
 import org.payn.chsm.io.xmltools.ElementReporter;
 import org.payn.chsm.io.xmltools.ElementResource;
 import org.payn.chsm.processors.ControllerHolon;
-import org.payn.chsm.processors.finitedifference.ControllerRungeKuttaTwo;
 import org.payn.chsm.resources.Resource;
 import org.payn.neoch.io.MatrixBuilderXML;
 import org.payn.neoch.io.reporters.ReporterXMLSerialFactoryXML;
