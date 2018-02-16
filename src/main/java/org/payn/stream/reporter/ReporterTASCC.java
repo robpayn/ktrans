@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.payn.chsm.io.reporters.ReporterSingleThread;
-import org.payn.chsm.resources.time.BehaviorTime;
+import org.payn.chsm.resources.time.BehaviorTimeStepper;
 import org.payn.chsm.resources.time.Iteration;
 import org.payn.chsm.resources.time.Time;
 import org.payn.chsm.values.ValueDouble;
@@ -160,7 +160,7 @@ public class ReporterTASCC extends ReporterSingleThread {
             Time.class.getSimpleName()
             ).getValue();
       timeStep = (ValueDouble)source.getState(
-            BehaviorTime.ITERATION_INTERVAL
+            BehaviorTimeStepper.ITERATION_INTERVAL
             ).getValue();
    }
 
