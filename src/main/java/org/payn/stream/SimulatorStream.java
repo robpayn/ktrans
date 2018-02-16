@@ -56,7 +56,7 @@ public class SimulatorStream extends SimulatorNEOCH {
                String configPath) throws Exception 
          {
             new InputProcessorXMLHyperUptake(
-                  new MetaInputXMLHyperUptake(workingDir, configPath, "stream"), 
+                  new MetaInputXMLHyperUptake(workingDir, configPath, "streamsimulator"), 
                   getSimulator()
                   );
          }

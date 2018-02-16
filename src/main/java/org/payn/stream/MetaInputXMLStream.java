@@ -1382,7 +1382,15 @@ public abstract class MetaInputXMLStream extends MetaInputXMLNEOCH {
     */
    public boolean isInitialConditions()
    {
-      return getElementInitialConditions().isActive();
+      ElementHelper initCondElement = getElementInitialConditions();
+      if (initCondElement == null)
+      {
+         return false;
+      }
+      else
+      {
+         return initCondElement.isActive();
+      }
    }
    
    /**
