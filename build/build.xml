@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="kinetic.makejar" default="makejar" basedir="C:/mount/boxsync/repositories/git">
+	<target name = "compile">
+		<mkdir dir = "streamsim/build/buildbin" />
+		<javac 
+			includeantruntime = "false"
+			srcdir = "chsm/src/main/java" 
+			destdir = "streamsim/build/buildbin"
+			fork = "yes"
+			executable = "C:\mount\jdk\bin\javac"
+			compiler = "javac1.8"
+		/>
+      <javac 
+      	includeantruntime = "false"
+         srcdir = "neoch/src/main/java" 
+         destdir = "streamsim/build/buildbin"
+         fork = "yes"
+         executable = "C:\mount\jdk\bin\javac"
+         compiler = "javac1.8"
+      />
+      <javac 
+         includeantruntime = "false"
+         srcdir = "resources/src/main/java" 
+         destdir = "streamsim/build/buildbin"
+         fork = "yes"
+         executable = "C:\mount\jdk\bin\javac"
+         compiler = "javac1.8"
+      />
+      <javac 
+         includeantruntime = "false"
+         srcdir = "simulation/src/main/java" 
+         destdir = "streamsim/build/buildbin"
+         fork = "yes"
+         executable = "C:\mount\jdk\bin\javac"
+         compiler = "javac1.8"
+      />
+      <javac 
+         includeantruntime = "false"
+         srcdir = "streamsim/src/main/java" 
+         destdir = "streamsim/build/buildbin"
+         fork = "yes"
+         executable = "C:\mount\jdk\bin\javac"
+         compiler = "javac1.8"
+      />
+	</target>
+   <target name = "makejar" depends = "compile" description = "Create a jar for the kinetic project">
+   	<delete file="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" />
+      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/streamsim/build/buildbin">
+         <manifest>
+            <attribute name="Main-Class" value="org.payn.stream.uptake.InputProcessorXMLHyperUptake" />
+         </manifest>       
+         <fileset dir=".">
+            <include name="**/${libs.dir}/**" />
+         </fileset>
+      </jar>
+      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/streamsim/src/main/java" update="true">
+        <fileset dir=".">
+           <include name="**/${libs.dir}/**" />
+        </fileset>
+      </jar>
+      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/chsm/src/main/java" update="true">
+        <fileset dir=".">
+           <include name="**/${libs.dir}/**" />
+        </fileset>
+      </jar>
+      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/neoch/src/main/java" update="true">
+        <fileset dir=".">
+           <include name="**/${libs.dir}/**" />
+        </fileset>
+      </jar>
+      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/resources/src/main/java" update="true">
+        <fileset dir=".">
+           <include name="**/${libs.dir}/**" />
+        </fileset>
+      </jar>
+      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/simulation/src/main/java" update="true">
+        <fileset dir=".">
+           <include name="**/${libs.dir}/**" />
+        </fileset>
+      </jar>
+   	<delete dir = "streamsim/build/buildbin" />
+   </target>
+</project>
