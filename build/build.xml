@@ -44,8 +44,8 @@
       />
 	</target>
    <target name = "makejar" depends = "compile" description = "Create a jar for the kinetic project">
-   	<delete file="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" />
-      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/streamsim/build/buildbin">
+   	<delete file="streamsim/build/model.jar" />
+      <jar jarfile="streamsim/build/model.jar" basedir="streamsim/build/buildbin">
          <manifest>
             <attribute name="Main-Class" value="org.payn.stream.uptake.InputProcessorXMLHyperUptake" />
          </manifest>       
@@ -53,27 +53,27 @@
             <include name="**/${libs.dir}/**" />
          </fileset>
       </jar>
-      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/streamsim/src/main/java" update="true">
+      <jar jarfile="streamsim/build/model.jar" basedir="streamsim/src/main/java" update="true">
         <fileset dir=".">
            <include name="**/${libs.dir}/**" />
         </fileset>
       </jar>
-      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/chsm/src/main/java" update="true">
+      <jar jarfile="streamsim/build/model.jar" basedir="chsm/src/main/java" update="true">
         <fileset dir=".">
            <include name="**/${libs.dir}/**" />
         </fileset>
       </jar>
-      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/neoch/src/main/java" update="true">
+      <jar jarfile="streamsim/build/model.jar" basedir="neoch/src/main/java" update="true">
         <fileset dir=".">
            <include name="**/${libs.dir}/**" />
         </fileset>
       </jar>
-      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/resources/src/main/java" update="true">
+      <jar jarfile="streamsim/build/model.jar" basedir="resources/src/main/java" update="true">
         <fileset dir=".">
            <include name="**/${libs.dir}/**" />
         </fileset>
       </jar>
-      <jar jarfile="C:/mount/boxsync/repositories/git/streamsim/build/model.jar" basedir="C:/mount/boxsync/repositories/git/simulation/src/main/java" update="true">
+      <jar jarfile="streamsim/build/model.jar" basedir="simulation/src/main/java" update="true">
         <fileset dir=".">
            <include name="**/${libs.dir}/**" />
         </fileset>
