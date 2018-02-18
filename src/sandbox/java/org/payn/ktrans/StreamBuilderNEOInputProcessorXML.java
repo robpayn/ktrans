@@ -36,7 +36,7 @@ public class StreamBuilderNEOInputProcessorXML
    }
 
    @Override
-   public void execute() throws Exception 
+   public void processInput() throws Exception 
    {
       if (!metaInput.isActive())
       {

@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.payn.simulation.OutputProcessorFactory;
 import org.payn.simulation.OutputProcessorFactoryAbstract;
-import org.payn.simulation.neoch.SimulatorNEOCH;
+import org.payn.simulation.neoch.SimulatorCHSM;
 import org.payn.stream.metabolism.InputProcessorXMLMetabolismBuilder;
 import org.payn.stream.metabolism.MetaInputXMLMetabolism;
 import org.payn.stream.uptake.InputProcessorXMLHyperUptake;
@@ -16,7 +16,7 @@ import org.payn.stream.uptake.MetaInputXMLHyperUptake;
  * @author robpayn
  *
  */
-public class SimulatorStream extends SimulatorNEOCH {
+public class SimulatorStream extends SimulatorCHSM {
    
    /**
     * Construct a new instance based on the provided command line arguments and working directory

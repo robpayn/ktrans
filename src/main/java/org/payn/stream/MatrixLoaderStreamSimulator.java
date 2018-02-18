@@ -99,7 +99,7 @@ public class MatrixLoaderStreamSimulator extends ModelLoaderXML {
       ReporterFactoryXML<?> factory = super.getReporterFactory(outputElem);
       if (factory == null)
       {
-         switch(outputElem.getName())
+         switch(outputElem.getType())
          {
             case REPORTER_SERIAL:
                factory = new ReporterXMLSerialFactoryXML();
