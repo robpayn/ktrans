@@ -127,7 +127,7 @@ public abstract class InputProcessorXMLStreamBuilder<MIT extends MetaInputXMLStr
       numCells = metaInput.getAttributeNumCells();
       if (numCells != null)
       {
-         numCellsDigits = new Integer(1 + (int)Math.log10(numCells));
+         numCellsDigits = Integer.valueOf(1 + (int)Math.log10(numCells));
       }
       cellNameRoot = metaInput.getAttributeCellName();
       boundaryNameRoot = metaInput.getAttributeBoundaryName();
